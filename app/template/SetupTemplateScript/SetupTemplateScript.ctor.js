@@ -1,10 +1,10 @@
-playtemEmbeddedApp.TagProviderChain.Template.Reward = function(options) {
+playtemEmbeddedApp.TagProviderChain.Template.SetupTemplateScript = function(options) {
     var defaults = {
         debug: false
     };
 
     this.settings = {
-        scriptUrl: "reward.js"
+        scriptUrl: "//static.playtem.com/templates/js/templatedisplay.js"
     };
 
     this.defaults = $.extend(defaults, options);

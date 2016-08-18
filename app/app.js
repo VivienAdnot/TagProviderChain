@@ -6,8 +6,10 @@ playtemEmbeddedApp.TagProviderChain = function(options) {
         debug: false
     };
 
-    this.settings = {};
+    this.settings = {
+        hasReward: false
+    };
     
-    this.defaults = $.extend(this.defaults, options);
-    this.settings = $.extend(this.settings, this.defaults);    
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);    
 };

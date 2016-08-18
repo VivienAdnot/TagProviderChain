@@ -3,7 +3,14 @@ playtemEmbeddedApp.TagProviderChain.Core.Date = {
         return $.now();
     },
 
-    getUnixCurrentTime = function(date1) {
-        return date1.getTime() / 1000 | 0;
+    getUnixCurrentTimestampSeconds = function() {
+        var referenceDate = new Date();
+
+        var getUTCTimestampSeconds = function() {
+            var utcTimestampMilliseconds = referenceDate.getTime();
+            return Math.floor(utcTimestampMilliseconds  / 1000);
+        };
+
+        return getUTCTimestampSeconds();
     }
 }
