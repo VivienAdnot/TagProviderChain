@@ -1,9 +1,9 @@
-playtemEmbeddedApp.TagProviderChain.Core.Date = {
-    getCurrentTimestamp = function() {
+playtemEmbeddedApp.Core.Date = {
+    getCurrentTimestamp : function() {
         return $.now();
     },
 
-    getUnixCurrentTimestampSeconds = function() {
+    getUnixCurrentTimestampSeconds : function() {
         var referenceDate = new Date();
 
         var getUTCTimestampSeconds = function() {

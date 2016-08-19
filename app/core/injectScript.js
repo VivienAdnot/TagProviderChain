@@ -1,3 +1,3 @@
-playtemEmbeddedApp.TagProviderChain.Core.injectScript = function(url, callback) {
+playtemEmbeddedApp.Core.injectScript = function(url, callback) {
     $.getScript(url, callback);
 };

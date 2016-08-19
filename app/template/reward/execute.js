@@ -1,18 +1,16 @@
-playtemEmbeddedApp.TagProviderChain.Template.Reward.execute = function(callback) {
+playtemEmbeddedApp.Reward.prototype.execute = function(callback) {
     var self = this;
 
-    self.init(function(error, data) {
+    self.init(callback, function(error, data) {
         if(error != null) {
             // handle error
-        }
-
-        if(!apiKey) {
-            console.log("apiKey undefined");
-            return;        
         }
 
         window.addEventListener("message", self.userIdMessageHandler, false);
 
         window.parent.postMessage("playtem:smartad:userId", "*");
+
+        // we don't set up a timeout because this module is not critical for the app if it fails.
+        // create a default reward in the html template in case of error
     });
 };

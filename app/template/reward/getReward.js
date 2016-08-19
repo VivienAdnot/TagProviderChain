@@ -1,7 +1,7 @@
-playtemEmbeddedApp.TagProviderChain.Template.Reward.getReward = function(response, callback) {
+playtemEmbeddedApp.Reward.prototype.getReward = function(callback) {
     var self = this;
 
-    var onParseSuccess = function() {
+    var onParseSuccess = function(rewardName, rewardImageUri) {
         $("#rewardImageUri").attr("src", rewardImageUri);
         $("#rewardName").text(rewardName);
     };
@@ -29,29 +29,25 @@ playtemEmbeddedApp.TagProviderChain.Template.Reward.getReward = function(respons
                 throw "no reward Name";
             }
 
-            onParseSuccess();
-        } catch(e) {
-            var logTag = "Smartad template : ajax success";
-            var errorMessage = logTag + " : " + e;
+            onParseSuccess(rewardName, rewardImageUri);
 
-            jQuery.post("https://ariane.playtem.com/Browser/Error", { message: errorMessage });
-            console.log("get reward error: " + e);
+            callback(null, "parseResponse success");
+        } catch(e) {
+            playtemEmbeddedApp.Core.log("Smartad template : ajax success", e);
+            callback("parseResponse error: " + e, null);
         }
     };
 
     $.ajax({
-        url: "//api.playtem.com/advertising/services.reward/",
+        url: self.settings.scriptUrl,
         data: {
-            ApiKey : apiKey,
-            userId : userId,
-            timestamp : getUnixTime()
+            ApiKey : self.settings.apiKey,
+            userId : self.settings.userId,
+            timestamp : playtemEmbeddedApp.Core.Date.getUnixCurrentTimestampSeconds()
         },
         success: parseResponse,
         error: function(jqXHR, textStatus, errorThrown) {
-            var logTag = "Smartad template : ajax error";
-            var errorMessage = logTag + " : " + errorThrown;
-
-            jQuery.post("https://ariane.playtem.com/Browser/Error", { message: errorMessage });
+            playtemEmbeddedApp.Core.log("Smartad template : ajax error", errorThrown);
         }
     });
 };

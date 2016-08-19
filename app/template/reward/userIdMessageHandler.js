@@ -1,16 +1,26 @@
-playtemEmbeddedApp.TagProviderChain.Template.Reward.userIdMessageHandler = function(response, callback) {
-    var self = this;
+playtemEmbeddedApp.Reward.prototype.userIdMessageHandler = function(postMessage) {
+    var self = window.playtemRewardText;
+    var playtemIdentifier = "playtem:js:";
 
-    var userIdMessage = postMessage.data;
-    if(!userIdMessage) {
-        console.log("userId undefined");
-        return;
+    if(!postMessage || !postMessage.data) {
+        self.executeCallback("invalid postmessage", null);
     }
 
-    var playtemIdentifier = "playtem:js:";
+    var userIdMessage = postMessage.data;
+
     if(userIdMessage.indexOf(playtemIdentifier) != 0) {
         //handle error
     }
 
-    var userId = userIdMessage.substring(playtemIdentifier.length);
+    var checkUserIsNumber = function() {
+        //todo
+    };
+
+    var extractUserId = function() {
+        return userIdMessage.substring(playtemIdentifier.length);
+    };
+
+    self.settings.userId = extractUserId();
+
+    self.getReward(self.executeCallback);
 };

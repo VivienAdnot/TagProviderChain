@@ -1,4 +1,13 @@
-playtemEmbeddedApp.TagProviderChain.Template.Reward.init = function(callback) {
+playtemEmbeddedApp.Reward.prototype.init = function(executeCallback, callback) {
     var self = this;
-    playtemEmbeddedApp.TagProviderChain.Core.injectScript(self.settings.scriptUrl, callback);
+
+    if(!self.settings.apiKey) {
+        callback("window.apiKey undefined", null);
+        return;        
+    }
+
+    self.executeCallback = executeCallback;
+    window.playtemRewardText = self;
+
+    callback(null, "success");
 };
