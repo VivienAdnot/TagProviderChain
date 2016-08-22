@@ -1,4 +1,4 @@
-playtemEmbeddedApp.Reward.prototype.getReward = function(callback) {
+playtemEmbedded.Reward.prototype.getReward = function(callback) {
     var self = this;
 
     var onParseSuccess = function(rewardName, rewardImageUri) {
@@ -33,7 +33,7 @@ playtemEmbeddedApp.Reward.prototype.getReward = function(callback) {
 
             callback(null, "parseResponse success");
         } catch(e) {
-            playtemEmbeddedApp.Core.log("Smartad template : ajax success", e);
+            playtemEmbedded.Core.log("Smartad template : ajax success", e);
             callback("parseResponse error: " + e, null);
         }
     };
@@ -43,11 +43,11 @@ playtemEmbeddedApp.Reward.prototype.getReward = function(callback) {
         data: {
             ApiKey : self.settings.apiKey,
             userId : self.settings.userId,
-            timestamp : playtemEmbeddedApp.Core.Date.getUnixCurrentTimestampSeconds()
+            timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
         },
         success: parseResponse,
         error: function(jqXHR, textStatus, errorThrown) {
-            playtemEmbeddedApp.Core.log("Smartad template : ajax error", errorThrown);
+            playtemEmbedded.Core.log("Smartad template : ajax error", errorThrown);
         }
     });
 };

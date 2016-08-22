@@ -1,3 +1,3 @@
-playtemEmbeddedApp.Core.injectScript = function(url, callback) {
+playtemEmbedded.Core.injectScript = function(url, callback) {
     $.getScript(url, callback);
 };

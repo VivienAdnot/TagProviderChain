@@ -1,4 +1,4 @@
-playtemEmbeddedApp.Core.Date = {
+playtemEmbedded.Core.Date = {
     getCurrentTimestamp : function() {
         return $.now();
     },

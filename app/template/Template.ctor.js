@@ -1,4 +1,4 @@
-playtemEmbeddedApp.Template = function(options) {
+playtemEmbedded.Template = function(options) {
     var defaults = {
         debug: false
     };

@@ -1,5 +1,5 @@
-playtemEmbeddedApp.Reward.prototype.userIdMessageHandler = function(postMessage) {
-    var self = window.playtemRewardText;
+playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
+    var self = playtemEmbedded.Core.globals.playtemRewardText;
     var playtemIdentifier = "playtem:js:";
 
     if(!postMessage || !postMessage.data) {

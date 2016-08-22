@@ -1,15 +1,15 @@
-playtemEmbeddedApp.Template.prototype.setup = function() {
+playtemEmbedded.Template.prototype.setup = function() {
     var self = this;
 
     self.executeTemplateScript();
 
     if(self.settings.hasReward == true) {
-        var rewarder = new playtemEmbeddedApp.Reward();
+        var rewarder = new playtemEmbedded.Reward();
 
         rewarder.execute(function(error, result) {
-            console.log("rewarder status");
+            /*console.log("rewarder status");
             console.log(error);
-            console.log(result);
+            console.log(result);*/
         });
     }
 };

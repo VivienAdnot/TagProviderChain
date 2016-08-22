@@ -22,8 +22,8 @@ module.exports = function(grunt) {
             },
             test: {
                 files: {
-                    "appTest/_source/template.js": ['_dist/template.js'],
-                    "appDisplay/_source/template.js": ['_dist/template.js']
+                    "appTest/_source/playtemEmbeddedApp.js": ['_dist/playtemEmbeddedApp.js'],
+                    "appDisplay/_source/playtemEmbeddedApp.js": ['_dist/playtemEmbeddedApp.js']
                 }
             }
         },
@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         connect: {
             test: {
                 options: {
-                    port: 8082,
+                    port: 8083,
                     hostname: '127.0.0.1',
                     keepalive: true
                 }
@@ -43,5 +43,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-connect');
 
-    grunt.registerTask('default', ['concat:app', 'concat:appTests', 'copy:test']);
+    //grunt.registerTask('default', ['concat:app', 'concat:appTests', 'copy:test']);
+    grunt.registerTask('default', ['concat:app', 'copy:test', 'connect:test']);
 };

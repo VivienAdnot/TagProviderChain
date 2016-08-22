@@ -1,4 +1,4 @@
-playtemEmbeddedApp.Core.log = function (tag, message) {
+playtemEmbedded.Core.log = function (tag, message) {
     var url = "https://ariane.playtem.com/Browser/Error";
     var logLovel = "error";
     var clientVersion = "JSEmbedded-0.0.1";

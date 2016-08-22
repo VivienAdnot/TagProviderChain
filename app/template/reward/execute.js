@@ -1,4 +1,4 @@
-playtemEmbeddedApp.Reward.prototype.execute = function(callback) {
+playtemEmbedded.Reward.prototype.execute = function(callback) {
     var self = this;
 
     self.init(callback, function(error, data) {

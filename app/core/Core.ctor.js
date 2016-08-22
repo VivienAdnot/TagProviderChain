@@ -1,1 +1,1 @@
-playtemEmbeddedApp.Core = {};
+playtemEmbedded.Core = {};

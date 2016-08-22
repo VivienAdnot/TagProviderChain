@@ -1,4 +1,4 @@
-playtemEmbeddedApp.Reward.prototype.init = function(executeCallback, callback) {
+playtemEmbedded.Reward.prototype.init = function(executeCallback, callback) {
     var self = this;
 
     if(!self.settings.apiKey) {
@@ -7,7 +7,7 @@ playtemEmbeddedApp.Reward.prototype.init = function(executeCallback, callback) {
     }
 
     self.executeCallback = executeCallback;
-    window.playtemRewardText = self;
+    playtemEmbedded.Core.globals.playtemRewardText = self;
 
     callback(null, "success");
 };

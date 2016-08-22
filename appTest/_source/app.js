@@ -191,56 +191,52 @@ playtemEmbedded.Smartad = function(options) {
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
     var self = this;
 
-    self.init(function(error, data) {
-        self.fetchAdvert(function(error, result) {
-            if(error) {
-                callback(error, null);
-                return;
-            }
+    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
+        // todo create div
 
-            self.render();
-            callback(null, result);
+        if(error != null) {
+            callback("smartad: script injection error", null)
+            return;
+        }
+
+        sas.setup({
+            domain: self.settings.domain,
+            async: true,
+            renderMode: 0
         });
+
+        sas.call("onecall",
+            {
+                siteId: self.settings.siteId,
+                pageName: self.settings.pageName,
+                formatId: self.settings.formatId
+            },
+            {
+                onLoad: function(o) {
+                    if (o && o.hasAd === true) {
+                        callback(null, true);
+                        return;
+                    } else {
+                        callback("no ad", null);
+                        return;
+                    }
+                }
+            }
+        );
+
+        // we have to call it outside of the callback
+        self.render();
     });
 };
 
-playtemEmbedded.Smartad.prototype.fetchAdvert = function(callback) {
-    var self = this;
-
-    var onLoadHandler = function(o) {
-        if (o && o.hasAd === true) {
-            callback(null, true);
-        } else {
-            callback("no ad", null);
-        }
-    };
-
-    sas.setup({
-        domain: self.settings.domain,
-        async: true,
-        renderMode: 0
-    });
-
-    sas.call("onecall",
-        {
-            siteId: self.settings.siteId,
-            pageName: self.settings.pageName,
-            formatId: self.settings.formatId
-        },
-        {
-            onLoad: onLoadHandler
-        }
-    );
-
-    //todo run timeout
-};
-
-playtemEmbedded.Smartad.prototype.init = function(callback) {
-    var self = this;
-    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, callback);
-};
+// playtemEmbedded.Smartad.prototype.init = function(callback) {
+//     var self = this;
+//     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, callback);
+// };
 
 playtemEmbedded.Smartad.prototype.render = function() {
+    var self = this;
+    
     var divId = "sas_" + self.settings.formatId;
     $(self.settings.target).attr("id", divId);
 

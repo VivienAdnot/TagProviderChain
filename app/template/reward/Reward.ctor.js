@@ -1,4 +1,4 @@
-playtemEmbeddedApp.Reward = function(options) {
+playtemEmbedded.Reward = function(options) {
     var defaults = {
         debug: false
     };

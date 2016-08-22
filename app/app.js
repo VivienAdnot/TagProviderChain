@@ -1,6 +1,6 @@
-var playtemEmbeddedApp = {};
+var playtemEmbedded = {};
 
-playtemEmbeddedApp.TagProvider = function(options) {
+playtemEmbedded.App = function(options) {
     var defaults = {
         debug: false
     };
@@ -13,12 +13,17 @@ playtemEmbeddedApp.TagProvider = function(options) {
     this.settings = $.extend(this.settings, defaults);    
 };
 
-playtemEmbeddedApp.TagProvider.prototype.execute = function() {
+playtemEmbedded.App.prototype.execute = function() {
     var self = this;
 
-    var templateSetup = new playtemEmbeddedApp.Template({
+    var templateSetup = new playtemEmbedded.Template({
         hasReward: self.settings.hasReward
     });
-    
+
     templateSetup.setup();
+
+    var tagProviders = new playtemEmbedded.TagProviders();
+    tagProviders.execute(function(error, result) {
+        console.log(error, result);
+    });
 };

@@ -1,7 +1,7 @@
-playtemEmbeddedApp.Template.prototype.executeTemplateScript = function(callback) {
+playtemEmbedded.Template.prototype.executeTemplateScript = function(callback) {
     var scriptUrl = "//static.playtem.com/templates/js/templatedisplay.js";
 
-    playtemEmbeddedApp.Core.injectScript(scriptUrl, function(error, data) {
+    playtemEmbedded.Core.injectScript(scriptUrl, function(error, data) {
         var jsTemplate = new PlaytemTemplate({
             clientType: "JavaScript",
             clickButtonUrl: "",
@@ -15,9 +15,9 @@ playtemEmbeddedApp.Template.prototype.executeTemplateScript = function(callback)
         });
 
         var playtemTemplateCallback = function(error, data) {
-            console.log("executeTemplateScript callback");
+            /*console.log("executeTemplateScript callback");
             console.log(error);
-            console.log(data);
+            console.log(data);*/
         };
 
         jsTemplate.execute(playtemTemplateCallback);

@@ -1,0 +1,1 @@
+playtemEmbedded.Core.globals = {};
