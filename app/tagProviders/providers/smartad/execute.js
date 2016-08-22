@@ -1,9 +1,13 @@
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
     var self = this;
+    var timeoutFired = false;
 
-    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
-        // todo create div
-
+    self.init(function(error, data) {
+        if(timeoutFired == true) {
+            // callback has already been fired.
+            return;
+        }
+        
         if(error != null) {
             callback("smartad: script injection error", null)
             return;
@@ -15,6 +19,16 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             renderMode: 0
         });
 
+        var loadHandler = function(result) {
+            if (result && result.hasAd === true) {
+                callback(null, "success");
+                return;
+            } else {
+                callback("no ad", null);
+                return;
+            }
+        };
+
         sas.call("onecall",
             {
                 siteId: self.settings.siteId,
@@ -22,14 +36,12 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
                 formatId: self.settings.formatId
             },
             {
-                onLoad: function(o) {
-                    if (o && o.hasAd === true) {
-                        callback(null, "success");
-                        return;
-                    } else {
-                        callback("no ad", null);
+                onLoad: function(result) {
+                    if(timeoutFired) {
                         return;
                     }
+
+                    loadHandler(result);
                 }
             }
         );
@@ -37,4 +49,10 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
         // we have to call it outside of the callback
         self.render();
     });
+
+    self.timeoutTimer = window.setTimeout(function () {
+        self.destructor();
+        timeoutFired = true;
+        callback("Smartad: timeout", null);
+    }, self.settings.httpRequestTimeout);
 };

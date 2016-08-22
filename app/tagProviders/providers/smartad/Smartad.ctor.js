@@ -9,7 +9,8 @@ playtemEmbedded.Smartad = function(options) {
         pageName : "home",
         formatId : 42149,
         domain: '//www8.smartadserver.com',
-        target: '.smartad'
+        target: '.smartad',
+        httpRequestTimeout: 3000
     };
 
     this.defaults = $.extend(defaults, options);

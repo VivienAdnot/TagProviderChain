@@ -148,6 +148,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
 
         provider.execute(function (error, result) {
             if (error !== null) {
+                console.log("execute provider result error: " + error);
                 moveNext();
                 return;
             }
@@ -185,19 +186,28 @@ playtemEmbedded.Smartad = function(options) {
         pageName : "home",
         formatId : 42149,
         domain: '//www8.smartadserver.com',
-        target: '.smartad'
+        target: '.smartad',
+        httpRequestTimeout: 3000
     };
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);       
 };
 
+playtemEmbedded.Smartad.prototype.destructor = function() {
+    $(".smartad").remove();
+};
+
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
     var self = this;
+    var timeoutFired = false;
 
-    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
-        // todo create div
-
+    self.init(function(error, data) {
+        if(timeoutFired == true) {
+            // callback has already been fired.
+            return;
+        }
+        
         if(error != null) {
             callback("smartad: script injection error", null)
             return;
@@ -209,6 +219,16 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             renderMode: 0
         });
 
+        var loadHandler = function(result) {
+            if (result && result.hasAd === true) {
+                callback(null, "success");
+                return;
+            } else {
+                callback("no ad", null);
+                return;
+            }
+        };
+
         sas.call("onecall",
             {
                 siteId: self.settings.siteId,
@@ -216,14 +236,12 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
                 formatId: self.settings.formatId
             },
             {
-                onLoad: function(o) {
-                    if (o && o.hasAd === true) {
-                        callback(null, "success");
-                        return;
-                    } else {
-                        callback("no ad", null);
+                onLoad: function(result) {
+                    if(timeoutFired) {
                         return;
                     }
+
+                    loadHandler(result);
                 }
             }
         );
@@ -231,6 +249,32 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
         // we have to call it outside of the callback
         self.render();
     });
+
+    self.timeoutTimer = window.setTimeout(function () {
+        self.destructor();
+        timeoutFired = true;
+        callback("Smartad: timeout", null);
+    }, self.settings.httpRequestTimeout);
+};
+
+playtemEmbedded.Smartad.prototype.init = function(callback) {
+    var self = this;
+
+    window.setTimeout(function() {
+
+    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
+        if(!error && data == "success") {
+            $(".ad").append("<div class == 'smartad'></div>");
+            callback(null, "success");
+            return;
+        }
+        
+        callback("smartad: script couldn't be loaded", null);
+    });        
+
+    }, 5000)
+
+
 };
 
 playtemEmbedded.Smartad.prototype.render = function() {

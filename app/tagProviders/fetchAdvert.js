@@ -7,6 +7,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
 
         provider.execute(function (error, result) {
             if (error !== null) {
+                console.log("execute provider result error: " + error);
                 moveNext();
                 return;
             }
