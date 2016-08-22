@@ -186,8 +186,19 @@ playtemEmbedded.Smartad = function(options) {
         pageName : "home",
         formatId : 42149,
         domain: '//www8.smartadserver.com',
-        target: '.smartad',
-        httpRequestTimeout: 3000
+
+        targetClass: 'smartad',
+        $targetContainerElement: $('.ad'),
+        httpRequestTimeout: 5000,
+
+        cssProperties: {
+            "position": "absolute",
+            "top": "179px",
+            "left": "125px",
+            "width": "500px",
+            "margin": "0 auto",
+            "text-align": "center"
+        }
     };
 
     this.defaults = $.extend(defaults, options);
@@ -195,7 +206,8 @@ playtemEmbedded.Smartad = function(options) {
 };
 
 playtemEmbedded.Smartad.prototype.destructor = function() {
-    $(".smartad").remove();
+    var self = this;
+    $(self.settings.targetId).remove();
 };
 
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
@@ -224,6 +236,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
                 callback(null, "success");
                 return;
             } else {
+                self.destructor();
                 callback("no ad", null);
                 return;
             }
@@ -241,6 +254,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
                         return;
                     }
 
+                    clearTimeout(self.timeoutTimer);
                     loadHandler(result);
                 }
             }
@@ -260,28 +274,29 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
 playtemEmbedded.Smartad.prototype.init = function(callback) {
     var self = this;
 
-    window.setTimeout(function() {
+    var createTarget = function() {
+        var node = "<div class='" + self.settings.targetClass + "'></div>";
+
+        self.settings.$targetContainerElement.append(node);
+        $("." + self.settings.targetClass).css(self.settings.cssProperties);
+    };
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(!error && data == "success") {
-            $(".ad").append("<div class == 'smartad'></div>");
+            createTarget();
             callback(null, "success");
             return;
         }
         
         callback("smartad: script couldn't be loaded", null);
-    });        
-
-    }, 5000)
-
-
+    });
 };
 
 playtemEmbedded.Smartad.prototype.render = function() {
     var self = this;
-    
+
     var divId = "sas_" + self.settings.formatId;
-    $(self.settings.target).attr("id", divId);
+    $("." + self.settings.targetClass).attr("id", divId);
 
     sas.render(self.settings.formatId);
 };

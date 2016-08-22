@@ -1,3 +1,4 @@
 playtemEmbedded.Smartad.prototype.destructor = function() {
-    $(".smartad").remove();
+    var self = this;
+    $(self.settings.targetId).remove();
 };

@@ -24,6 +24,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
                 callback(null, "success");
                 return;
             } else {
+                self.destructor();
                 callback("no ad", null);
                 return;
             }
@@ -41,6 +42,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
                         return;
                     }
 
+                    clearTimeout(self.timeoutTimer);
                     loadHandler(result);
                 }
             }
