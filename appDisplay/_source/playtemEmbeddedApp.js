@@ -207,7 +207,9 @@ playtemEmbedded.Smartad = function(options) {
 
 playtemEmbedded.Smartad.prototype.destructor = function() {
     var self = this;
-    $(self.settings.targetId).remove();
+    if($(self.settings.targetClass).length > 0) {
+        $(self.settings.targetClass).remove();
+    }
 };
 
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
@@ -385,6 +387,9 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
     var onParseSuccess = function(rewardName, rewardImageUri) {
         $("#rewardImageUri").attr("src", rewardImageUri);
         $("#rewardName").text(rewardName);
+
+        $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
+        $("#js-rewardOfferingMessage").css("visibility", "visible");
     };
 
     var parseResponse = function(data) {
@@ -435,6 +440,9 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
 
 playtemEmbedded.Reward.prototype.init = function(executeCallback, callback) {
     var self = this;
+
+    $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
+    $("#js-rewardOfferingMessage").css("visibility", "hidden");
 
     if(!self.settings.apiKey) {
         callback("window.apiKey undefined", null);

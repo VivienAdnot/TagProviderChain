@@ -4,6 +4,9 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
     var onParseSuccess = function(rewardName, rewardImageUri) {
         $("#rewardImageUri").attr("src", rewardImageUri);
         $("#rewardName").text(rewardName);
+
+        $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
+        $("#js-rewardOfferingMessage").css("visibility", "visible");
     };
 
     var parseResponse = function(data) {
