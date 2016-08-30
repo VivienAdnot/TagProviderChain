@@ -5,7 +5,7 @@ playtemEmbedded.App = function(options) {
         /*mandatory*/
         apiKey: undefined,
         hasReward: false,
-        providers: undefined,
+        providers: [],
         /* mandatory */
         outputLanguage: undefined
     };
@@ -28,7 +28,10 @@ playtemEmbedded.App.prototype.execute = function() {
 
     templateSetup.setup();
 
-    var tagProviders = new playtemEmbedded.TagProviders();
+    var tagProviders = new playtemEmbedded.TagProviders({
+        providers: self.settings.providers
+    });
+    
     tagProviders.execute(function(error, result) {
         console.log(error, result);
     });
@@ -121,13 +124,21 @@ playtemEmbedded.Core.Identifiers = {
     }
 };
 
-playtemEmbedded.TagProviders = function () {
-    this.providers = [
-        playtemEmbedded.Smartad
-    ];
+playtemEmbedded.TagProviders = function (options) {
+    var defaults = {
+        providers : []
+    };
+
+    this.settings = {
+    };
+    
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults); 
+
+    // this.providers = [
+    //     playtemEmbedded.Smartad
+    // ];
 };
-
-
 
 playtemEmbedded.TagProviders.prototype.execute = function (callback) {
     var self = this;
@@ -142,12 +153,16 @@ playtemEmbedded.TagProviders.prototype.execute = function (callback) {
         if(typeof callback == "function") {
             callback(error, result);
         }
-    });        
+    });
 };
 
 playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
     var self = this;
     var index = 0;
+
+    var isArray = function(target) {
+        return Object.prototype.toString.call(target) == "[object Array]";
+    };
 
     var executeProvider = function (AdvertProvider) {
         var provider = new AdvertProvider();
@@ -169,14 +184,19 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
     };
 
     var run = function () {
-        if (index >= self.providers.length) {
+        if (index >= self.settings.providers.length) {
             callback("no more provider to call", null);
             return;
         }
 
-        var currentProviderReference = self.providers[index];
+        var currentProviderReference = self.settings.providers[index];
         executeProvider(currentProviderReference);
     };
+
+    if(!isArray(self.settings.providers)) {
+        callback("self.settings.providers must be an array", null);
+        return;
+    }
 
     run();
 };

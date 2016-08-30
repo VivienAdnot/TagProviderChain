@@ -11,5 +11,5 @@ playtemEmbedded.TagProviders.prototype.execute = function (callback) {
         if(typeof callback == "function") {
             callback(error, result);
         }
-    });        
+    });
 };

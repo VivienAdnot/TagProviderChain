@@ -5,7 +5,7 @@ playtemEmbedded.App = function(options) {
         /*mandatory*/
         apiKey: undefined,
         hasReward: false,
-        providers: undefined,
+        providers: [],
         /* mandatory */
         outputLanguage: undefined
     };
@@ -28,7 +28,10 @@ playtemEmbedded.App.prototype.execute = function() {
 
     templateSetup.setup();
 
-    var tagProviders = new playtemEmbedded.TagProviders();
+    var tagProviders = new playtemEmbedded.TagProviders({
+        providers: self.settings.providers
+    });
+    
     tagProviders.execute(function(error, result) {
         console.log(error, result);
     });
