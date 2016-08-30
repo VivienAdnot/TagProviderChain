@@ -1,10 +1,10 @@
 playtemEmbedded.Reward = function(options) {
     var defaults = {
-        debug: false
+        debug: false,
+        apiKey: undefined
     };
 
     this.settings = {
-        apiKey: window.apiKey,
         scriptUrl: "//api.playtem.com/advertising/services.reward/",
         userId: null
     };

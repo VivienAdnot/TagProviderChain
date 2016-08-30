@@ -40,11 +40,11 @@
         <script type="text/javascript" src="_source/playtemEmbeddedApp.js"></script>
 
         <script type="text/javascript">
-            var apiKey = "TSTb-8438v";
-            var outputLanguage = "en-US";
-
             var playtemApp = new playtemEmbedded.App({
-                hasReward: true
+                hasReward: true,
+                providers: {"smartad":true,"pubmatic":false},
+                apiKey: "TSTb-8438v",
+                outputLanguage : "en-US"
             });
 
             playtemApp.execute();

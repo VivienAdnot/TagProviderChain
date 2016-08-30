@@ -2,22 +2,28 @@ var playtemEmbedded = {};
 
 playtemEmbedded.App = function(options) {
     var defaults = {
-        debug: false
+        /*mandatory*/
+        apiKey: undefined,
+        hasReward: false,
+        providers: undefined,
+        /* mandatory */
+        outputLanguage: undefined
     };
 
     this.settings = {
-        hasReward: false
+
     };
     
     this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);    
+    this.settings = $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.App.prototype.execute = function() {
     var self = this;
 
     var templateSetup = new playtemEmbedded.Template({
-        hasReward: self.settings.hasReward
+        hasReward: self.settings.hasReward,
+        apiKey: self.settings.apiKey
     });
 
     templateSetup.setup();
@@ -306,11 +312,13 @@ playtemEmbedded.Smartad.prototype.render = function() {
 
 playtemEmbedded.Template = function(options) {
     var defaults = {
-        debug: false
+        debug: false,
+        apiKey: undefined,
+        hasReward: false,
+        outputLanguage: "en-US",
     };
 
     this.settings = {
-        hasReward: false,
         scripts: {
             setupTemplate: "//static.playtem.com/templates/js/templatedisplay.js",
             reward: "reward.js"
@@ -322,6 +330,7 @@ playtemEmbedded.Template = function(options) {
 };
 
 playtemEmbedded.Template.prototype.executeTemplateScript = function(callback) {
+    var self = this;
     var scriptUrl = "//static.playtem.com/templates/js/templatedisplay.js";
 
     playtemEmbedded.Core.injectScript(scriptUrl, function(error, data) {
@@ -331,7 +340,7 @@ playtemEmbedded.Template.prototype.executeTemplateScript = function(callback) {
             brandName: "Our partner",
 
             policyUrl: "",
-            outputLanguage: "en-US",
+            outputLanguage: self.settings.outputLanguage,
             policyIconUrl: "",
 
             campaignType: "1"
@@ -349,11 +358,11 @@ playtemEmbedded.Template.prototype.executeTemplateScript = function(callback) {
 
 playtemEmbedded.Reward = function(options) {
     var defaults = {
-        debug: false
+        debug: false,
+        apiKey: undefined
     };
 
     this.settings = {
-        apiKey: window.apiKey,
         scriptUrl: "//api.playtem.com/advertising/services.reward/",
         userId: null
     };
@@ -427,7 +436,7 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
     $.ajax({
         url: self.settings.scriptUrl,
         data: {
-            ApiKey : self.settings.apiKey,
+            apiKey : self.settings.apiKey,
             userId : self.settings.userId,
             timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
         },
@@ -450,13 +459,13 @@ playtemEmbedded.Reward.prototype.init = function(executeCallback, callback) {
     }
 
     self.executeCallback = executeCallback;
-    playtemEmbedded.Core.globals.playtemRewardText = self;
+    playtemEmbedded.Core.globals.playtemRewardContext = self;
 
     callback(null, "success");
 };
 
 playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
-    var self = playtemEmbedded.Core.globals.playtemRewardText;
+    var self = playtemEmbedded.Core.globals.playtemRewardContext;
     var playtemIdentifier = "playtem:js:";
 
     if(!postMessage || !postMessage.data) {
@@ -488,12 +497,12 @@ playtemEmbedded.Template.prototype.setup = function() {
     self.executeTemplateScript();
 
     if(self.settings.hasReward == true) {
-        var rewarder = new playtemEmbedded.Reward();
+        var rewarder = new playtemEmbedded.Reward({
+            apiKey: self.settings.apiKey
+        });
 
         rewarder.execute(function(error, result) {
-            /*console.log("rewarder status");
-            console.log(error);
-            console.log(result);*/
+
         });
     }
 };

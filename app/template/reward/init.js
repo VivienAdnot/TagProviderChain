@@ -10,7 +10,7 @@ playtemEmbedded.Reward.prototype.init = function(executeCallback, callback) {
     }
 
     self.executeCallback = executeCallback;
-    playtemEmbedded.Core.globals.playtemRewardText = self;
+    playtemEmbedded.Core.globals.playtemRewardContext = self;
 
     callback(null, "success");
 };

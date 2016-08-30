@@ -4,12 +4,12 @@ playtemEmbedded.Template.prototype.setup = function() {
     self.executeTemplateScript();
 
     if(self.settings.hasReward == true) {
-        var rewarder = new playtemEmbedded.Reward();
+        var rewarder = new playtemEmbedded.Reward({
+            apiKey: self.settings.apiKey
+        });
 
         rewarder.execute(function(error, result) {
-            /*console.log("rewarder status");
-            console.log(error);
-            console.log(result);*/
+
         });
     }
 };

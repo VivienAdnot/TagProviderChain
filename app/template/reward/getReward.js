@@ -44,7 +44,7 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
     $.ajax({
         url: self.settings.scriptUrl,
         data: {
-            ApiKey : self.settings.apiKey,
+            apiKey : self.settings.apiKey,
             userId : self.settings.userId,
             timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
         },

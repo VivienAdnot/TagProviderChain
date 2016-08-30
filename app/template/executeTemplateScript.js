@@ -1,4 +1,5 @@
 playtemEmbedded.Template.prototype.executeTemplateScript = function(callback) {
+    var self = this;
     var scriptUrl = "//static.playtem.com/templates/js/templatedisplay.js";
 
     playtemEmbedded.Core.injectScript(scriptUrl, function(error, data) {
@@ -8,7 +9,7 @@ playtemEmbedded.Template.prototype.executeTemplateScript = function(callback) {
             brandName: "Our partner",
 
             policyUrl: "",
-            outputLanguage: "en-US",
+            outputLanguage: self.settings.outputLanguage,
             policyIconUrl: "",
 
             campaignType: "1"

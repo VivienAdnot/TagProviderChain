@@ -2,22 +2,28 @@ var playtemEmbedded = {};
 
 playtemEmbedded.App = function(options) {
     var defaults = {
-        debug: false
+        /*mandatory*/
+        apiKey: undefined,
+        hasReward: false,
+        providers: undefined,
+        /* mandatory */
+        outputLanguage: undefined
     };
 
     this.settings = {
-        hasReward: false
+
     };
     
     this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);    
+    this.settings = $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.App.prototype.execute = function() {
     var self = this;
 
     var templateSetup = new playtemEmbedded.Template({
-        hasReward: self.settings.hasReward
+        hasReward: self.settings.hasReward,
+        apiKey: self.settings.apiKey
     });
 
     templateSetup.setup();

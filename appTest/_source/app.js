@@ -384,13 +384,13 @@ playtemEmbedded.Reward.prototype.init = function(executeCallback, callback) {
     }
 
     self.executeCallback = executeCallback;
-    playtemEmbedded.Core.globals.playtemRewardText = self;
+    playtemEmbedded.Core.globals.playtemRewardContext = self;
 
     callback(null, "success");
 };
 
 playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
-    var self = playtemEmbedded.Core.globals.playtemRewardText;
+    var self = playtemEmbedded.Core.globals.playtemRewardContext;
     var playtemIdentifier = "playtem:js:";
 
     if(!postMessage || !postMessage.data) {

@@ -1,10 +1,12 @@
 playtemEmbedded.Template = function(options) {
     var defaults = {
-        debug: false
+        debug: false,
+        apiKey: undefined,
+        hasReward: false,
+        outputLanguage: "en-US",
     };
 
     this.settings = {
-        hasReward: false,
         scripts: {
             setupTemplate: "//static.playtem.com/templates/js/templatedisplay.js",
             reward: "reward.js"
