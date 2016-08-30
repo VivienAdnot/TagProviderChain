@@ -133,11 +133,7 @@ playtemEmbedded.TagProviders = function (options) {
     };
     
     this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults); 
-
-    // this.providers = [
-    //     playtemEmbedded.Smartad
-    // ];
+    this.settings = $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.TagProviders.prototype.execute = function (callback) {
