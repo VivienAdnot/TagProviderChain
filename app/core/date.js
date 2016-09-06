@@ -13,4 +13,4 @@ playtemEmbedded.Core.Date = {
 
         return getUTCTimestampSeconds();
     }
-}
+};

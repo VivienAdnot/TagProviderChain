@@ -42,7 +42,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
                         return;
                     }
 
-                    clearTimeout(self.timeoutTimer);
+                    window.clearTimeout(self.timeoutTimer);
                     loadHandler(result);
                 }
             }

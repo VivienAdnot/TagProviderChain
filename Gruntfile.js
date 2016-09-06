@@ -43,6 +43,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-connect');
 
-    //grunt.registerTask('default', ['concat:app', 'concat:appTests', 'copy:test']);
-    grunt.registerTask('default', ['concat:app', 'copy:test', 'connect:test']);
+    grunt.registerTask('build', ['concat:app', 'copy:test']);
+
+    grunt.registerTask('run', ['concat:app', 'copy:test', 'connect:test']);
 };

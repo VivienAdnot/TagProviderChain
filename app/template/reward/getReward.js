@@ -2,11 +2,32 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
     var self = this;
 
     var onParseSuccess = function(rewardName, rewardImageUri) {
-        $("#rewardImageUri").attr("src", rewardImageUri);
-        $("#rewardName").text(rewardName);
-
-        $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
-        $("#js-rewardOfferingMessage").css("visibility", "visible");
+        if(self.settings.gameType == "desktop") {
+            //reward img uri
+            $("#rewardImageUri").attr("src", rewardImageUri);
+            $("#rewardImageUri").css("visibility", "visible");
+            //reward img name
+            $("#rewardName").text(rewardName);
+            $("#rewardName").css("visibility", "visible");
+            //our partner
+            $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
+            //offers you
+            $("#js-rewardOfferingMessage").css("visibility", "visible");
+        } else if(self.settings.gameType == "mobile") {
+            //reward img ui
+            $(".ad__reward__image").attr("src", rewardImageUri);
+            $(".ad__reward__image").css("visibility", "visible");
+            //reward name
+            $(".ad__reward__offerMessage__rewardName").text(rewardName);
+            $(".ad__reward__offerMessage__rewardName").css("visibility", "visible");
+            //our partner
+            $(".ad__header__title").css("visibility", "visible");
+            //offers you
+            $("#js-rewardOfferingMessage").css("visibility", "visible");
+        } else {
+            // todo handle error
+            return;
+        }
     };
 
     var parseResponse = function(data) {

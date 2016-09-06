@@ -168,7 +168,7 @@
         }
     </style>
 
-    <link rel="stylesheet" href="css/JewelAcademy-custom.css"/>
+    <link rel="stylesheet" href="../css/JewelAcademy-custom.css"/>
 </head>
 <body>
     <div class="ad">
@@ -181,23 +181,24 @@
         <div class="ad__reward__offerMessage u-verticalAlignText">
             <div>
                 <span id="js-rewardOfferingMessage">offers you</span>
-                <span class="ad__reward__offerMessage__rewardName">2 Emeraudes</span>
+                <span class="ad__reward__offerMessage__rewardName">1 Star</span>
             </div>
         </div>
 
-        <img class="ad__reward__image" src="http://static.playtem.com/images/items/yatzee-coin-187x187.png" alt="" />
+        <img class="ad__reward__image" src="http://static.playtem.com/images/items/jewelacademy-stars-187x187.png" alt="" />
     </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
-    <script type="text/javascript" src="_source/playtemEmbeddedApp.js"></script>
+    <script type="text/javascript" src="../_source/playtemEmbeddedApp.js"></script>
 
     <script type="text/javascript">
         var playtemApp = new playtemEmbedded.App({
             hasReward: true,
             providers: [ playtemEmbedded.Facebook ],
             apiKey: "TSTc-9467v",
-            outputLanguage : "en-US"
+            outputLanguage : "en-US",
+            gameType: "mobile"
         });
 
         playtemApp.execute();

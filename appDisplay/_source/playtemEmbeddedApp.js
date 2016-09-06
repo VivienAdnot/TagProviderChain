@@ -6,6 +6,7 @@ playtemEmbedded.App = function(options) {
         apiKey: undefined,
         hasReward: false,
         providers: [],
+        gameType: undefined,
         /* mandatory */
         outputLanguage: undefined
     };
@@ -23,7 +24,8 @@ playtemEmbedded.App.prototype.execute = function() {
 
     var templateSetup = new playtemEmbedded.Template({
         hasReward: self.settings.hasReward,
-        apiKey: self.settings.apiKey
+        apiKey: self.settings.apiKey,
+        gameType: self.settings.gameType
     });
 
     templateSetup.setup();
@@ -54,7 +56,7 @@ playtemEmbedded.Core.Date = {
 
         return getUTCTimestampSeconds();
     }
-}
+};
 
 playtemEmbedded.Core.globals = {};
 
@@ -97,9 +99,19 @@ playtemEmbedded.Core.PostMessage.prototype.destroyListener = function(listenerId
     window.removeEventListener("message", handler, false);
 };
 
-playtemEmbedded.Core.createSmartadTracker = function(eventType, providerName) {
+playtemEmbedded.Core.ScreenSize = {
+    windowWidth : function() {
+        return Math.round(window.innerWidth);
+    },
+
+    windowHeight : function() {
+        return Math.round(window.innerHeight);
+    }
+};
+
+playtemEmbedded.Core.createTracker = function(providerName, eventType) {
     var buildUrl = function() {
-        var timestamp = playtemEmbedded.Core.date.getCurrentTimestamp();
+        var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
         return "https://api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&t=" + timestamp;
     };
 
@@ -214,17 +226,71 @@ playtemEmbedded.Facebook = function(options) {
 playtemEmbedded.Facebook.prototype.execute = function(callback) {
     var self = this;
 
-    self.init(function() {
-        $(".thirdPartyTitleClass").text("title test");
-        $(".thirdPartyMediaClass").text("media test");
-        $(".thirdPartyBodyClass").text("body test");
-        $(".thirdPartyCallToActionClass").text("cta test");
-    });
+    playtemEmbedded.Core.createTracker("Facebook", "execute");
 
-    callback(null, "success");
+    self.setupUi();
+    self.fetchAdvert(function(error, data) {
+        if(!error && data == "success") {
+            self.render();
+        }
+
+        callback(error, data);
+    });
 };
 
-playtemEmbedded.Facebook.prototype.init = function(callback) {
+playtemEmbedded.Facebook.prototype.fetchAdvert = function(callback) {
+    var self = this;
+    var timeoutFired = false;
+
+    window.fbAsyncInit = function() {
+        FB.Event.subscribe(
+            'ad.loaded',
+            function(placementId) {
+                if(!timeoutFired) {
+                    window.clearTimeout(self.timeoutTimer);
+                    playtemEmbedded.Core.createTracker("Facebook", "success");
+
+                    callback(null, "success");
+                }
+            }
+        );
+        FB.Event.subscribe(
+            'ad.error',
+            function(errorCode, errorMessage, placementId) {
+                if(!timeoutFired) {
+                    window.clearTimeout(self.timeoutTimer);
+                    playtemEmbedded.Core.createTracker("Facebook", "passback");
+
+                    var error = 'Facebook error (' + errorCode + ') : ' + errorMessage;
+                    callback(error, null);
+                }
+            }
+        );
+    };
+
+    (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk/xfbml.ad.js#xfbml=1&version=v2.5&appId=992123530865458";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    self.timeoutTimer = window.setTimeout(function () {
+        timeoutFired = true;
+        playtemEmbedded.Core.createTracker("Facebook", "timeout");
+
+        callback("Facebook: timeout", null);
+    }, self.settings.httpRequestTimeout);
+};
+
+playtemEmbedded.Facebook.prototype.render = function(callback) {
+    var self = this;
+
+    document.getElementById('ad_root').style.display = 'block';
+};
+
+playtemEmbedded.Facebook.prototype.setupUi = function() {
     var self = this;
 
     var node = 
@@ -285,8 +351,6 @@ playtemEmbedded.Facebook.prototype.init = function(callback) {
         "font-weight": "600",
         "margin-top": "5px"
     });
-
-    callback();
 };
 
 playtemEmbedded.Smartad = function(options) {
@@ -370,7 +434,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
                         return;
                     }
 
-                    clearTimeout(self.timeoutTimer);
+                    window.clearTimeout(self.timeoutTimer);
                     loadHandler(result);
                 }
             }
@@ -420,10 +484,11 @@ playtemEmbedded.Smartad.prototype.render = function() {
 
 playtemEmbedded.Template = function(options) {
     var defaults = {
-        debug: false,
         apiKey: undefined,
+        gameType: undefined,
         hasReward: false,
         outputLanguage: "en-US",
+        debug: false,
     };
 
     this.settings = {
@@ -467,7 +532,8 @@ playtemEmbedded.Template.prototype.executeTemplateScript = function(callback) {
 playtemEmbedded.Reward = function(options) {
     var defaults = {
         debug: false,
-        apiKey: undefined
+        apiKey: undefined,
+        gameType: undefined
     };
 
     this.settings = {
@@ -502,11 +568,32 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
     var self = this;
 
     var onParseSuccess = function(rewardName, rewardImageUri) {
-        $("#rewardImageUri").attr("src", rewardImageUri);
-        $("#rewardName").text(rewardName);
-
-        $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
-        $("#js-rewardOfferingMessage").css("visibility", "visible");
+        if(self.settings.gameType == "desktop") {
+            //reward img uri
+            $("#rewardImageUri").attr("src", rewardImageUri);
+            $("#rewardImageUri").css("visibility", "visible");
+            //reward img name
+            $("#rewardName").text(rewardName);
+            $("#rewardName").css("visibility", "visible");
+            //our partner
+            $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
+            //offers you
+            $("#js-rewardOfferingMessage").css("visibility", "visible");
+        } else if(self.settings.gameType == "mobile") {
+            //reward img ui
+            $(".ad__reward__image").attr("src", rewardImageUri);
+            $(".ad__reward__image").css("visibility", "visible");
+            //reward name
+            $(".ad__reward__offerMessage__rewardName").text(rewardName);
+            $(".ad__reward__offerMessage__rewardName").css("visibility", "visible");
+            //our partner
+            $(".ad__header__title").css("visibility", "visible");
+            //offers you
+            $("#js-rewardOfferingMessage").css("visibility", "visible");
+        } else {
+            // todo handle error
+            return;
+        }
     };
 
     var parseResponse = function(data) {
@@ -558,8 +645,26 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
 playtemEmbedded.Reward.prototype.init = function(executeCallback, callback) {
     var self = this;
 
-    $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
-    $("#js-rewardOfferingMessage").css("visibility", "hidden");
+    if(self.settings.gameType == "desktop") {
+        //reward img uri
+        $("#rewardImageUri").css("visibility", "hidden");
+        //reward img name
+        $("#rewardName").css("visibility", "hidden");
+
+        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
+        $("#js-rewardOfferingMessage").css("visibility", "hidden");
+
+    } else if(self.settings.gameType == "mobile") {
+        //reward img uri
+        $(".ad__reward__image").css("visibility", "hidden");
+        $(".ad__reward__offerMessage__rewardName").css("visibility", "hidden");
+        $(".ad__header__title").css("visibility", "hidden");
+        $("#js-rewardOfferingMessage").css("visibility", "hidden");
+
+    } else {
+        // todo handle error
+        return;
+    }
 
     if(!self.settings.apiKey) {
         callback("window.apiKey undefined", null);
@@ -583,7 +688,7 @@ playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
     var userIdMessage = postMessage.data;
 
     if(userIdMessage.indexOf(playtemIdentifier) != 0) {
-        //handle error
+        return;
     }
 
     var checkUserIsNumber = function() {
@@ -606,7 +711,8 @@ playtemEmbedded.Template.prototype.setup = function() {
 
     if(self.settings.hasReward == true) {
         var rewarder = new playtemEmbedded.Reward({
-            apiKey: self.settings.apiKey
+            apiKey: self.settings.apiKey,
+            gameType: self.settings.gameType
         });
 
         rewarder.execute(function(error, result) {

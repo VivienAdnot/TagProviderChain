@@ -1,12 +1,14 @@
 playtemEmbedded.Facebook.prototype.execute = function(callback) {
     var self = this;
 
-    self.init(function() {
-        $(".thirdPartyTitleClass").text("title test");
-        $(".thirdPartyMediaClass").text("media test");
-        $(".thirdPartyBodyClass").text("body test");
-        $(".thirdPartyCallToActionClass").text("cta test");
-    });
+    playtemEmbedded.Core.createTracker("Facebook", "execute");
 
-    callback(null, "success");
+    self.setupUi();
+    self.fetchAdvert(function(error, data) {
+        if(!error && data == "success") {
+            self.render();
+        }
+
+        callback(error, data);
+    });
 };

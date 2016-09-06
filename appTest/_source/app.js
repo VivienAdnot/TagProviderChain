@@ -86,9 +86,9 @@ playtemEmbedded.Core.PostMessage.prototype.destroyListener = function(listenerId
     window.removeEventListener("message", handler, false);
 };
 
-playtemEmbedded.Core.createSmartadTracker = function(eventType, providerName) {
+playtemEmbedded.Core.createTracker = function(eventType, providerName) {
     var buildUrl = function() {
-        var timestamp = playtemEmbedded.Core.date.getCurrentTimestamp();
+        var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
         return "https://api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&t=" + timestamp;
     };
 

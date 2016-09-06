@@ -1,4 +1,4 @@
-playtemEmbedded.Facebook.prototype.init = function(callback) {
+playtemEmbedded.Facebook.prototype.setupUi = function() {
     var self = this;
 
     var node = 
@@ -59,6 +59,4 @@ playtemEmbedded.Facebook.prototype.init = function(callback) {
         "font-weight": "600",
         "margin-top": "5px"
     });
-
-    callback();
 };

@@ -6,6 +6,7 @@ playtemEmbedded.App = function(options) {
         apiKey: undefined,
         hasReward: false,
         providers: [],
+        gameType: undefined,
         /* mandatory */
         outputLanguage: undefined
     };
@@ -23,7 +24,8 @@ playtemEmbedded.App.prototype.execute = function() {
 
     var templateSetup = new playtemEmbedded.Template({
         hasReward: self.settings.hasReward,
-        apiKey: self.settings.apiKey
+        apiKey: self.settings.apiKey,
+        gameType: self.settings.gameType
     });
 
     templateSetup.setup();

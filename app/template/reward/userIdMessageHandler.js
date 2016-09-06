@@ -9,7 +9,7 @@ playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
     var userIdMessage = postMessage.data;
 
     if(userIdMessage.indexOf(playtemIdentifier) != 0) {
-        //handle error
+        return;
     }
 
     var checkUserIsNumber = function() {

@@ -6,8 +6,8 @@
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
-        <link rel="stylesheet" href="css/all.css"/>
-        <link rel="stylesheet" href="css/ludokado-custom.css"/>
+        <link rel="stylesheet" href="../css/all.css"/>
+        <link rel="stylesheet" href="../css/ludokado-custom.css"/>
     </head>
     <body>
         <div class="ad">
@@ -37,14 +37,15 @@
             <!--<div class="smartad"></div>-->
         </div>
 
-        <script type="text/javascript" src="_source/playtemEmbeddedApp.js"></script>
+        <script type="text/javascript" src="../_source/playtemEmbeddedApp.js"></script>
 
         <script type="text/javascript">
             var playtemApp = new playtemEmbedded.App({
                 hasReward: true,
                 providers: [ playtemEmbedded.Smartad ],
                 apiKey: "TSTb-8438v",
-                outputLanguage : "en-US"
+                outputLanguage : "en-US",
+                gameType: "desktop"
             });
 
             playtemApp.execute();

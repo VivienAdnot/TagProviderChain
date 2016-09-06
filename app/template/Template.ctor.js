@@ -1,9 +1,10 @@
 playtemEmbedded.Template = function(options) {
     var defaults = {
-        debug: false,
         apiKey: undefined,
+        gameType: undefined,
         hasReward: false,
         outputLanguage: "en-US",
+        debug: false,
     };
 
     this.settings = {
