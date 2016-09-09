@@ -1,9 +1,8 @@
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
     var self = this;
-    var timeoutFired = false;
 
     self.init(function(error, data) {
-        if(timeoutFired == true) {
+        if(self.timeoutFired == true) {
             // callback has already been fired.
             return;
         }
@@ -38,7 +37,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             },
             {
                 onLoad: function(result) {
-                    if(timeoutFired) {
+                    if(self.timeoutFired) {
                         return;
                     }
 
@@ -54,7 +53,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
 
     self.timeoutTimer = window.setTimeout(function () {
         self.destructor();
-        timeoutFired = true;
+        self.timeoutFired = true;
         callback("Smartad: timeout", null);
     }, self.settings.httpRequestTimeout);
 };

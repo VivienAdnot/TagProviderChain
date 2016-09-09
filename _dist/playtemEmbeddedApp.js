@@ -75,6 +75,10 @@ playtemEmbedded.Core.log = function (tag, message) {
     jQuery.post(url, { message: formattedMessage });
 };
 
+playtemEmbedded.Core.Operations = {
+    noop: function () {}
+};
+
 playtemEmbedded.Core.PostMessage = function() {
     this.listenerPool = {};
 };
@@ -159,7 +163,7 @@ playtemEmbedded.TagProviders.prototype.execute = function (callback) {
 };
 
 playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
-    var self = this;
+    /*var self = this;
     var index = 0;
 
     var isArray = function(target) {
@@ -200,7 +204,82 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
         return;
     }
 
-    run();
+    run();*/
+
+    var provider = new playtemEmbedded.Affiz();
+
+    provider.execute(function (error, result) {
+        callback(error, result);
+    });
+};
+
+playtemEmbedded.Affiz = function(options) {
+    var defaults = {
+        debug: false
+    };
+
+    this.settings = {
+        scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
+        siteId : '315f315f393336_d465200f9f', // todo replace
+        httpRequestTimeout: 5000
+    };
+
+    this.timeoutTimer = null;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);       
+};
+
+playtemEmbedded.Affiz.prototype.destructor = function(callback) {
+    var self = this;
+
+    window.avAsyncInit = undefined;
+    window.clearTimeout(self.timeoutTimer);
+};
+
+playtemEmbedded.Affiz.prototype.execute = function(callback) {
+    var self = this;
+
+    var onAdAvailable = function() {
+        callback(null, "success");
+        AFFIZVIDEO.show();
+        // todo block cross
+    };
+
+    var onAdUnavailable = function() {
+        clearTimeout(self.timeoutTimer);
+        callback("Affiz: no ad", null);
+    };
+
+    var onVideoComplete = function() {
+        // todo unblock cross
+    };
+
+    window.avAsyncInit = function() {
+        AFFIZVIDEO.init({
+            site_id: '315f315f393336_d465200f9f', // todo set
+            clientid: "0000", // todo set
+            load_callback: onAdAvailable,
+            noads_callback: onAdUnavailable,
+            complete_callback: onVideoComplete
+        });
+    };
+
+    self.timeoutTimer = window.setTimeout(function () { // todo attach self
+        self.destructor();
+        onAdAvailable = playtemEmbedded.Core.Operations.noop; // todo test
+        onAdUnavailable = playtemEmbedded.Core.Operations.noop;
+        onVideoComplete = playtemEmbedded.Core.Operations.noop;
+
+        callback("Affiz: timeout", null);
+    }, self.settings.httpRequestTimeout);
+
+    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
+        if(error) {
+            callback("Affiz: script couldn't be loaded", null);
+            self.destructor();
+        }
+    });    
 };
 
 playtemEmbedded.Smartad = function(options) {
@@ -242,10 +321,9 @@ playtemEmbedded.Smartad.prototype.destructor = function() {
 
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
     var self = this;
-    var timeoutFired = false;
 
     self.init(function(error, data) {
-        if(timeoutFired == true) {
+        if(self.timeoutFired == true) {
             // callback has already been fired.
             return;
         }
@@ -280,7 +358,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             },
             {
                 onLoad: function(result) {
-                    if(timeoutFired) {
+                    if(self.timeoutFired) {
                         return;
                     }
 
@@ -296,7 +374,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
 
     self.timeoutTimer = window.setTimeout(function () {
         self.destructor();
-        timeoutFired = true;
+        self.timeoutFired = true;
         callback("Smartad: timeout", null);
     }, self.settings.httpRequestTimeout);
 };

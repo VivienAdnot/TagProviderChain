@@ -1,5 +1,5 @@
 playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
-    var self = this;
+    /*var self = this;
     var index = 0;
 
     var isArray = function(target) {
@@ -40,5 +40,11 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
         return;
     }
 
-    run();
+    run();*/
+
+    var provider = new playtemEmbedded.Affiz();
+
+    provider.execute(function (error, result) {
+        callback(error, result);
+    });
 };
