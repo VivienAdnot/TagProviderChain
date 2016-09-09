@@ -66,7 +66,7 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
         url: self.settings.scriptUrl,
         data: {
             apiKey : self.settings.apiKey,
-            userId : self.settings.userId,
+            userId : self.userId,
             timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
         },
         success: parseResponse,

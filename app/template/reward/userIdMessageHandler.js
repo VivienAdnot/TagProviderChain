@@ -20,7 +20,7 @@ playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
         return userIdMessage.substring(playtemIdentifier.length);
     };
 
-    self.settings.userId = extractUserId();
+    self.userId = extractUserId();
 
     self.getReward(self.executeCallback);
 };

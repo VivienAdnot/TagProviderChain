@@ -43,18 +43,10 @@ var eventHandler = function (postMessageEvent) {
 
 listener.add("message", eventHandler);
 
-$("#ludokado-prod").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='prod/TST9-43fav.html'></iframe>");
+$("#ludokado").one("click", function() {
+    $("body").append("<iframe class='iframe iframe-desktop' src='templates/TST9-43fav.html'></iframe>");
 });
 
-$("#jewel-prod").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-mobile' src='prod/TSTc-9467v.html'></iframe>");
-});
-
-$("#ludokado-preprod").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='preprod/desktop-ludokado.html'></iframe>");
-});
-
-$("#jewel-preprod").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-mobile' src='preprod/webmobile-jewel.html'></iframe>");
+$("#jewel").one("click", function() {
+    $("body").append("<iframe class='iframe iframe-mobile' src='templates/TSTc-9467v.html'></iframe>");
 });

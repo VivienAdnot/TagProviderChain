@@ -8,7 +8,7 @@ playtemEmbedded.Reward.prototype.execute = function(callback) {
 
         window.addEventListener("message", self.userIdMessageHandler, false);
 
-        window.parent.postMessage("playtem:smartad:userId", "*");
+        window.parent.postMessage(self.settings.sendEvents.userId, "*");
 
         // we don't set up a timeout because this module is not critical for the app if it fails.
         // create a default reward in the html template in case of error

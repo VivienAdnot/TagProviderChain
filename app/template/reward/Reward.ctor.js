@@ -7,9 +7,12 @@ playtemEmbedded.Reward = function(options) {
 
     this.settings = {
         scriptUrl: "//api.playtem.com/advertising/services.reward/",
-        userId: null
+        sendEvents: {
+            userId: "playtem:tagApp:userId",
+        }
     };
 
+    this.userId = null;
     this.executeCallback = null;
 
     this.defaults = $.extend(defaults, options);

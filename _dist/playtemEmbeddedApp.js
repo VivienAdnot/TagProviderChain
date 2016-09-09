@@ -34,8 +34,8 @@ playtemEmbedded.App.prototype.execute = function() {
         providers: self.settings.providers
     });
     
-    tagProviders.execute(function(error, result) {
-        console.log(error, result);
+    tagProviders.execute(function(error, result) 
+    {
     });
 };
 
@@ -99,16 +99,6 @@ playtemEmbedded.Core.PostMessage.prototype.destroyListener = function(listenerId
     window.removeEventListener("message", handler, false);
 };
 
-playtemEmbedded.Core.ScreenSize = {
-    windowWidth : function() {
-        return Math.round(window.innerWidth);
-    },
-
-    windowHeight : function() {
-        return Math.round(window.innerHeight);
-    }
-};
-
 playtemEmbedded.Core.createTracker = function(providerName, eventType) {
     var buildUrl = function() {
         var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
@@ -142,6 +132,10 @@ playtemEmbedded.TagProviders = function (options) {
     };
 
     this.settings = {
+        sendEvents: {
+            onAdAvailable: "playtem:tagApp:adAvailable",
+            onAdUnavailable: "playtem:tagApp:adUnavailable"
+        }
     };
     
     this.defaults = $.extend(defaults, options);
@@ -153,9 +147,9 @@ playtemEmbedded.TagProviders.prototype.execute = function (callback) {
 
     self.fetchAdvert(function (error, result) {
         if(result == "success") {
-            window.parent.postMessage("playtem:smartad:adAvailable", "*");
+            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
         } else {
-            window.parent.postMessage("playtem:smartad:adUnavailable", "*");
+            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
         }
 
         if(typeof callback == "function") {
@@ -207,150 +201,6 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
     }
 
     run();
-};
-
-playtemEmbedded.Facebook = function(options) {
-    var defaults = {
-        debug: false
-    };
-
-    this.settings = {
-        $targetContainerElement: $('.ad'),
-        httpRequestTimeout: 5000
-    };
-
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
-};
-
-playtemEmbedded.Facebook.prototype.execute = function(callback) {
-    var self = this;
-
-    playtemEmbedded.Core.createTracker("Facebook", "execute");
-
-    self.setupUi();
-    self.fetchAdvert(function(error, data) {
-        if(!error && data == "success") {
-            self.render();
-        }
-
-        callback(error, data);
-    });
-};
-
-playtemEmbedded.Facebook.prototype.fetchAdvert = function(callback) {
-    var self = this;
-    var timeoutFired = false;
-
-    window.fbAsyncInit = function() {
-        FB.Event.subscribe(
-            'ad.loaded',
-            function(placementId) {
-                if(!timeoutFired) {
-                    window.clearTimeout(self.timeoutTimer);
-                    playtemEmbedded.Core.createTracker("Facebook", "success");
-
-                    callback(null, "success");
-                }
-            }
-        );
-        FB.Event.subscribe(
-            'ad.error',
-            function(errorCode, errorMessage, placementId) {
-                if(!timeoutFired) {
-                    window.clearTimeout(self.timeoutTimer);
-                    playtemEmbedded.Core.createTracker("Facebook", "passback");
-
-                    var error = 'Facebook error (' + errorCode + ') : ' + errorMessage;
-                    callback(error, null);
-                }
-            }
-        );
-    };
-
-    (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk/xfbml.ad.js#xfbml=1&version=v2.5&appId=992123530865458";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-
-    self.timeoutTimer = window.setTimeout(function () {
-        timeoutFired = true;
-        playtemEmbedded.Core.createTracker("Facebook", "timeout");
-
-        callback("Facebook: timeout", null);
-    }, self.settings.httpRequestTimeout);
-};
-
-playtemEmbedded.Facebook.prototype.render = function(callback) {
-    var self = this;
-
-    document.getElementById('ad_root').style.display = 'block';
-};
-
-playtemEmbedded.Facebook.prototype.setupUi = function() {
-    var self = this;
-
-    var node = 
-        '<div class="facebookAdWrapper">' +
-            '<div class="fb-ad" data-placementid="992123530865458_992138464197298" data-format="native" data-nativeadid="ad_root" data-testmode="false"></div>' +
-            '<div id="ad_root">' +
-                '<a class="fbAdLink">' +
-                    '<div class="fbAdMedia thirdPartyMediaClass"></div>' +
-                    '<div class="fbAdTitle thirdPartyTitleClass"></div>' +
-                    '<div class="fbAdBody thirdPartyBodyClass"></div>' +
-                    '<div class="fbAdCallToAction thirdPartyCallToActionClass"></div>' +
-                '</a>'+
-            '</div>' +
-        '</div>';
-
-    self.settings.$targetContainerElement.append(node);
-
-    $(".facebookAdWrapper").css({
-        "position": "absolute",
-        "top": "60px",
-        "left": "35px"
-    });
-
-    $("#ad_root").css({
-        "display": "none",
-        "font-size": "8px",
-        "height": "180px",
-        "line-height": "10px",
-        "position": "relative",
-        "width": "180px",
-        "text-align": "center",
-        "color": "#ffffff"
-    });
-
-    $(".thirdPartyMediaClass").css({
-        "height": "113px",
-        "width": "180px"
-    });
-
-    $(".thirdPartyTitleClass").css({
-        "font-weight": "600",
-        "font-size": "9px",
-        "margin": "8px 0 4px 0",
-        "overflow": "hidden",
-        "text-overflow": "ellipsis",
-        "white-space": "nowrap"
-    });
-
-    $(".thirdPartyBodyClass").css({
-        "display": "-webkit-box",
-        "height": "19px",
-        "-webkit-line-clamp": 2,
-        "overflow": "hidden"
-    });
-
-    $(".thirdPartyCallToActionClass").css({
-        "font-family": "sans-serif",
-        "font-weight": "600",
-        "margin-top": "5px"
-    });
 };
 
 playtemEmbedded.Smartad = function(options) {
@@ -538,9 +388,12 @@ playtemEmbedded.Reward = function(options) {
 
     this.settings = {
         scriptUrl: "//api.playtem.com/advertising/services.reward/",
-        userId: null
+        sendEvents: {
+            userId: "playtem:tagApp:userId",
+        }
     };
 
+    this.userId = null;
     this.executeCallback = null;
 
     this.defaults = $.extend(defaults, options);
@@ -557,7 +410,7 @@ playtemEmbedded.Reward.prototype.execute = function(callback) {
 
         window.addEventListener("message", self.userIdMessageHandler, false);
 
-        window.parent.postMessage("playtem:smartad:userId", "*");
+        window.parent.postMessage(self.settings.sendEvents.userId, "*");
 
         // we don't set up a timeout because this module is not critical for the app if it fails.
         // create a default reward in the html template in case of error
@@ -632,7 +485,7 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
         url: self.settings.scriptUrl,
         data: {
             apiKey : self.settings.apiKey,
-            userId : self.settings.userId,
+            userId : self.userId,
             timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
         },
         success: parseResponse,
@@ -699,7 +552,7 @@ playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
         return userIdMessage.substring(playtemIdentifier.length);
     };
 
-    self.settings.userId = extractUserId();
+    self.userId = extractUserId();
 
     self.getReward(self.executeCallback);
 };

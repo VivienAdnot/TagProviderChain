@@ -4,6 +4,10 @@ playtemEmbedded.TagProviders = function (options) {
     };
 
     this.settings = {
+        sendEvents: {
+            onAdAvailable: "playtem:tagApp:adAvailable",
+            onAdUnavailable: "playtem:tagApp:adUnavailable"
+        }
     };
     
     this.defaults = $.extend(defaults, options);

@@ -3,9 +3,9 @@ playtemEmbedded.TagProviders.prototype.execute = function (callback) {
 
     self.fetchAdvert(function (error, result) {
         if(result == "success") {
-            window.parent.postMessage("playtem:smartad:adAvailable", "*");
+            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
         } else {
-            window.parent.postMessage("playtem:smartad:adUnavailable", "*");
+            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
         }
 
         if(typeof callback == "function") {

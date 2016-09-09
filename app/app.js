@@ -34,7 +34,7 @@ playtemEmbedded.App.prototype.execute = function() {
         providers: self.settings.providers
     });
     
-    tagProviders.execute(function(error, result) {
-        console.log(error, result);
+    tagProviders.execute(function(error, result) 
+    {
     });
 };
