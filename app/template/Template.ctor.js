@@ -13,7 +13,7 @@ playtemEmbedded.Template = function(options) {
             reward: "reward.js"
         }
     };
-    
+
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);    
 };

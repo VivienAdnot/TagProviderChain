@@ -220,10 +220,13 @@ playtemEmbedded.Affiz = function(options) {
 
     this.settings = {
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
-        siteId : '315f315f393336_d465200f9f', // todo replace
+        siteId : '315f315f393336_d465200f9f', // todo replace,
+        target: 'iframeAdsAffiz',
+        $targetContainerElement: $('.ad'),
         httpRequestTimeout: 5000
     };
 
+    this.windowBlocker = new playtemEmbedded.WindowBlocker();
     this.timeoutTimer = null;
 
     this.defaults = $.extend(defaults, options);
@@ -241,9 +244,10 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
     var self = this;
 
     var onAdAvailable = function() {
+        clearTimeout(self.timeoutTimer);
+        self.windowBlocker.setBlocker();
         callback(null, "success");
         AFFIZVIDEO.show();
-        // todo block cross
     };
 
     var onAdUnavailable = function() {
@@ -252,7 +256,7 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
     };
 
     var onVideoComplete = function() {
-        // todo unblock cross
+        self.windowBlocker.clearBlocker();
     };
 
     window.avAsyncInit = function() {
@@ -261,7 +265,8 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
             clientid: "0000", // todo set
             load_callback: onAdAvailable,
             noads_callback: onAdUnavailable,
-            complete_callback: onVideoComplete
+            complete_callback: onVideoComplete,
+            modal: false
         });
     };
 
@@ -273,6 +278,21 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
 
         callback("Affiz: timeout", null);
     }, self.settings.httpRequestTimeout);
+
+    var createTarget = function() {
+        var node =
+        "<div class='playerWrapper'>" +
+            "<div id='" + self.settings.target + "'></div>" +
+        "</div>";
+
+        self.settings.$targetContainerElement.append(node);
+        $(".playerWrapper").css({
+            width: "500px",
+            height: "350px"
+        });
+    };
+
+    createTarget();
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
@@ -410,6 +430,32 @@ playtemEmbedded.Smartad.prototype.render = function() {
 };
 
 
+playtemEmbedded.WindowBlocker = function(options) {
+    var defaults = {
+
+    };
+
+    this.settings = {
+        $blockableElement : $(".js-closeAd"),
+        crossFadeInDuration: 800
+    };
+    
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);    
+};
+
+playtemEmbedded.WindowBlocker.prototype = {
+    setBlocker : function() {
+        var self = this;
+        self.settings.$blockableElement.hide();
+    },
+
+    clearBlocker: function() {
+        var self = this;
+        self.settings.$blockableElement.fadeIn(self.settings.crossFadeInDuration);
+    }
+};
+
 playtemEmbedded.Template = function(options) {
     var defaults = {
         apiKey: undefined,
@@ -425,7 +471,7 @@ playtemEmbedded.Template = function(options) {
             reward: "reward.js"
         }
     };
-    
+
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);    
 };
