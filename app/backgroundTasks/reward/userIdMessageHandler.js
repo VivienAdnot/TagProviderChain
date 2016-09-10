@@ -3,7 +3,7 @@ playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
     var playtemIdentifier = "playtem:js:";
 
     if(!postMessage || !postMessage.data) {
-        self.executeCallback("invalid postmessage", null);
+        return;
     }
 
     var userIdMessage = postMessage.data;
@@ -12,15 +12,11 @@ playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
         return;
     }
 
-    var checkUserIsNumber = function() {
-        //todo
-    };
-
     var extractUserId = function() {
         return userIdMessage.substring(playtemIdentifier.length);
     };
 
     self.userId = extractUserId();
 
-    self.getReward(self.executeCallback);
+    self.getReward(playtemEmbedded.Core.Operations.noop);
 };

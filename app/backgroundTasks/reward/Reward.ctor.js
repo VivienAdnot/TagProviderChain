@@ -1,6 +1,5 @@
 playtemEmbedded.Reward = function(options) {
     var defaults = {
-        debug: false,
         apiKey: undefined,
         gameType: undefined
     };

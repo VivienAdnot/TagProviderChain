@@ -22,21 +22,226 @@ playtemEmbedded.App = function(options) {
 playtemEmbedded.App.prototype.execute = function() {
     var self = this;
 
-    var templateSetup = new playtemEmbedded.Template({
+    var tasks = new playtemEmbedded.BackgroundTasks({
         hasReward: self.settings.hasReward,
         apiKey: self.settings.apiKey,
         gameType: self.settings.gameType
     });
 
-    templateSetup.setup();
+    tasks.runAllTasks();
 
     var tagProviders = new playtemEmbedded.TagProviders({
         providers: self.settings.providers
     });
     
-    tagProviders.execute(function(error, result) 
-    {
+    tagProviders.execute(playtemEmbedded.Core.Operations.noop);
+};
+
+playtemEmbedded.BackgroundTasks = function(options) {
+    var defaults = {
+        apiKey: undefined,
+        gameType: undefined,
+        hasReward: false
+    };
+
+    this.settings = {
+
+    };
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);    
+};
+
+playtemEmbedded.BackgroundTasks.prototype = {
+    runAllTasks : function() {
+        var self = this;
+
+        if(self.settings.hasReward == true) {
+            var rewarder = new playtemEmbedded.Reward({
+                apiKey: self.settings.apiKey,
+                gameType: self.settings.gameType
+            });
+
+            rewarder.run();
+        }
+    }
+};
+
+playtemEmbedded.Reward = function(options) {
+    var defaults = {
+        apiKey: undefined,
+        gameType: undefined
+    };
+
+    this.settings = {
+        scriptUrl: "//api.playtem.com/advertising/services.reward/",
+        sendEvents: {
+            userId: "playtem:tagApp:userId",
+        }
+    };
+
+    this.userId = null;
+    this.executeCallback = null;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);       
+};
+
+playtemEmbedded.Reward.prototype.getReward = function(callback) {
+    var self = this;
+
+    var onParseSuccess = function(rewardName, rewardImageUri) {
+        if(self.settings.gameType == "desktop") {
+            //reward img uri
+            $("#rewardImageUri").attr("src", rewardImageUri);
+            $("#rewardImageUri").css("visibility", "visible");
+            //reward img name
+            $("#rewardName").text(rewardName);
+            $("#rewardName").css("visibility", "visible");
+            //our partner
+            $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
+            //offers you
+            $("#js-rewardOfferingMessage").css("visibility", "visible");
+        } else if(self.settings.gameType == "mobile") {
+            //reward img ui
+            $(".ad__reward__image").attr("src", rewardImageUri);
+            $(".ad__reward__image").css("visibility", "visible");
+            //reward name
+            $(".ad__reward__offerMessage__rewardName").text(rewardName);
+            $(".ad__reward__offerMessage__rewardName").css("visibility", "visible");
+            //our partner
+            $(".ad__header__title").css("visibility", "visible");
+            //offers you
+            $("#js-rewardOfferingMessage").css("visibility", "visible");
+        } else {
+            // todo handle error
+            return;
+        }
+    };
+
+    var parseResponse = function(data) {
+        try {
+            if(data.StatusCode !== 0) {
+                throw "no gift available: " + data.StatusCode + ", " + data.StatusMessage;
+            }
+
+            var response = data.Response;
+
+            var rewardImageUri = response.Image;
+            if(!rewardImageUri) {
+                throw "no reward image";
+            }
+
+            var defaultLanguage = response.Name.Default;
+            if(!defaultLanguage) {
+                throw "no default Language";
+            }
+
+            var rewardName = response.Name[defaultLanguage];
+            if(!rewardName) {
+                throw "no reward Name";
+            }
+
+            onParseSuccess(rewardName, rewardImageUri);
+
+            callback(null, "parseResponse success");
+        } catch(e) {
+            playtemEmbedded.Core.log("Smartad template : ajax success", e);
+            callback("parseResponse error: " + e, null);
+        }
+    };
+
+    $.ajax({
+        url: self.settings.scriptUrl,
+        data: {
+            apiKey : self.settings.apiKey,
+            userId : self.userId,
+            timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
+        },
+        success: parseResponse,
+        error: function(jqXHR, textStatus, errorThrown) {
+            playtemEmbedded.Core.log("Smartad template : ajax error", errorThrown);
+        }
     });
+};
+
+playtemEmbedded.Reward.prototype.init = function(callback) {
+    var self = this;
+
+    var hideElements = function() {
+        if(self.settings.gameType == "desktop") {
+            //reward img uri
+            $("#rewardImageUri").css("visibility", "hidden");
+            //reward img name
+            $("#rewardName").css("visibility", "hidden");
+
+            $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
+            $("#js-rewardOfferingMessage").css("visibility", "hidden");
+
+        } else if(self.settings.gameType == "mobile") {
+            //reward img uri
+            $(".ad__reward__image").css("visibility", "hidden");
+            $(".ad__reward__offerMessage__rewardName").css("visibility", "hidden");
+            $(".ad__header__title").css("visibility", "hidden");
+            $("#js-rewardOfferingMessage").css("visibility", "hidden");
+
+        } else {
+            // todo handle error
+            return;
+        }
+    }
+
+    if(!self.settings.apiKey) {
+        callback("window.apiKey undefined", null);
+        return;        
+    }
+
+    hideElements();
+    playtemEmbedded.Core.globals.playtemRewardContext = self;
+
+    callback(null, "success");
+};
+
+playtemEmbedded.Reward.prototype.run = function() {
+    var self = this;
+
+    self.init(function(error, data) {
+        if(error != null) {
+            return;
+        }
+
+        // listen
+        window.addEventListener("message", self.userIdMessageHandler, false);
+
+        // send
+        window.parent.postMessage(self.settings.sendEvents.userId, "*");
+
+        // we don't set up a timeout because this module is not critical for the app if it fails.
+        // create a default reward in the html template in case of error
+    });
+};
+
+playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
+    var self = playtemEmbedded.Core.globals.playtemRewardContext;
+    var playtemIdentifier = "playtem:js:";
+
+    if(!postMessage || !postMessage.data) {
+        return;
+    }
+
+    var userIdMessage = postMessage.data;
+
+    if(userIdMessage.indexOf(playtemIdentifier) != 0) {
+        return;
+    }
+
+    var extractUserId = function() {
+        return userIdMessage.substring(playtemIdentifier.length);
+    };
+
+    self.userId = extractUserId();
+
+    self.getReward(playtemEmbedded.Core.Operations.noop);
 };
 
 playtemEmbedded.Core = {};
@@ -453,247 +658,5 @@ playtemEmbedded.WindowBlocker.prototype = {
     clearBlocker: function() {
         var self = this;
         self.settings.$blockableElement.fadeIn(self.settings.crossFadeInDuration);
-    }
-};
-
-playtemEmbedded.Template = function(options) {
-    var defaults = {
-        apiKey: undefined,
-        gameType: undefined,
-        hasReward: false,
-        outputLanguage: "en-US",
-        debug: false,
-    };
-
-    this.settings = {
-        scripts: {
-            setupTemplate: "//static.playtem.com/templates/js/templatedisplay.js",
-            reward: "reward.js"
-        }
-    };
-
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);    
-};
-
-playtemEmbedded.Template.prototype.executeTemplateScript = function(callback) {
-    var self = this;
-    var scriptUrl = "//static.playtem.com/templates/js/templatedisplay.js";
-
-    playtemEmbedded.Core.injectScript(scriptUrl, function(error, data) {
-        var jsTemplate = new PlaytemTemplate({
-            clientType: "JavaScript",
-            clickButtonUrl: "",
-            brandName: "Our partner",
-
-            policyUrl: "",
-            outputLanguage: self.settings.outputLanguage,
-            policyIconUrl: "",
-
-            campaignType: "1"
-        });
-
-        var playtemTemplateCallback = function(error, data) {
-            /*console.log("executeTemplateScript callback");
-            console.log(error);
-            console.log(data);*/
-        };
-
-        jsTemplate.execute(playtemTemplateCallback);
-    });
-};
-
-playtemEmbedded.Reward = function(options) {
-    var defaults = {
-        debug: false,
-        apiKey: undefined,
-        gameType: undefined
-    };
-
-    this.settings = {
-        scriptUrl: "//api.playtem.com/advertising/services.reward/",
-        sendEvents: {
-            userId: "playtem:tagApp:userId",
-        }
-    };
-
-    this.userId = null;
-    this.executeCallback = null;
-
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
-};
-
-playtemEmbedded.Reward.prototype.execute = function(callback) {
-    var self = this;
-
-    self.init(callback, function(error, data) {
-        if(error != null) {
-            // handle error
-        }
-
-        window.addEventListener("message", self.userIdMessageHandler, false);
-
-        window.parent.postMessage(self.settings.sendEvents.userId, "*");
-
-        // we don't set up a timeout because this module is not critical for the app if it fails.
-        // create a default reward in the html template in case of error
-    });
-};
-
-playtemEmbedded.Reward.prototype.getReward = function(callback) {
-    var self = this;
-
-    var onParseSuccess = function(rewardName, rewardImageUri) {
-        if(self.settings.gameType == "desktop") {
-            //reward img uri
-            $("#rewardImageUri").attr("src", rewardImageUri);
-            $("#rewardImageUri").css("visibility", "visible");
-            //reward img name
-            $("#rewardName").text(rewardName);
-            $("#rewardName").css("visibility", "visible");
-            //our partner
-            $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
-            //offers you
-            $("#js-rewardOfferingMessage").css("visibility", "visible");
-        } else if(self.settings.gameType == "mobile") {
-            //reward img ui
-            $(".ad__reward__image").attr("src", rewardImageUri);
-            $(".ad__reward__image").css("visibility", "visible");
-            //reward name
-            $(".ad__reward__offerMessage__rewardName").text(rewardName);
-            $(".ad__reward__offerMessage__rewardName").css("visibility", "visible");
-            //our partner
-            $(".ad__header__title").css("visibility", "visible");
-            //offers you
-            $("#js-rewardOfferingMessage").css("visibility", "visible");
-        } else {
-            // todo handle error
-            return;
-        }
-    };
-
-    var parseResponse = function(data) {
-        try {
-            if(data.StatusCode !== 0) {
-                throw "no gift available: " + data.StatusCode + ", " + data.StatusMessage;
-            }
-
-            var response = data.Response;
-
-            var rewardImageUri = response.Image;
-            if(!rewardImageUri) {
-                throw "no reward image";
-            }
-
-            var defaultLanguage = response.Name.Default;
-            if(!defaultLanguage) {
-                throw "no default Language";
-            }
-
-            var rewardName = response.Name[defaultLanguage];
-            if(!rewardName) {
-                throw "no reward Name";
-            }
-
-            onParseSuccess(rewardName, rewardImageUri);
-
-            callback(null, "parseResponse success");
-        } catch(e) {
-            playtemEmbedded.Core.log("Smartad template : ajax success", e);
-            callback("parseResponse error: " + e, null);
-        }
-    };
-
-    $.ajax({
-        url: self.settings.scriptUrl,
-        data: {
-            apiKey : self.settings.apiKey,
-            userId : self.userId,
-            timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
-        },
-        success: parseResponse,
-        error: function(jqXHR, textStatus, errorThrown) {
-            playtemEmbedded.Core.log("Smartad template : ajax error", errorThrown);
-        }
-    });
-};
-
-playtemEmbedded.Reward.prototype.init = function(executeCallback, callback) {
-    var self = this;
-
-    if(self.settings.gameType == "desktop") {
-        //reward img uri
-        $("#rewardImageUri").css("visibility", "hidden");
-        //reward img name
-        $("#rewardName").css("visibility", "hidden");
-
-        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
-        $("#js-rewardOfferingMessage").css("visibility", "hidden");
-
-    } else if(self.settings.gameType == "mobile") {
-        //reward img uri
-        $(".ad__reward__image").css("visibility", "hidden");
-        $(".ad__reward__offerMessage__rewardName").css("visibility", "hidden");
-        $(".ad__header__title").css("visibility", "hidden");
-        $("#js-rewardOfferingMessage").css("visibility", "hidden");
-
-    } else {
-        // todo handle error
-        return;
-    }
-
-    if(!self.settings.apiKey) {
-        callback("window.apiKey undefined", null);
-        return;        
-    }
-
-    self.executeCallback = executeCallback;
-    playtemEmbedded.Core.globals.playtemRewardContext = self;
-
-    callback(null, "success");
-};
-
-playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
-    var self = playtemEmbedded.Core.globals.playtemRewardContext;
-    var playtemIdentifier = "playtem:js:";
-
-    if(!postMessage || !postMessage.data) {
-        self.executeCallback("invalid postmessage", null);
-    }
-
-    var userIdMessage = postMessage.data;
-
-    if(userIdMessage.indexOf(playtemIdentifier) != 0) {
-        return;
-    }
-
-    var checkUserIsNumber = function() {
-        //todo
-    };
-
-    var extractUserId = function() {
-        return userIdMessage.substring(playtemIdentifier.length);
-    };
-
-    self.userId = extractUserId();
-
-    self.getReward(self.executeCallback);
-};
-
-playtemEmbedded.Template.prototype.setup = function() {
-    var self = this;
-
-    self.executeTemplateScript();
-
-    if(self.settings.hasReward == true) {
-        var rewarder = new playtemEmbedded.Reward({
-            apiKey: self.settings.apiKey,
-            gameType: self.settings.gameType
-        });
-
-        rewarder.execute(function(error, result) {
-
-        });
     }
 };
