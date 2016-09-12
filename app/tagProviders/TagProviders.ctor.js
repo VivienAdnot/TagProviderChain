@@ -1,6 +1,9 @@
 playtemEmbedded.TagProviders = function (options) {
     var defaults = {
-        providers : []
+        providers : [],
+        apiKey: undefined,
+        gameType: undefined,
+        hasReward: false        
     };
 
     this.settings = {

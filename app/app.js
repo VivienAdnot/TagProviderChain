@@ -22,16 +22,11 @@ playtemEmbedded.App = function(options) {
 playtemEmbedded.App.prototype.execute = function() {
     var self = this;
 
-    var tasks = new playtemEmbedded.BackgroundTasks({
+    var tagProviders = new playtemEmbedded.TagProviders({
+        providers: self.settings.providers,
         hasReward: self.settings.hasReward,
         apiKey: self.settings.apiKey,
-        gameType: self.settings.gameType
-    });
-
-    tasks.runAllTasks();
-
-    var tagProviders = new playtemEmbedded.TagProviders({
-        providers: self.settings.providers
+        gameType: self.settings.gameType        
     });
     
     tagProviders.execute(playtemEmbedded.Core.Operations.noop);
