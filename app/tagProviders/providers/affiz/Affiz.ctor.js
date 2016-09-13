@@ -1,6 +1,5 @@
 playtemEmbedded.Affiz = function(options) {
     var defaults = {
-        debug: false
     };
 
     this.settings = {

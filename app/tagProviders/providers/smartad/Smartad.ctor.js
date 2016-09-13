@@ -1,6 +1,5 @@
 playtemEmbedded.Smartad = function(options) {
     var defaults = {
-        debug: false
     };
 
     this.settings = {

@@ -1,50 +1,15 @@
 playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
-    /*var self = this;
-    var index = 0;
+    var self = this;
 
-    var isArray = function(target) {
-        return Object.prototype.toString.call(target) == "[object Array]";
-    };
-
-    var executeProvider = function (AdvertProvider) {
-        var provider = new AdvertProvider();
-
-        provider.execute(function (error, result) {
-            if (error !== null) {
-                console.log("execute provider result error: " + error);
-                moveNext();
-                return;
-            }
-
-            callback(error, result);
-        });
-    };
-
-    var moveNext = function () {
-        index++;
-        run();
-    };
-
-    var run = function () {
-        if (index >= self.settings.providers.length) {
-            callback("no more provider to call", null);
-            return;
-        }
-
-        var currentProviderReference = self.settings.providers[index];
-        executeProvider(currentProviderReference);
-    };
-
-    if(!isArray(self.settings.providers)) {
-        callback("self.settings.providers must be an array", null);
-        return;
-    }
-
-    run();*/
-
-    var provider = new playtemEmbedded.Affiz();
+    var provider = new playtemEmbedded.Spotx({
+        debug: true
+    });
 
     provider.execute(function (error, result) {
+        if(error && error != "Spotx: no ad") {
+            playtemEmbedded.Core.log("spotx", error);
+        }
+
         callback(error, result);
     });
 };
