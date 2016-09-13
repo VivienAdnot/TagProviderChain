@@ -58,7 +58,7 @@ playtemEmbedded.Core.injectScript = function(url, callback) {
 };
 
 playtemEmbedded.Core.log = function (tag, message) {
-    var url = "http://ariane.playtem.com/Browser/Error";
+    var url = "//ariane.playtem.com/Browser/Error";
     var logLovel = "error";
     var clientVersion = "JSEmbedded-0.0.1";
 
@@ -168,7 +168,23 @@ playtemEmbedded.TagProviders.prototype.execute = function (callback) {
 };
 
 playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
-    /*var self = this;
+    var self = this;
+
+    var provider = new playtemEmbedded.Spotx({
+        debug: true
+    });
+
+    provider.execute(function (error, result) {
+        if(error && error != "Spotx: no ad") {
+            playtemEmbedded.Core.log("spotx", error);
+        }
+
+        callback(error, result);
+    });
+};
+
+/*playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
+    var self = this;
     var index = 0;
 
     var isArray = function(target) {
@@ -209,20 +225,8 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
         return;
     }
 
-    run();*/
-
-    var provider = new playtemEmbedded.Spotx({
-        debug: true
-    });
-
-    provider.execute(function (error, result) {
-        if(error) {
-            playtemEmbedded.Core.log("spotx", error);
-        }
-
-        callback(error, result);
-    });
-};
+    run();
+};*/
 
 playtemEmbedded.Affiz = function(options) {
     var defaults = {
@@ -451,7 +455,7 @@ playtemEmbedded.Spotx = function(options) {
             "spotx_ad_unit" : "incontent",
             "spotx_ad_done_function" : "spotXCallback",
             "spotx_content_width" : "450",
-            "spotx_content_height" : "370",
+            "spotx_content_height" : "300", // 370 default
             "spotx_collapse" : "1",
             "spotx_ad_volume" : "0",
             "spotx_unmute_on_mouse" : "1",
@@ -461,6 +465,15 @@ playtemEmbedded.Spotx = function(options) {
             "spotx_content_container_id" : "spotx"
         },
         $targetContainerElement: $('.ad'),
+
+        cssProperties: {
+            "position": "absolute",
+            "top": "179px",
+            "left": "125px",
+            "width": "450px",
+            "margin": "0 auto",
+            "text-align": "center"
+        }        
     };
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
@@ -579,8 +592,14 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
     };
 
     var createTarget = function() {
-        var node = "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>";
+        var node =
+        "<div class='playerWrapper'>" +
+            "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>" +
+        "</div>";
+
         self.settings.$targetContainerElement.append(node);
+
+        $(".playerWrapper").css(self.settings.cssProperties);
     };
 
     createTarget();

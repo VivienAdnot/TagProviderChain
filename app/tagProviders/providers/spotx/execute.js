@@ -67,7 +67,6 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
         self.timeouts.videoCompletion.instance = window.setTimeout(function () {
             self.windowBlocker.clearBlocker();
             self.settings.debug && console.log("timeout: video completion");
-            playtemEmbedded.Core.log("spotx", "Spotx timeout: video completion");
         }, self.timeouts.videoCompletion.duration);
 
         playtemEmbedded.Core.createTracker("spotx", "onAdAvailable");
@@ -94,8 +93,14 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
     };
 
     var createTarget = function() {
-        var node = "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>";
+        var node =
+        "<div class='playerWrapper'>" +
+            "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>" +
+        "</div>";
+
         self.settings.$targetContainerElement.append(node);
+
+        $(".playerWrapper").css(self.settings.cssProperties);
     };
 
     createTarget();

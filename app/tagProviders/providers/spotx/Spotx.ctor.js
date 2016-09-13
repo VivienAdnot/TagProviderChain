@@ -10,7 +10,7 @@ playtemEmbedded.Spotx = function(options) {
             "spotx_ad_unit" : "incontent",
             "spotx_ad_done_function" : "spotXCallback",
             "spotx_content_width" : "450",
-            "spotx_content_height" : "370",
+            "spotx_content_height" : "300", // 370 default
             "spotx_collapse" : "1",
             "spotx_ad_volume" : "0",
             "spotx_unmute_on_mouse" : "1",
@@ -20,6 +20,15 @@ playtemEmbedded.Spotx = function(options) {
             "spotx_content_container_id" : "spotx"
         },
         $targetContainerElement: $('.ad'),
+
+        cssProperties: {
+            "position": "absolute",
+            "top": "179px",
+            "left": "150px",
+            "width": "450px",
+            "margin": "0 auto",
+            "text-align": "center"
+        }
     };
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
