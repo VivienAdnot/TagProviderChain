@@ -47,6 +47,8 @@ playtemEmbedded.Spotx = function(options) {
         }
     };
 
+    this.poll = null;
+
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);       
 };

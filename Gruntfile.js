@@ -29,7 +29,7 @@ module.exports = function(grunt) {
         },
         
         connect: {
-            test: {
+            root: {
                 options: {
                     port: 8083,
                     hostname: '127.0.0.1',
@@ -45,5 +45,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', ['concat:app', 'copy:test']);
 
-    grunt.registerTask('run', ['concat:app', 'copy:test', 'connect:test']);
+    grunt.registerTask('serve', ['concat:app', 'copy:test', 'connect:root']);
+    
+    grunt.registerTask('test', ['concat:app', 'concat:appTests', 'copy:test', 'connect:root']);
 };

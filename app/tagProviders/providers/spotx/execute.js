@@ -1,54 +1,53 @@
 playtemEmbedded.Spotx.prototype.execute = function(callback) {
     var self = this;
-
-    var onScriptLoaded = function() {
-        self.settings.debug && console.log("onScriptLoaded");
-        playtemEmbedded.Core.createTracker("spotx", "request");
-        detectOnAdStarted();
-    };
-
-    var onScriptInjectionError = function(errorMessage) {
-        window.clearTimeout(self.timeouts.scriptInjected.instance);
-        callback("Spotx exception: " + errorMessage, null);
-    };
+    
+    var onAdAvailableCalled = false;
+    var onAdUnavailableCalled = false;
+    var onVideoCompleteCalled = false;
 
     //custom
     var detectOnAdStarted = function() {
-        var onAdAvailableCalled = false;
-        var $playerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
+        self.poll = window.setInterval(function() {
+            // refresh every round
+            var $playerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
+            var isPlayerDefined = $playerContainer.length == 1;
+            var isPlayerVisible = $playerContainer.height() == self.settings.scriptOptions["spotx_content_height"];
 
-        if($playerContainer.length != 1) {
-            callback("Spotx exception: player container is undefined", null);
-        }
-
-        self.timeouts.videoAvailability.instance = window.setTimeout(function () {
-            window.clearInterval(poll);
-            self.settings.debug && console.log("timeout: player visible");
-            callback("Spotx timeout: video availability", null);
-            return;
-        }, self.timeouts.videoAvailability.duration);
-
-        var poll = window.setInterval(function() {
-            var isPlayerVisible = $playerContainer.height() > 0;
-
-            if(isPlayerVisible) {
-                window.clearInterval(poll);
+            if(isPlayerDefined && isPlayerVisible) {
+                window.clearInterval(self.poll);
                 window.clearTimeout(self.timeouts.videoAvailability.instance);
-                self.settings.debug && console.log("player visible");
 
                 //todo onceProxy;
                 if(onAdAvailableCalled == false) {
                     onAdAvailableCalled = true;
                     onAdAvailable();
+                } else {
+                    playtemEmbedded.Core.log("spotx", "attempted to call onAdAvailable more than once");
                 }
             }
             
         }, 200);
+
+        self.timeouts.videoAvailability.instance = window.setTimeout(function () {
+            window.clearInterval(self.poll);
+
+            if(onAdUnavailableCalled == false) {
+                onAdUnavailable();
+                onAdUnavailableCalled = true;
+
+                playtemEmbedded.Core.log("spotx", "detectOnAdStarted timeout");
+            } else {
+                playtemEmbedded.Core.log("spotx", "attempted to call onAdUnavailable more than once");
+            }
+        }, self.timeouts.videoAvailability.duration);        
     };
 
     //custom
     // todo don't name it here, do it in settings and do window[settings_method_name] = function()
     window.spotXCallback = function(videoStatus) {
+        window.clearInterval(self.poll);
+        window.clearTimeout(self.timeouts.videoAvailability.instance);
+
         if (typeof videoStatus != "boolean") {
             callback("Spotx exception: spotXCallback bad parameter videoStatus: " + videoStatus, null);
             return;
@@ -56,29 +55,45 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
 
         if(videoStatus === true) {
             self.settings.debug && console.log("spotXCallback: video completion");
-            onVideoComplete();
+
+            if(onVideoCompleteCalled == false) {
+                onVideoComplete();
+                onVideoCompleteCalled = true;
+            } else {
+                // do not log, allowedbehaviour if the player pauses the player
+            }
+            
         } else {
             self.settings.debug && console.log("spotXCallback: onAdUnavailable");
-            onAdUnavailable();
+
+            if(onAdUnavailableCalled == false) {
+                onAdUnavailable();
+                onAdUnavailableCalled = true;
+            } else {
+                playtemEmbedded.Core.log("spotx", "attempted to call onAdUnavailable more than once");
+            }
         }
     };
 
     var onAdAvailable = function() {
-        self.timeouts.videoCompletion.instance = window.setTimeout(function () {
-            self.windowBlocker.clearBlocker();
-            self.settings.debug && console.log("timeout: video completion");
-        }, self.timeouts.videoCompletion.duration);
+        onAdUnavailable = playtemEmbedded.Core.Operations.noop;
 
         playtemEmbedded.Core.createTracker("spotx", "onAdAvailable");
 
         self.windowBlocker.setBlocker();
+
+        self.timeouts.videoCompletion.instance = window.setTimeout(function () {
+            onVideoComplete();
+        }, self.timeouts.videoCompletion.duration);
+
         self.settings.debug && console.log("onAdAvailable");
         callback(null, "success");
     };
 
     var onAdUnavailable = function() {
-        window.clearTimeout(self.timeouts.videoAvailability.instance);
         playtemEmbedded.Core.createTracker("spotx", "onAdUnavailable");
+
+        onAdAvailable = playtemEmbedded.Core.Operations.noop;
 
         self.settings.debug && console.log("onAdUnavailable");
         callback("Spotx: no ad", null);
@@ -86,9 +101,10 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
 
     var onVideoComplete = function() {
         window.clearTimeout(self.timeouts.videoCompletion.instance);
-        playtemEmbedded.Core.createTracker("spotx", "onVideoComplete");
 
         self.windowBlocker.clearBlocker();
+
+        playtemEmbedded.Core.createTracker("spotx", "onVideoComplete");
         self.settings.debug && console.log("onVideoComplete");
     };
 
@@ -106,31 +122,29 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
     createTarget();
 
     // inject script
-    try {
+
+    var injectScript = function() {
+        var onScriptLoaded = function() {
+            self.settings.debug && console.log("onScriptLoaded");
+            playtemEmbedded.Core.createTracker("spotx", "request");
+            detectOnAdStarted();
+        };
+
+        var onScriptInjectionError = function(errorMessage) {
+            callback("Spotx exception onScriptInjectionError: " + errorMessage, null);
+        };
+        
         var script = document.createElement("script");
         script.async = true;
         script.src = self.settings.scriptUrl;
 
-        var toDashed = function(name) {
-            return name.replace(/([A-Z])/g, function(u) {
-                return "-" + u.toLowerCase();
-            });
-        };        
-
         for(var key in self.settings.scriptOptions) {
             if(self.settings.scriptOptions.hasOwnProperty(key)) {
-                script.setAttribute('data-' + toDashed(key), self.settings.scriptOptions[key]);
+                script.setAttribute('data-' + key, self.settings.scriptOptions[key]);
             }
         }
 
-        script.onerror = function () {
-            onScriptInjectionError(e);
-            window.clearTimeout(self.timeouts.scriptInjected.instance);
-            throw "Spotx exception: inject script error";
-        };
-
         script.onload = function () {
-            window.clearTimeout(self.timeouts.scriptInjected.instance);
             onScriptLoaded();
         };
 
@@ -141,14 +155,17 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
             }
         };
 
-        self.timeouts.scriptInjected.instance = window.setTimeout(function () {
-            callback("Spotx timeout: script injection", null);
-            return;
-        }, self.timeouts.scriptInjected.duration);
+        script.onerror = function () {
+            onScriptInjectionError("error while loading script");
+        };
 
-        document.getElementsByTagName("body")[0].appendChild(script);
-    } catch(e) {
-        onScriptInjectionError(e);
-        return;
+        try {
+            document.getElementsByTagName("body")[0].appendChild(script);
+        } catch(e) {
+            onScriptInjectionError("body.appendChild exception: " + e);
+            return;
+        }
     }
+
+    injectScript();
 };
