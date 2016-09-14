@@ -31,6 +31,8 @@ playtemEmbedded.Spotx = function(options) {
         }
     };
 
+    this.executeCallback = undefined;
+
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
     this.timeouts = {
         scriptInjected : {
