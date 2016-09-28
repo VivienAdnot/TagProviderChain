@@ -8,7 +8,8 @@ playtemEmbedded.App = function(options) {
         providers: [],
         gameType: undefined,
         /* mandatory */
-        outputLanguage: undefined
+        outputLanguage: undefined,
+        debug: false
     };
 
     this.settings = {
@@ -26,10 +27,14 @@ playtemEmbedded.App.prototype.execute = function() {
         providers: self.settings.providers,
         hasReward: self.settings.hasReward,
         apiKey: self.settings.apiKey,
-        gameType: self.settings.gameType        
+        gameType: self.settings.gameType,
+        debug: self.settings.debug
     });
     
     tagProviders.execute(playtemEmbedded.Core.Operations.noop);
+
+    var closeBtnWatcher = new playtemEmbedded.CrossManager();
+    closeBtnWatcher.watchClose();
 };
 
 playtemEmbedded.Core = {};
@@ -141,12 +146,39 @@ playtemEmbedded.Core.Identifiers = {
     }
 };
 
+playtemEmbedded.CrossManager = function(options) {
+    var defaults = {
+
+    };
+
+    this.settings = {
+        $element : $(".js-closeAd"),
+        sendEvents: {
+            messageCloseWindow : "closeAdWindow"
+        }
+    };
+    
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);    
+};
+
+playtemEmbedded.CrossManager.prototype = {
+    watchClose : function() {
+        var self = this;
+
+        self.settings.$element.click(function () {
+            window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+        });
+    }
+};
+
 playtemEmbedded.TagProviders = function (options) {
     var defaults = {
         providers : [],
         apiKey: undefined,
         gameType: undefined,
-        hasReward: false        
+        hasReward: false,
+        debug: false
     };
 
     this.settings = {
@@ -194,7 +226,9 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
     };
 
     var executeProvider = function (AdvertProvider) {
-        var provider = new AdvertProvider();
+        var provider = new AdvertProvider({
+            debug: self.settings.debug
+        });
 
         provider.execute(function (error, result) {
             if (error !== null) {
@@ -231,12 +265,16 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
 };
 
 playtemEmbedded.Affiz = function(options) {
+    var siteIdProduction = '315f315f32333439_8d31ea22dd';
+    var siteIdTest = '315f315f32333530_68dafd7974';
+    
     var defaults = {
+        debug : false
     };
 
     this.settings = {
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
-        siteId : '315f315f32333439_8d31ea22dd',
+        siteId : siteIdProduction,
         target: 'iframeAdsAffiz',
         $targetContainerElement: $('.ad'),
         httpRequestTimeout: 5000    
@@ -246,7 +284,11 @@ playtemEmbedded.Affiz = function(options) {
     this.timeoutTimer = null;
 
     this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        this.settings.siteId = siteIdTest;
+    }
 };
 
 playtemEmbedded.Affiz.prototype.execute = function(callback) {

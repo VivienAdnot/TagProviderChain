@@ -8,7 +8,8 @@ playtemEmbedded.App = function(options) {
         providers: [],
         gameType: undefined,
         /* mandatory */
-        outputLanguage: undefined
+        outputLanguage: undefined,
+        debug: false
     };
 
     this.settings = {
@@ -26,8 +27,12 @@ playtemEmbedded.App.prototype.execute = function() {
         providers: self.settings.providers,
         hasReward: self.settings.hasReward,
         apiKey: self.settings.apiKey,
-        gameType: self.settings.gameType        
+        gameType: self.settings.gameType,
+        debug: self.settings.debug
     });
     
     tagProviders.execute(playtemEmbedded.Core.Operations.noop);
+
+    var closeBtnWatcher = new playtemEmbedded.CrossManager();
+    closeBtnWatcher.watchClose();
 };

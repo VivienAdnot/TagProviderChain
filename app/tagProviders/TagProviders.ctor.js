@@ -3,7 +3,8 @@ playtemEmbedded.TagProviders = function (options) {
         providers : [],
         apiKey: undefined,
         gameType: undefined,
-        hasReward: false        
+        hasReward: false,
+        debug: false
     };
 
     this.settings = {
