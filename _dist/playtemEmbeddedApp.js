@@ -185,35 +185,7 @@ playtemEmbedded.TagProviders.prototype.execute = function (callback) {
     });
 };
 
-// playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
-//     var self = this;
-
-//     var provider = new playtemEmbedded.Affiz({
-//         debug: true
-//     });
-
-//     provider.execute(function (error, result) {
-//         callback(error, result);
-//     });
-// };
-
 playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
-    var self = this;
-
-    var provider = new playtemEmbedded.Spotx({
-        debug: true
-    });
-
-    provider.execute(function (error, result) {
-        if(error && error != "Spotx: no ad") {
-            playtemEmbedded.Core.log("spotx", error);
-        }
-
-        callback(error, result);
-    });
-};
-
-/*playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
     var self = this;
     var index = 0;
 
@@ -256,7 +228,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
     }
 
     run();
-};*/
+};
 
 playtemEmbedded.Affiz = function(options) {
     var defaults = {
@@ -264,7 +236,7 @@ playtemEmbedded.Affiz = function(options) {
 
     this.settings = {
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
-        siteId : '315f315f32333530_68dafd7974',
+        siteId : '315f315f32333439_8d31ea22dd',
         target: 'iframeAdsAffiz',
         $targetContainerElement: $('.ad'),
         httpRequestTimeout: 5000    
@@ -483,7 +455,7 @@ playtemEmbedded.Spotx = function(options) {
     this.settings = {
         scriptUrl: '//search.spotxchange.com/js/spotx.js',
         scriptOptions: {
-            "spotx_channel_id" : "XXX85394",
+            "spotx_channel_id" : "85394",
             "spotx_ad_unit" : "incontent",
             "spotx_ad_done_function" : "spotXCallback",
             "spotx_content_width" : "450",

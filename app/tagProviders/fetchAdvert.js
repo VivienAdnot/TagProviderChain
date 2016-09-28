@@ -1,4 +1,4 @@
-/*playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
+playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
     var self = this;
     var index = 0;
 
@@ -41,4 +41,4 @@
     }
 
     run();
-};*/
+};
