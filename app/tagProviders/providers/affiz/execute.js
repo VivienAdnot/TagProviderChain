@@ -20,6 +20,10 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
         self.windowBlocker.clearBlocker();
     };
 
+    var onCloseCallback = function() {
+        alert("close");
+    };
+
     window.avAsyncInit = function() {
         AFFIZVIDEO.init({
             site_id: self.settings.siteId,
@@ -27,7 +31,8 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
             load_callback: onAdAvailable,
             noads_callback: onAdUnavailable,
             complete_callback: onVideoComplete,
-            modal: false
+            close_callback: onCloseCallback,
+            modal: self.settings.modal
         });
     };
 
@@ -47,7 +52,9 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
         });
     };
 
-    playtemEmbedded.Core.createTracker("affiz", "request");
+    if(self.settings.modal == false) {
+        playtemEmbedded.Core.createTracker("affiz", "request");
+    }
 
     createTarget();
 

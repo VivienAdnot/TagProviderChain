@@ -7,7 +7,6 @@ playtemEmbedded.Spotx.prototype.onVideoComplete = playtemEmbedded.Core.Operation
         self.windowBlocker.clearBlocker();
 
         playtemEmbedded.Core.createTracker("spotx", "onVideoComplete");
-        self.settings.debug && console.log("onVideoComplete");
     },
 
     function() {

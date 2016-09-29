@@ -3,22 +3,6 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
 
     playtemEmbedded.Core.createTracker("spotx", "request");
 
-    self.init(callback, function(error, result) {
-        if(error) {
-            callback(error, result);
-            return;
-        }
-
-        self.detectOnAdStarted(function(adStartedStatus) {
-            if(adStartedStatus) {
-                self.onAdAvailable();
-                return;
-            }
-            
-            self.onAdUnavailable();
-        });
-    });
-
     window.spotXCallback = function(videoStatus) {
         window.clearInterval(self.poll);
         window.clearTimeout(self.timeouts.videoAvailability.instance);
@@ -30,5 +14,21 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
             self.settings.debug && console.log("spotXCallback: onAdUnavailable");
             onAdUnavailable();
         }
-    };
+    };    
+
+    self.init(callback, function(error, result) {
+        if(error) {
+            callback(error, result);
+            return;
+        }
+
+        self.watchVideoPlayerCreation(function(adStartedStatus) {
+            if(adStartedStatus) {
+                self.onAdAvailable();
+                return;
+            }
+            
+            self.onAdUnavailable();
+        });
+    });
 };

@@ -3,10 +3,6 @@ playtemEmbedded.Spotx.prototype.onAdUnavailable = playtemEmbedded.Core.Operation
         var self = this;
         
         playtemEmbedded.Core.createTracker("spotx", "onAdUnavailable");
-
-        self.onAdAvailable = playtemEmbedded.Core.Operations.noop;
-
-        self.settings.debug && console.log("onAdUnavailable");
         self.executeCallback("Spotx: no ad", null);
     },
 

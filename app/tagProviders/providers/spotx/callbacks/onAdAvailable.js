@@ -2,17 +2,8 @@ playtemEmbedded.Spotx.prototype.onAdAvailable = playtemEmbedded.Core.Operations.
     function() {
         var self = this;
         
-        self.onAdUnavailable = playtemEmbedded.Core.Operations.noop;
-
         playtemEmbedded.Core.createTracker("spotx", "onAdAvailable");
-
         self.windowBlocker.setBlocker();
-
-        self.timeouts.videoCompletion.instance = window.setTimeout(function () {
-            self.onVideoComplete();
-        }, self.timeouts.videoCompletion.duration);
-
-        self.settings.debug && console.log("onAdAvailable");
         self.executeCallback(null, "success");
     },
 

@@ -1,4 +1,8 @@
 playtemEmbedded.Spotx = function(options) {
+    var siteIdTest = "85394";
+    var siteIdProductionInstream = "147520";
+    var siteIdProductionOutstream = "166222";
+
     var defaults = {
         debug: false
     };
@@ -6,7 +10,7 @@ playtemEmbedded.Spotx = function(options) {
     this.settings = {
         scriptUrl: '//search.spotxchange.com/js/spotx.js',
         scriptOptions: {
-            "spotx_channel_id" : "85394",
+            "spotx_channel_id" : siteIdProductionOutstream,
             "spotx_ad_unit" : "incontent",
             "spotx_ad_done_function" : "spotXCallback",
             "spotx_content_width" : "450",
@@ -35,22 +39,18 @@ playtemEmbedded.Spotx = function(options) {
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
     this.timeouts = {
-        scriptInjected : {
-            instance: null,
-            duration: 1000
-        },
         videoAvailability : {
             instance: null,
-            duration: 4000
-        },
-        videoCompletion : {
-            instance: null,
-            duration: 30000
+            duration: 10000
         }
     };
 
     this.poll = null;
 
     this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
+    this.settings = $.extend(this.settings, defaults);
+    
+    if(this.settings.debug === true) {
+        this.settings.siteId = siteIdTest;
+    }
 };

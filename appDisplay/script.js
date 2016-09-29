@@ -43,10 +43,10 @@ var eventHandler = function (postMessageEvent) {
 
 listener.add("message", eventHandler);
 
-$("#ludokado").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='templates/TST9-43fav.html'></iframe>");
+$("#spotx").one("click", function() {
+    $("body").append("<iframe class='iframe iframe-desktop' src='templates/b9de-4f25v.html'></iframe>");
 });
 
-$("#jewel").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-mobile' src='templates/TSTc-9467v.html'></iframe>");
+$("#affiz").one("click", function() {
+    $("body").append("<iframe class='iframe iframe-desktop' src='templates/TSTb-8438v.html'></iframe>");
 });
