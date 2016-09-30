@@ -12,7 +12,10 @@ playtemEmbedded.Affiz = function(options) {
         // target: 'iframeAdsAffiz',
         $targetContainerElement: $('.ad'),
         modal: true,
-        httpRequestTimeout: 10000
+        httpRequestTimeout: 30000,
+        sendEvents: {
+            messageCloseWindow : "closeAdWindow"
+        }        
     };
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();

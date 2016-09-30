@@ -278,7 +278,10 @@ playtemEmbedded.Affiz = function(options) {
         // target: 'iframeAdsAffiz',
         $targetContainerElement: $('.ad'),
         modal: true,
-        httpRequestTimeout: 10000
+        httpRequestTimeout: 30000,
+        sendEvents: {
+            messageCloseWindow : "closeAdWindow"
+        }        
     };
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
@@ -295,12 +298,16 @@ playtemEmbedded.Affiz = function(options) {
 playtemEmbedded.Affiz.prototype.execute = function(callback) {
     var self = this;
 
+    var closeWindow = function() {
+        window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+    }
+
     var onAdAvailable = function() {
         clearTimeout(self.timeoutTimer);
         self.windowBlocker.setBlocker();
         playtemEmbedded.Core.createTracker("affiz", "onAdAvailable");
+
         callback(null, "success");
-        AFFIZVIDEO.show();
     };
 
     var onAdUnavailable = function() {
@@ -311,11 +318,12 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
 
     var onVideoComplete = function() {
         playtemEmbedded.Core.createTracker("affiz", "onVideoComplete");
-        self.windowBlocker.clearBlocker();
+        closeWindow();
     };
 
     var onCloseCallback = function() {
-        alert("close");
+        playtemEmbedded.Core.createTracker("affiz", "onVideoClosed");
+        closeWindow();
     };
 
     window.avAsyncInit = function() {
@@ -330,27 +338,33 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
         });
     };
 
-    var createTarget = function() {
-        var node =
-        "<div class='playerWrapper'>" +
-            "<div id='" + self.settings.target + "'></div>" +
-        "</div>";
+    var createFakePlayerImage = function() {
+        var node = "<img id='playerImg' src='//static.playtem.com/tag/tagProviders/img/player.png' />";
 
-        self.settings.$targetContainerElement.append(node);
-        $(".playerWrapper").css({
-            width: "500px",
-            height: "350px",
+        $("body").append(node);
+
+        var $playerImg = $("#playerImg");
+
+        $playerImg.css({
             position: "absolute",
-            top: "175px",
-            left: "125px"
+            top: "190px",
+            left: "0",
+            right: "0",
+            margin: "auto",
+            width: "500px",
+            height: "300px",
+            cursor: "pointer"
+        });
+
+        $playerImg.one("click", function() {
+            AFFIZVIDEO.show();
+            $playerImg.hide();
         });
     };
 
-    if(self.settings.modal == false) {
-        playtemEmbedded.Core.createTracker("affiz", "request");
-    }
+    createFakePlayerImage();
 
-    createTarget();
+    playtemEmbedded.Core.createTracker("affiz", "request");
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
