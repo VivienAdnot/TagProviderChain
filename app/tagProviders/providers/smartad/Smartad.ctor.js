@@ -1,6 +1,5 @@
-playtemEmbeddedApp.TagProviderChain.Template.Reward = function(options) {
+playtemEmbedded.Smartad = function(options) {
     var defaults = {
-        debug: false
     };
 
     this.settings = {
@@ -8,7 +7,20 @@ playtemEmbeddedApp.TagProviderChain.Template.Reward = function(options) {
         siteId : 100394,
         pageName : "home",
         formatId : 42149,
-        domain: '//www8.smartadserver.com'
+        domain: '//www8.smartadserver.com',
+
+        targetClass: 'smartad',
+        $targetContainerElement: $('.ad'),
+        httpRequestTimeout: 5000,
+
+        cssProperties: {
+            "position": "absolute",
+            "top": "179px",
+            "left": "125px",
+            "width": "500px",
+            "margin": "0 auto",
+            "text-align": "center"
+        }
     };
 
     this.defaults = $.extend(defaults, options);

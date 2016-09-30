@@ -1,6 +1,6 @@
-playtemEmbeddedApp.TagProviderChain.Core.createSmartadTracker = function(eventType, providerName) {
+playtemEmbedded.Core.createTracker = function(providerName, eventType) {
     var buildUrl = function() {
-        var timestamp = playtemEmbeddedApp.TagProviderChain.Core.date.getCurrentTimestamp();
+        var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
         return "https://api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&t=" + timestamp;
     };
 

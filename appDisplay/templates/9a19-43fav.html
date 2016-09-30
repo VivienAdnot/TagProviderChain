@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Desktop Reward</title>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+        <link rel="stylesheet" href="../css/all.css"/>
+        <link rel="stylesheet" href="../css/ludokado-custom.css"/>
+    </head>
+    <body>
+        <div class="ad">
+            <!-- title-->
+            <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">Congratulations</h1>
+            <img class="js-closeAd ad__imgClose" src="https://static.playtem.com/templates/Ludokado/750x550/cross-close.png"/>
+
+            <!-- reward block-->
+            <div class="ad__reward__offerMessageBlock">
+                <div class="ad__reward__offerMessage u-verticalAlignText">
+                    <div>
+                        <span class="ad__reward__offerMessage__brandName">Our partner</span>
+                        <span id="js-rewardOfferingMessage">offers you</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad__rewardImageBlock">
+                <img id="rewardImageUri" class="ad__reward__image" src="//:0" alt="" />
+                <div class="ad__reward__itemTitleBlock">
+                    <div class="ad__reward__itemTitle u-verticalAlignText">
+                        <span id="rewardName"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../_source/playtemEmbeddedApp.js"></script>
+
+        <script type="text/javascript">
+            var playtemApp = new playtemEmbedded.App({
+                hasReward: true,
+                providers: [ playtemEmbedded.Smartad ],
+                apiKey: "9a19-43fav",
+                outputLanguage : "en-US",
+                gameType: "desktop",
+                debug: false
+            });
+
+            playtemApp.execute();
+        </script>        
+    </body>
+</html>

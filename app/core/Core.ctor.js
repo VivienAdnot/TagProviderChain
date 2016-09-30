@@ -1,1 +1,1 @@
-playtemEmbeddedApp.TagProviderChain.Core = {};
+playtemEmbedded.Core = {};

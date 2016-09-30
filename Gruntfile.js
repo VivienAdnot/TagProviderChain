@@ -5,13 +5,13 @@ module.exports = function(grunt) {
             options: {
                 separator: '\n\n'
             },
-            JSTemplateApplication: {
-                src: ['PlaytemTemplate/**/*.js'],
-                dest: '_dist/template.js'
+            app: {
+                src: ['app/**/*.js'],
+                dest: '_dist/playtemEmbeddedApp.js'
             },
-            JSTemplateTests: {
-                src: ['PlaytemTemplateTests/qunit/**/*.js'],
-                dest: 'PlaytemTemplateTests/_build/tests.js'
+            appTests: {
+                src: ['appTest/qunit/**/*.js'],
+                dest: 'appTest/_build/tests.js'
             }
         },
         
@@ -22,16 +22,16 @@ module.exports = function(grunt) {
             },
             test: {
                 files: {
-                    "PlaytemTemplateTests/_source/template.js": ['_dist/template.js'],
-                    "displayPlaytemTemplate/_source/template.js": ['_dist/template.js']
+                    "appTest/_source/playtemEmbeddedApp.js": ['_dist/playtemEmbeddedApp.js'],
+                    "appDisplay/_source/playtemEmbeddedApp.js": ['_dist/playtemEmbeddedApp.js']
                 }
             }
         },
         
         connect: {
-            test: {
+            root: {
                 options: {
-                    port: 8081,
+                    port: 8083,
                     hostname: '127.0.0.1',
                     keepalive: true
                 }
@@ -43,5 +43,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-connect');
 
-    grunt.registerTask('default', ['concat:JSTemplateApplication', 'concat:JSTemplateTests', 'copy:test', 'connect:test']);
+    grunt.registerTask('build', ['concat:app', 'copy:test']);
+
+    grunt.registerTask('serve', ['concat:app', 'copy:test', 'connect:root']);
+    
+    grunt.registerTask('test', ['concat:app', 'concat:appTests', 'copy:test', 'connect:root']);
 };

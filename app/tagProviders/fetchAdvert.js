@@ -1,11 +1,19 @@
-playtemApp.Main.TagProviders.prototype.fetchAdvert = function (callback) {
+playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
     var self = this;
+    var index = 0;
+
+    var isArray = function(target) {
+        return Object.prototype.toString.call(target) == "[object Array]";
+    };
 
     var executeProvider = function (AdvertProvider) {
-        var provider = new AdvertProvider();
+        var provider = new AdvertProvider({
+            debug: self.settings.debug
+        });
 
         provider.execute(function (error, result) {
             if (error !== null) {
+                console.log("execute provider result error: " + error);
                 moveNext();
                 return;
             }
@@ -15,26 +23,24 @@ playtemApp.Main.TagProviders.prototype.fetchAdvert = function (callback) {
     };
 
     var moveNext = function () {
-        self.index++;
+        index++;
         run();
     };
 
     var run = function () {
-        var __local = {
-            applicationSettings: playtemApp.Settings.providers.client2Server.shared.applicationSettings,
-            client2ServerBindings: playtemApp.Settings.providers.client2Server.shared.bindings
-        };
-        
-        var errorMessage = null;
-
-        if (self.index >= self.providers.length) {
+        if (index >= self.settings.providers.length) {
             callback("no more provider to call", null);
             return;
         }
 
-        var currentProviderReference = self.providers[self.index];
+        var currentProviderReference = self.settings.providers[index];
         executeProvider(currentProviderReference);
     };
+
+    if(!isArray(self.settings.providers)) {
+        callback("self.settings.providers must be an array", null);
+        return;
+    }
 
     run();
 };
