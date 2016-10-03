@@ -313,17 +313,24 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
     var onAdUnavailable = function() {
         clearTimeout(self.timeoutTimer);
         playtemEmbedded.Core.createTracker("affiz", "onAdUnavailable");
-        callback("Affiz: no ad", null);
+
+        window.setTimeout(function() {
+            callback("Affiz: no ad", null);
+        }, 500);        
     };
 
     var onVideoComplete = function() {
         playtemEmbedded.Core.createTracker("affiz", "onVideoComplete");
-        closeWindow();
+        window.setTimeout(function() {
+            closeWindow();
+        }, 200);
     };
 
     var onCloseCallback = function() {
         playtemEmbedded.Core.createTracker("affiz", "onVideoClosed");
-        closeWindow();
+        window.setTimeout(function() {
+            closeWindow();
+        }, 200);
     };
 
     window.avAsyncInit = function() {
