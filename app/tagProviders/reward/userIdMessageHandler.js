@@ -18,5 +18,5 @@ playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
 
     self.userId = extractUserId();
 
-    self.getReward(playtemEmbedded.Core.Operations.noop);
+    self.getReward(self.executeCallback);
 };

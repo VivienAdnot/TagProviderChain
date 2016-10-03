@@ -3,7 +3,9 @@ playtemEmbedded.Affiz = function(options) {
     var siteIdTest = '315f315f32333530_68dafd7974';
 
     var defaults = {
-        debug : false
+        debug : false,
+        apiKey: undefined,
+        hasReward: false
     };
 
     this.settings = {

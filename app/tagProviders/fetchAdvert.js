@@ -8,7 +8,9 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
 
     var executeProvider = function (AdvertProvider) {
         var provider = new AdvertProvider({
-            debug: self.settings.debug
+            debug: self.settings.debug,
+            apiKey: self.settings.apiKey,
+            hasReward: self.settings.hasReward
         });
 
         provider.execute(function (error, result) {

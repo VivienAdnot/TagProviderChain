@@ -37,23 +37,12 @@ var eventHandler = function (postMessageEvent) {
         case "playtem:tagApp:userId":
             onUserId();
             break;
-        case "closeAdWindow":
-            $(".iframe").remove();
-            break;
         default: break;
     }
 };
 
 listener.add("message", eventHandler);
 
-$("#spotx").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='templates/b9de-4f25v.html'></iframe>");
-});
-
-$("#affiz").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='templates/TSTb-8438v.html'></iframe>");
-});
-
-$("#smartad").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='templates/TST9-43fav.html'></iframe>");
+$("#testIframe").one("click", function() {
+    $("body").append("<iframe class='iframe' src='embedded.html'></iframe>");
 });

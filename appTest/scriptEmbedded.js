@@ -34,11 +34,8 @@ var eventHandler = function (postMessageEvent) {
     };
     
     switch (postMessageEvent.data) {
-        case "playtem:tagApp:userId":
+        case "playtem:smartad:userId":
             onUserId();
-            break;
-        case "closeAdWindow":
-            $(".iframe").remove();
             break;
         default: break;
     }
@@ -52,8 +49,4 @@ $("#spotx").one("click", function() {
 
 $("#affiz").one("click", function() {
     $("body").append("<iframe class='iframe iframe-desktop' src='templates/TSTb-8438v.html'></iframe>");
-});
-
-$("#smartad").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='templates/TST9-43fav.html'></iframe>");
 });

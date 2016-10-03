@@ -4,7 +4,9 @@ playtemEmbedded.Spotx = function(options) {
     var siteIdProductionOutstream = "166222";
 
     var defaults = {
-        debug: false
+        debug: false,
+        apiKey: undefined,
+        hasReward: false
     };
 
     this.settings = {

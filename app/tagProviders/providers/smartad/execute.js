@@ -20,8 +20,18 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
 
         var loadHandler = function(result) {
             if (result && result.hasAd === true) {
+
+                if(self.settings.hasReward == true) {
+                    var rewarder = new playtemEmbedded.Reward({
+                        apiKey: self.settings.apiKey
+                    });
+
+                    rewarder.execute(playtemEmbedded.Core.Operations.noop);
+                }
+
                 callback(null, "success");
                 return;
+                
             } else {
                 self.destructor();
                 callback("no ad", null);
