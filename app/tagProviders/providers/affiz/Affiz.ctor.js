@@ -11,7 +11,6 @@ playtemEmbedded.Affiz = function(options) {
     this.settings = {
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
         siteId : siteIdProduction,
-        // target: 'iframeAdsAffiz',
         $targetContainerElement: $('.ad'),
         modal: true,
         httpRequestTimeout: 30000,

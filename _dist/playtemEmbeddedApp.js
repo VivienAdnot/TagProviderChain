@@ -125,8 +125,7 @@ playtemEmbedded.Core.track = function(providerName, eventType, callback) {
     }
 
     var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
-    //var url = "//api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&t=" + timestamp;
-    var url = "//api.playtem.com/xyz.js";
+    var url = "//api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&t=" + timestamp;
 
     $.get(url)
         .fail(function() {
@@ -270,7 +269,6 @@ playtemEmbedded.Affiz = function(options) {
     this.settings = {
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
         siteId : siteIdProduction,
-        // target: 'iframeAdsAffiz',
         $targetContainerElement: $('.ad'),
         modal: true,
         httpRequestTimeout: 30000,
@@ -292,6 +290,10 @@ playtemEmbedded.Affiz = function(options) {
 
 playtemEmbedded.Affiz.prototype.execute = function(callback) {
     var self = this;
+
+    var closeWindow = function() {
+        window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+    };
 
     var onAdAvailable = function() {
         clearTimeout(self.timeoutTimer);

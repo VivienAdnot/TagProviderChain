@@ -1,6 +1,10 @@
 playtemEmbedded.Affiz.prototype.execute = function(callback) {
     var self = this;
 
+    var closeWindow = function() {
+        window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+    };
+
     var onAdAvailable = function() {
         clearTimeout(self.timeoutTimer);
         self.windowBlocker.setBlocker();
