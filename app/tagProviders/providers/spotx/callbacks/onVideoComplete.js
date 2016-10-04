@@ -4,7 +4,7 @@ playtemEmbedded.Spotx.prototype.onVideoComplete = playtemEmbedded.Core.Operation
         
         window.clearTimeout(self.timeouts.videoCompletion.instance);
 
-        playtemEmbedded.Core.createTracker("spotx", "onVideoComplete");
+        playtemEmbedded.Core.track("spotx", "onVideoComplete");
 
         if(self.settings.hasReward == true) {
             var rewarder = new playtemEmbedded.Reward({

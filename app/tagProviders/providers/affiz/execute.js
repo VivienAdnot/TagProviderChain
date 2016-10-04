@@ -4,22 +4,24 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
     var onAdAvailable = function() {
         clearTimeout(self.timeoutTimer);
         self.windowBlocker.setBlocker();
-        playtemEmbedded.Core.createTracker("affiz", "onAdAvailable");
-
-        callback(null, "success");
+        playtemEmbedded.Core.track("affiz", "onAdAvailable", function() {
+            callback(null, "success");
+        });
     };
 
     var onAdUnavailable = function() {
         clearTimeout(self.timeoutTimer);
-        playtemEmbedded.Core.createTracker("affiz", "onAdUnavailable");
-
-        window.setTimeout(function() {
+        playtemEmbedded.Core.track("affiz", "onAdUnavailable", function() {
             callback("Affiz: no ad", null);
-        }, 500);
+        });
     };
 
     var onVideoComplete = function() {
-        playtemEmbedded.Core.createTracker("affiz", "onVideoComplete");
+        var always = function() {
+            playtemEmbedded.Core.track("affiz", "onVideoComplete", function() {
+                self.windowBlocker.clearBlocker();
+            });
+        };
 
         if(self.settings.hasReward == true) {
             var rewarder = new playtemEmbedded.Reward({
@@ -27,19 +29,17 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
             });
 
             rewarder.execute(function(error, success) {
-                console.log(error, success);
-                self.windowBlocker.clearBlocker();
+                always();
             });
         } else {
-            self.windowBlocker.clearBlocker();
+            always();
         }
     };
 
     var onCloseCallback = function() {
-        playtemEmbedded.Core.createTracker("affiz", "onVideoClosed");
-        window.setTimeout(function() {
+        playtemEmbedded.Core.track("affiz", "onVideoClosed", function() {
             closeWindow();
-        }, 500);
+        });
     };
 
     window.avAsyncInit = function() {
@@ -80,7 +80,7 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
 
     createFakePlayerImage();
 
-    playtemEmbedded.Core.createTracker("affiz", "request");
+    playtemEmbedded.Core.track("affiz", "request");
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
@@ -94,10 +94,8 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
         onAdUnavailable = playtemEmbedded.Core.Operations.noop;
         onVideoComplete = playtemEmbedded.Core.Operations.noop;
 
-        playtemEmbedded.Core.createTracker("affiz", "timeout");
-
-        window.setTimeout(function() {
+        playtemEmbedded.Core.track("affiz", "timeout", function() {
             callback("Affiz: timeout", null);
-        }, 500);
+        });
     }, self.settings.httpRequestTimeout);
 };
