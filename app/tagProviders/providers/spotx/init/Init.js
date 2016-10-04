@@ -10,7 +10,6 @@ playtemEmbedded.Spotx.prototype.init = function(executeCallback, callback) {
             return;
         }
 
-        self.settings.debug && console.log("Spotx script loaded");
         callback(null, "success");
     });
 };

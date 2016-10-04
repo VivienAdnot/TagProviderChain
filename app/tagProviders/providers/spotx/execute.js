@@ -8,13 +8,11 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
         window.clearTimeout(self.timeouts.videoAvailability.instance);
 
         if(videoStatus === true) {
-            self.settings.debug && console.log("spotXCallback: video completion");
             self.onVideoComplete();
         } else {
-            self.settings.debug && console.log("spotXCallback: onAdUnavailable");
             onAdUnavailable();
         }
-    };    
+    };
 
     self.init(callback, function(error, result) {
         if(error) {
