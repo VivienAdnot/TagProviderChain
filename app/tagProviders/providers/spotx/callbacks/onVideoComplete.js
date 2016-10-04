@@ -4,9 +4,19 @@ playtemEmbedded.Spotx.prototype.onVideoComplete = playtemEmbedded.Core.Operation
         
         window.clearTimeout(self.timeouts.videoCompletion.instance);
 
-        self.windowBlocker.clearBlocker();
+        playtemEmbedded.Core.track("spotx", "onVideoComplete");
 
-        playtemEmbedded.Core.createTracker("spotx", "onVideoComplete");
+        if(self.settings.hasReward == true) {
+            var rewarder = new playtemEmbedded.Reward({
+                apiKey: self.settings.apiKey
+            });
+
+            rewarder.execute(function(error, success) {
+                self.windowBlocker.clearBlocker();
+            });
+        } else {
+            self.windowBlocker.clearBlocker();
+        }        
     },
 
     function() {

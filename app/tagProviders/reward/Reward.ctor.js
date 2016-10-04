@@ -1,7 +1,6 @@
 playtemEmbedded.Reward = function(options) {
     var defaults = {
-        apiKey: undefined,
-        gameType: undefined
+        apiKey: undefined
     };
 
     this.settings = {

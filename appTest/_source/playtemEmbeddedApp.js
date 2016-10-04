@@ -119,22 +119,21 @@ playtemEmbedded.Core.PostMessage.prototype.destroyListener = function(listenerId
     window.removeEventListener("message", handler, false);
 };
 
-playtemEmbedded.Core.createTracker = function(providerName, eventType) {
-    var buildUrl = function() {
-        var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
-        return "https://api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&t=" + timestamp;
-    };
+playtemEmbedded.Core.track = function(providerName, eventType, callback) {
+    if(!callback || typeof callback != "function") {
+        callback = $.noop;
+    }
 
-    var pixel = document.createElement("img");
-    pixel.src = buildUrl();
-    pixel.className = "u-tracker";
-    pixel.width = "0";
-    pixel.height = "0";
-    pixel.setAttribute("style", "position:absolute; visibility:hidden;");
-    
-    var script = document.getElementsByTagName('script')[0];
-    var body = script.parentNode;
-    var node = body.insertBefore(pixel, script);
+    var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
+    var url = "//api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&t=" + timestamp;
+
+    $.get(url)
+        .fail(function() {
+            playtemEmbedded.Core.log("playtemEmbedded", "couldn't retrieve pixel tracking from: " + url);
+        })
+        .always(function() {
+            callback();
+        });
 };
 
 playtemEmbedded.Core.Identifiers = {
@@ -197,15 +196,6 @@ playtemEmbedded.TagProviders.prototype.execute = function (callback) {
 
     self.fetchAdvert(function (error, result) {
         if(result == "success") {
-            if(self.settings.hasReward == true) {
-                var rewarder = new playtemEmbedded.Reward({
-                    apiKey: self.settings.apiKey,
-                    gameType: self.settings.gameType
-                });
-
-                rewarder.run();
-            }
-
             window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
         } else {
             window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
@@ -227,7 +217,9 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
 
     var executeProvider = function (AdvertProvider) {
         var provider = new AdvertProvider({
-            debug: self.settings.debug
+            debug: self.settings.debug,
+            apiKey: self.settings.apiKey,
+            hasReward: self.settings.hasReward
         });
 
         provider.execute(function (error, result) {
@@ -269,13 +261,14 @@ playtemEmbedded.Affiz = function(options) {
     var siteIdTest = '315f315f32333530_68dafd7974';
 
     var defaults = {
-        debug : false
+        debug : false,
+        apiKey: undefined,
+        hasReward: false
     };
 
     this.settings = {
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
         siteId : siteIdProduction,
-        // target: 'iframeAdsAffiz',
         $targetContainerElement: $('.ad'),
         modal: true,
         httpRequestTimeout: 30000,
@@ -300,37 +293,47 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
 
     var closeWindow = function() {
         window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
-    }
+    };
 
     var onAdAvailable = function() {
         clearTimeout(self.timeoutTimer);
         self.windowBlocker.setBlocker();
-        playtemEmbedded.Core.createTracker("affiz", "onAdAvailable");
-
-        callback(null, "success");
+        playtemEmbedded.Core.track("affiz", "onAdAvailable", function() {
+            callback(null, "success");
+        });
     };
 
     var onAdUnavailable = function() {
         clearTimeout(self.timeoutTimer);
-        playtemEmbedded.Core.createTracker("affiz", "onAdUnavailable");
-
-        window.setTimeout(function() {
+        playtemEmbedded.Core.track("affiz", "onAdUnavailable", function() {
             callback("Affiz: no ad", null);
-        }, 500);        
+        });
     };
 
     var onVideoComplete = function() {
-        playtemEmbedded.Core.createTracker("affiz", "onVideoComplete");
-        window.setTimeout(function() {
-            closeWindow();
-        }, 200);
+        var always = function() {
+            playtemEmbedded.Core.track("affiz", "onVideoComplete", function() {
+                self.windowBlocker.clearBlocker();
+            });
+        };
+
+        if(self.settings.hasReward == true) {
+            var rewarder = new playtemEmbedded.Reward({
+                apiKey: self.settings.apiKey
+            });
+
+            rewarder.execute(function(error, success) {
+                always();
+            });
+        } else {
+            always();
+        }
     };
 
     var onCloseCallback = function() {
-        playtemEmbedded.Core.createTracker("affiz", "onVideoClosed");
-        window.setTimeout(function() {
+        playtemEmbedded.Core.track("affiz", "onVideoClosed", function() {
             closeWindow();
-        }, 200);
+        });
     };
 
     window.avAsyncInit = function() {
@@ -371,7 +374,7 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
 
     createFakePlayerImage();
 
-    playtemEmbedded.Core.createTracker("affiz", "request");
+    playtemEmbedded.Core.track("affiz", "request");
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
@@ -385,14 +388,17 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
         onAdUnavailable = playtemEmbedded.Core.Operations.noop;
         onVideoComplete = playtemEmbedded.Core.Operations.noop;
 
-        playtemEmbedded.Core.log("Affiz", "timeout");
-
-        callback("Affiz: timeout", null);
+        playtemEmbedded.Core.track("affiz", "timeout", function() {
+            callback("Affiz: timeout", null);
+        });
     }, self.settings.httpRequestTimeout);
 };
 
 playtemEmbedded.Smartad = function(options) {
     var defaults = {
+        debug: false,
+        apiKey: undefined,
+        hasReward: false
     };
 
     this.settings = {
@@ -449,8 +455,18 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
 
         var loadHandler = function(result) {
             if (result && result.hasAd === true) {
+
+                if(self.settings.hasReward == true) {
+                    var rewarder = new playtemEmbedded.Reward({
+                        apiKey: self.settings.apiKey
+                    });
+
+                    rewarder.execute(playtemEmbedded.Core.Operations.noop);
+                }
+
                 callback(null, "success");
                 return;
+                
             } else {
                 self.destructor();
                 callback("no ad", null);
@@ -524,7 +540,9 @@ playtemEmbedded.Spotx = function(options) {
     var siteIdProductionOutstream = "166222";
 
     var defaults = {
-        debug: false
+        debug: false,
+        apiKey: undefined,
+        hasReward: false
     };
 
     this.settings = {
@@ -579,7 +597,7 @@ playtemEmbedded.Spotx.prototype.onAdAvailable = playtemEmbedded.Core.Operations.
     function() {
         var self = this;
         
-        playtemEmbedded.Core.createTracker("spotx", "onAdAvailable");
+        playtemEmbedded.Core.track("spotx", "onAdAvailable");
         self.windowBlocker.setBlocker();
         self.executeCallback(null, "success");
     },
@@ -593,7 +611,7 @@ playtemEmbedded.Spotx.prototype.onAdUnavailable = playtemEmbedded.Core.Operation
     function() {
         var self = this;
         
-        playtemEmbedded.Core.createTracker("spotx", "onAdUnavailable");
+        playtemEmbedded.Core.track("spotx", "onAdUnavailable");
         self.executeCallback("Spotx: no ad", null);
     },
 
@@ -608,9 +626,19 @@ playtemEmbedded.Spotx.prototype.onVideoComplete = playtemEmbedded.Core.Operation
         
         window.clearTimeout(self.timeouts.videoCompletion.instance);
 
-        self.windowBlocker.clearBlocker();
+        playtemEmbedded.Core.track("spotx", "onVideoComplete");
 
-        playtemEmbedded.Core.createTracker("spotx", "onVideoComplete");
+        if(self.settings.hasReward == true) {
+            var rewarder = new playtemEmbedded.Reward({
+                apiKey: self.settings.apiKey
+            });
+
+            rewarder.execute(function(error, success) {
+                self.windowBlocker.clearBlocker();
+            });
+        } else {
+            self.windowBlocker.clearBlocker();
+        }        
     },
 
     function() {
@@ -622,7 +650,7 @@ playtemEmbedded.Spotx.prototype.onVideoComplete = playtemEmbedded.Core.Operation
 playtemEmbedded.Spotx.prototype.execute = function(callback) {
     var self = this;
 
-    playtemEmbedded.Core.createTracker("spotx", "request");
+    playtemEmbedded.Core.track("spotx", "request");
 
     window.spotXCallback = function(videoStatus) {
         window.clearInterval(self.poll);
@@ -662,7 +690,7 @@ playtemEmbedded.Spotx.prototype.init = function(executeCallback, callback) {
 
     self.injectScript(function(error, result) {
         if(error) {
-            callback("Spotx injectScript error: " + errorMessage, null);
+            callback("Spotx injectScript error: " + error, null);
             return;
         }
 
@@ -748,8 +776,7 @@ playtemEmbedded.Spotx.prototype.watchVideoPlayerCreation = function(callback) {
 
 playtemEmbedded.Reward = function(options) {
     var defaults = {
-        apiKey: undefined,
-        gameType: undefined
+        apiKey: undefined
     };
 
     this.settings = {
@@ -766,36 +793,39 @@ playtemEmbedded.Reward = function(options) {
     this.settings = $.extend(this.settings, defaults);       
 };
 
+playtemEmbedded.Reward.prototype.execute = function(callback) {
+    var self = this;
+
+    self.init(callback, function(error, data) {
+        if(error != null) {
+            return;
+        }
+
+        // listen
+        window.addEventListener("message", self.userIdMessageHandler, false);
+
+        // send
+        window.parent.postMessage(self.settings.sendEvents.userId, "*");
+
+        // we don't set up a timeout because this module is not critical for the app if it fails.
+        // create a default reward in the html template in case of error
+    });
+};
+
 playtemEmbedded.Reward.prototype.getReward = function(callback) {
     var self = this;
 
     var onParseSuccess = function(rewardName, rewardImageUri) {
-        if(self.settings.gameType == "desktop") {
-            //reward img uri
-            $("#rewardImageUri").attr("src", rewardImageUri);
-            $("#rewardImageUri").css("visibility", "visible");
-            //reward img name
-            $("#rewardName").text(rewardName);
-            $("#rewardName").css("visibility", "visible");
-            //our partner
-            $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
-            //offers you
-            $("#js-rewardOfferingMessage").css("visibility", "visible");
-        } else if(self.settings.gameType == "mobile") {
-            //reward img ui
-            $(".ad__reward__image").attr("src", rewardImageUri);
-            $(".ad__reward__image").css("visibility", "visible");
-            //reward name
-            $(".ad__reward__offerMessage__rewardName").text(rewardName);
-            $(".ad__reward__offerMessage__rewardName").css("visibility", "visible");
-            //our partner
-            $(".ad__header__title").css("visibility", "visible");
-            //offers you
-            $("#js-rewardOfferingMessage").css("visibility", "visible");
-        } else {
-            // todo handle error
-            return;
-        }
+        //reward img uri
+        $("#rewardImageUri").attr("src", rewardImageUri);
+        $("#rewardImageUri").css("visibility", "visible");
+        //reward img name
+        $("#rewardName").text(rewardName);
+        $("#rewardName").css("visibility", "visible");
+        //our partner
+        $(".ad__reward__offerMessage__brandName").text("Our partner");
+        //offers you
+        $("#js-rewardOfferingMessage").text("offers you");
     };
 
     var parseResponse = function(data) {
@@ -823,10 +853,11 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
 
             onParseSuccess(rewardName, rewardImageUri);
 
-            callback(null, "parseResponse success");
+            callback(null, "success");
         } catch(e) {
-            playtemEmbedded.Core.log("Smartad template : ajax success", e);
-            callback("parseResponse error: " + e, null);
+            var errorMessage = "reward parse response error: " + e;
+            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
+            callback(errorMessage, null);
         }
     };
 
@@ -839,65 +870,37 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
         },
         success: parseResponse,
         error: function(jqXHR, textStatus, errorThrown) {
-            playtemEmbedded.Core.log("Smartad template : ajax error", errorThrown);
+            var errorMessage = "reward ajax error: " + errorThrown;
+            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
+            callback(errorMessage, null);
         }
     });
 };
 
-playtemEmbedded.Reward.prototype.init = function(callback) {
+playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) {
     var self = this;
 
     var hideElements = function() {
-        if(self.settings.gameType == "desktop") {
-            //reward img uri
-            $("#rewardImageUri").css("visibility", "hidden");
-            //reward img name
-            $("#rewardName").css("visibility", "hidden");
+        //reward img uri
+        $("#rewardImageUri").css("visibility", "hidden");
+        //reward img name
+        $("#rewardName").css("visibility", "hidden");
 
-            $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
-            $("#js-rewardOfferingMessage").css("visibility", "hidden");
-
-        } else if(self.settings.gameType == "mobile") {
-            //reward img uri
-            $(".ad__reward__image").css("visibility", "hidden");
-            $(".ad__reward__offerMessage__rewardName").css("visibility", "hidden");
-            $(".ad__header__title").css("visibility", "hidden");
-            $("#js-rewardOfferingMessage").css("visibility", "hidden");
-
-        } else {
-            // todo handle error
-            return;
-        }
-    }
+        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
+        $("#js-rewardOfferingMessage").css("visibility", "hidden");
+    };
 
     if(!self.settings.apiKey) {
-        callback("window.apiKey undefined", null);
-        return;        
+        initCallback("window.apiKey undefined", null);
+        return;
     }
 
-    hideElements();
+    self.executeCallback = executeCallback;
+
+    //hideElements();
     playtemEmbedded.Core.globals.playtemRewardContext = self;
 
-    callback(null, "success");
-};
-
-playtemEmbedded.Reward.prototype.run = function() {
-    var self = this;
-
-    self.init(function(error, data) {
-        if(error != null) {
-            return;
-        }
-
-        // listen
-        window.addEventListener("message", self.userIdMessageHandler, false);
-
-        // send
-        window.parent.postMessage(self.settings.sendEvents.userId, "*");
-
-        // we don't set up a timeout because this module is not critical for the app if it fails.
-        // create a default reward in the html template in case of error
-    });
+    initCallback(null, "success");
 };
 
 playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
@@ -920,7 +923,7 @@ playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
 
     self.userId = extractUserId();
 
-    self.getReward(playtemEmbedded.Core.Operations.noop);
+    self.getReward(self.executeCallback);
 };
 
 playtemEmbedded.WindowBlocker = function(options) {

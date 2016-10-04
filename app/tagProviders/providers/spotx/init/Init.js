@@ -6,11 +6,10 @@ playtemEmbedded.Spotx.prototype.init = function(executeCallback, callback) {
 
     self.injectScript(function(error, result) {
         if(error) {
-            callback("Spotx injectScript error: " + errorMessage, null);
+            callback("Spotx injectScript error: " + error, null);
             return;
         }
 
-        self.settings.debug && console.log("Spotx script loaded");
         callback(null, "success");
     });
 };
