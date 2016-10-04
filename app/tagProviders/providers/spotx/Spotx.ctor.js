@@ -5,8 +5,11 @@ playtemEmbedded.Spotx = function(options) {
 
     var defaults = {
         debug: false,
-        apiKey: undefined,
-        hasReward: false
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onError: $.noop
     };
 
     this.settings = {
@@ -39,7 +42,6 @@ playtemEmbedded.Spotx = function(options) {
 
     this.executeCallback = undefined;
 
-    this.windowBlocker = new playtemEmbedded.WindowBlocker();
     this.timeouts = {
         videoAvailability : {
             instance: null,

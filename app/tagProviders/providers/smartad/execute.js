@@ -8,7 +8,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
         }
         
         if(error != null) {
-            callback("smartad: script injection error", null)
+            self.settings.onError(error);
             return;
         }
 
@@ -20,21 +20,10 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
 
         var loadHandler = function(result) {
             if (result && result.hasAd === true) {
-
-                if(self.settings.hasReward == true) {
-                    var rewarder = new playtemEmbedded.Reward({
-                        apiKey: self.settings.apiKey
-                    });
-
-                    rewarder.execute(playtemEmbedded.Core.Operations.noop);
-                }
-
-                callback(null, "success");
-                return;
-                
+                self.settings.onAdAvailable();
             } else {
                 self.destructor();
-                callback("no ad", null);
+                self.settings.onAdUnavailable();
                 return;
             }
         };
@@ -64,6 +53,6 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
     self.timeoutTimer = window.setTimeout(function () {
         self.destructor();
         self.timeoutFired = true;
-        callback("Smartad: timeout", null);
+        self.settings.onError("Smartad: timeout");
     }, self.settings.httpRequestTimeout);
 };

@@ -11,7 +11,7 @@ playtemEmbedded.Spotx.prototype.watchVideoPlayerCreation = function(callback) {
             window.clearTimeout(self.timeouts.videoAvailability.instance);
 
             window.clearInterval(self.poll);
-            window.spotXCallback = playtemEmbedded.Core.Operations.noop;
+            window.spotXCallback = $.noop;
 
             callback(true);
         }
@@ -19,7 +19,7 @@ playtemEmbedded.Spotx.prototype.watchVideoPlayerCreation = function(callback) {
 
     self.timeouts.videoAvailability.instance = window.setTimeout(function () {
         window.clearInterval(self.poll);
-        window.spotXCallback = playtemEmbedded.Core.Operations.noop;
+        window.spotXCallback = $.noop;
 
         callback(false);
     }, self.timeouts.videoAvailability.duration);

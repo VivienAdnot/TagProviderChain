@@ -2,9 +2,9 @@ playtemEmbedded.Spotx.prototype.onAdAvailable = playtemEmbedded.Core.Operations.
     function() {
         var self = this;
         
-        playtemEmbedded.Core.track("spotx", "onAdAvailable");
-        self.windowBlocker.setBlocker();
-        self.executeCallback(null, "success");
+        playtemEmbedded.Core.track("spotx", "onAdAvailable", function() {
+            self.settings.onAdAvailable();
+        });
     },
 
     function() {
