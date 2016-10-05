@@ -17,7 +17,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
         clearTimeout(self.timeoutTimer);
 
         playtemEmbedded.Core.track("affiz", "onAdUnavailable", function() {
-            self.settings.onAdAvailable();
+            self.settings.onAdUnavailable();
         });
     };
 

@@ -1,7 +1,7 @@
 playtemEmbedded.Spotx = function(options) {
     var siteIdTest = "85394";
     var siteIdProductionInstream = "147520";
-    var siteIdProductionOutstream = "166222";
+    var siteIdProductionOutstream = "146222";
 
     var defaults = {
         debug: false,

@@ -176,6 +176,158 @@ playtemEmbedded.CrossManager.prototype = {
     }
 };
 
+playtemEmbedded.Reward = function(options) {
+    var defaults = {
+        apiKey: undefined
+    };
+
+    this.settings = {
+        scriptUrl: "//api.playtem.com/advertising/services.reward/",
+        sendEvents: {
+            userId: "playtem:tagApp:userId",
+        }
+    };
+
+    this.userId = null;
+    this.executeCallback = null;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);       
+};
+
+playtemEmbedded.Reward.prototype.execute = function(callback) {
+    var self = this;
+
+    self.init(callback, function(error, data) {
+        if(error != null) {
+            return;
+        }
+
+        // listen
+        window.addEventListener("message", self.userIdMessageHandler, false);
+
+        // send
+        window.parent.postMessage(self.settings.sendEvents.userId, "*");
+
+        // we don't set up a timeout because this module is not critical for the app if it fails.
+        // create a default reward in the html template in case of error
+    });
+};
+
+playtemEmbedded.Reward.prototype.getReward = function(callback) {
+    var self = this;
+
+    var onParseSuccess = function(rewardName, rewardImageUri) {
+        //reward img uri
+        $("#rewardImageUri").attr("src", rewardImageUri);
+        $("#rewardImageUri").css("visibility", "visible");
+        //reward img name
+        $("#rewardName").text(rewardName);
+        $("#rewardName").css("visibility", "visible");
+        //our partner
+        $(".ad__reward__offerMessage__brandName").text("Our partner");
+        //offers you
+        $("#js-rewardOfferingMessage").text("offers you");
+    };
+
+    var parseResponse = function(data) {
+        try {
+            if(data.StatusCode !== 0) {
+                throw "no gift available: " + data.StatusCode + ", " + data.StatusMessage;
+            }
+
+            var response = data.Response;
+
+            var rewardImageUri = response.Image;
+            if(!rewardImageUri) {
+                throw "no reward image";
+            }
+
+            var defaultLanguage = response.Name.Default;
+            if(!defaultLanguage) {
+                throw "no default Language";
+            }
+
+            var rewardName = response.Name[defaultLanguage];
+            if(!rewardName) {
+                throw "no reward Name";
+            }
+
+            onParseSuccess(rewardName, rewardImageUri);
+
+            callback(null, "success");
+        } catch(e) {
+            var errorMessage = "reward parse response error: " + e;
+            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
+            callback(errorMessage, null);
+        }
+    };
+
+    $.ajax({
+        url: self.settings.scriptUrl,
+        data: {
+            apiKey : self.settings.apiKey,
+            userId : self.userId,
+            timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
+        },
+        success: parseResponse,
+        error: function(jqXHR, textStatus, errorThrown) {
+            var errorMessage = "reward ajax error: " + errorThrown;
+            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
+            callback(errorMessage, null);
+        }
+    });
+};
+
+playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) {
+    var self = this;
+
+    var hideElements = function() {
+        //reward img uri
+        $("#rewardImageUri").css("visibility", "hidden");
+        //reward img name
+        $("#rewardName").css("visibility", "hidden");
+
+        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
+        $("#js-rewardOfferingMessage").css("visibility", "hidden");
+    };
+
+    if(!self.settings.apiKey) {
+        initCallback("window.apiKey undefined", null);
+        return;
+    }
+
+    self.executeCallback = executeCallback;
+
+    //hideElements();
+    playtemEmbedded.Core.globals.playtemRewardContext = self;
+
+    initCallback(null, "success");
+};
+
+playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
+    var self = playtemEmbedded.Core.globals.playtemRewardContext;
+    var playtemIdentifier = "playtem:js:";
+
+    if(!postMessage || !postMessage.data) {
+        return;
+    }
+
+    var userIdMessage = postMessage.data;
+
+    if(userIdMessage.indexOf(playtemIdentifier) != 0) {
+        return;
+    }
+
+    var extractUserId = function() {
+        return userIdMessage.substring(playtemIdentifier.length);
+    };
+
+    self.userId = extractUserId();
+
+    self.getReward(self.executeCallback);
+};
+
 playtemEmbedded.TagProviders = function (options) {
     var defaults = {
         providers : [],
@@ -249,8 +401,8 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
         moveNext();
     };
 
-    var onError = function(errorMessage) {
-        //todo log errorMessage ?
+    var onErrorPerProvider = function(errorMessage) {
+        playtemEmbedded.Core.log("TagProviders.fetchAdvert", errorMessage);
         moveNext();
     };
 
@@ -263,7 +415,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
             onAdAvailable: onAdAvailable,
             onAdUnavailable: onAdUnavailablePerProvider,
             onAdComplete: onAdComplete,
-            onError: onError            
+            onError: onErrorPerProvider            
         });
 
         provider.execute();
@@ -347,7 +499,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
         clearTimeout(self.timeoutTimer);
 
         playtemEmbedded.Core.track("affiz", "onAdUnavailable", function() {
-            self.settings.onAdAvailable();
+            self.settings.onAdUnavailable();
         });
     };
 
@@ -555,7 +707,7 @@ playtemEmbedded.Smartad.prototype.render = function() {
 playtemEmbedded.Spotx = function(options) {
     var siteIdTest = "85394";
     var siteIdProductionInstream = "147520";
-    var siteIdProductionOutstream = "166222";
+    var siteIdProductionOutstream = "146222";
 
     var defaults = {
         debug: false,
@@ -779,158 +931,6 @@ playtemEmbedded.Spotx.prototype.watchVideoPlayerCreation = function(callback) {
     }, self.timeouts.videoAvailability.duration);
 };
 
-playtemEmbedded.Reward = function(options) {
-    var defaults = {
-        apiKey: undefined
-    };
-
-    this.settings = {
-        scriptUrl: "//api.playtem.com/advertising/services.reward/",
-        sendEvents: {
-            userId: "playtem:tagApp:userId",
-        }
-    };
-
-    this.userId = null;
-    this.executeCallback = null;
-
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
-};
-
-playtemEmbedded.Reward.prototype.execute = function(callback) {
-    var self = this;
-
-    self.init(callback, function(error, data) {
-        if(error != null) {
-            return;
-        }
-
-        // listen
-        window.addEventListener("message", self.userIdMessageHandler, false);
-
-        // send
-        window.parent.postMessage(self.settings.sendEvents.userId, "*");
-
-        // we don't set up a timeout because this module is not critical for the app if it fails.
-        // create a default reward in the html template in case of error
-    });
-};
-
-playtemEmbedded.Reward.prototype.getReward = function(callback) {
-    var self = this;
-
-    var onParseSuccess = function(rewardName, rewardImageUri) {
-        //reward img uri
-        $("#rewardImageUri").attr("src", rewardImageUri);
-        $("#rewardImageUri").css("visibility", "visible");
-        //reward img name
-        $("#rewardName").text(rewardName);
-        $("#rewardName").css("visibility", "visible");
-        //our partner
-        $(".ad__reward__offerMessage__brandName").text("Our partner");
-        //offers you
-        $("#js-rewardOfferingMessage").text("offers you");
-    };
-
-    var parseResponse = function(data) {
-        try {
-            if(data.StatusCode !== 0) {
-                throw "no gift available: " + data.StatusCode + ", " + data.StatusMessage;
-            }
-
-            var response = data.Response;
-
-            var rewardImageUri = response.Image;
-            if(!rewardImageUri) {
-                throw "no reward image";
-            }
-
-            var defaultLanguage = response.Name.Default;
-            if(!defaultLanguage) {
-                throw "no default Language";
-            }
-
-            var rewardName = response.Name[defaultLanguage];
-            if(!rewardName) {
-                throw "no reward Name";
-            }
-
-            onParseSuccess(rewardName, rewardImageUri);
-
-            callback(null, "success");
-        } catch(e) {
-            var errorMessage = "reward parse response error: " + e;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
-            callback(errorMessage, null);
-        }
-    };
-
-    $.ajax({
-        url: self.settings.scriptUrl,
-        data: {
-            apiKey : self.settings.apiKey,
-            userId : self.userId,
-            timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
-        },
-        success: parseResponse,
-        error: function(jqXHR, textStatus, errorThrown) {
-            var errorMessage = "reward ajax error: " + errorThrown;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
-            callback(errorMessage, null);
-        }
-    });
-};
-
-playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) {
-    var self = this;
-
-    var hideElements = function() {
-        //reward img uri
-        $("#rewardImageUri").css("visibility", "hidden");
-        //reward img name
-        $("#rewardName").css("visibility", "hidden");
-
-        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
-        $("#js-rewardOfferingMessage").css("visibility", "hidden");
-    };
-
-    if(!self.settings.apiKey) {
-        initCallback("window.apiKey undefined", null);
-        return;
-    }
-
-    self.executeCallback = executeCallback;
-
-    //hideElements();
-    playtemEmbedded.Core.globals.playtemRewardContext = self;
-
-    initCallback(null, "success");
-};
-
-playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
-    var self = playtemEmbedded.Core.globals.playtemRewardContext;
-    var playtemIdentifier = "playtem:js:";
-
-    if(!postMessage || !postMessage.data) {
-        return;
-    }
-
-    var userIdMessage = postMessage.data;
-
-    if(userIdMessage.indexOf(playtemIdentifier) != 0) {
-        return;
-    }
-
-    var extractUserId = function() {
-        return userIdMessage.substring(playtemIdentifier.length);
-    };
-
-    self.userId = extractUserId();
-
-    self.getReward(self.executeCallback);
-};
-
 playtemEmbedded.WindowBlocker = function(options) {
     var defaults = {
 
@@ -938,7 +938,7 @@ playtemEmbedded.WindowBlocker = function(options) {
 
     this.settings = {
         $blockableElement : $(".js-closeAd"),
-        crossFadeInDuration: 800
+        crossFadeInDuration: 500
     };
     
     this.defaults = $.extend(defaults, options);

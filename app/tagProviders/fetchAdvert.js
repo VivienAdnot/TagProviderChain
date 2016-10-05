@@ -10,8 +10,8 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
         moveNext();
     };
 
-    var onError = function(errorMessage) {
-        //todo log errorMessage ?
+    var onErrorPerProvider = function(errorMessage) {
+        playtemEmbedded.Core.log("TagProviders.fetchAdvert", errorMessage);
         moveNext();
     };
 
@@ -24,7 +24,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
             onAdAvailable: onAdAvailable,
             onAdUnavailable: onAdUnavailablePerProvider,
             onAdComplete: onAdComplete,
-            onError: onError            
+            onError: onErrorPerProvider            
         });
 
         provider.execute();
