@@ -3,12 +3,12 @@
     height: 40px;
 }
 
-.iframe {
+.iframeXXX {
     display: block;
     border: 1px solid blue;
 } 
 
-.iframe-desktop {
+.iframeXXX-desktop {
     width: 755px;
     height: 555px;
 }
@@ -16,4 +16,8 @@
 .iframe-mobile {
     width: 255px;
     height: 255px;
+}
+
+.u-hidden {
+    display: none;
 }

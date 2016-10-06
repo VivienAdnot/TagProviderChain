@@ -4,8 +4,11 @@ playtemEmbedded.Affiz = function(options) {
 
     var defaults = {
         debug : false,
-        apiKey: undefined,
-        hasReward: false
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onError: $.noop
     };
 
     this.settings = {

@@ -1,15 +1,37 @@
-playtemEmbedded.TagProviders.prototype.execute = function (callback) {
+playtemEmbedded.TagProviders.prototype.execute = function () {
     var self = this;
 
-    self.fetchAdvert(function (error, result) {
-        if(result == "success") {
-            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
-        } else {
-            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
-        }
+    var onAdAvailable = function() {
+        window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
 
-        if(typeof callback == "function") {
-            callback(error, result);
+        if(self.settings.blockWindow == true) {
+            self.windowBlocker.setBlocker();
         }
-    });
+    };
+
+    var onAdUnavailable = function() {
+        window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
+    };
+
+    var onAdComplete = function() {
+        var always = function() {
+            if(self.settings.blockWindow == true) {
+                self.windowBlocker.clearBlocker();
+            }
+        };
+
+        if(self.settings.hasReward == true) {
+            var rewarder = new playtemEmbedded.Reward({
+                apiKey: self.settings.apiKey
+            });
+
+            rewarder.execute(function(error, success) {
+                always();
+            });
+        } else {
+            always();
+        }
+    };
+
+    self.fetchAdvert(onAdAvailable, onAdUnavailable, onAdComplete);
 };

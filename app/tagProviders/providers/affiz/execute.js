@@ -1,4 +1,4 @@
-playtemEmbedded.Affiz.prototype.execute = function(callback) {
+playtemEmbedded.Affiz.prototype.execute = function() {
     var self = this;
 
     var closeWindow = function() {
@@ -7,40 +7,27 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
 
     var onAdAvailable = function() {
         clearTimeout(self.timeoutTimer);
-        self.windowBlocker.setBlocker();
+
         playtemEmbedded.Core.track("affiz", "onAdAvailable", function() {
-            callback(null, "success");
+            self.settings.onAdAvailable();
         });
     };
 
     var onAdUnavailable = function() {
         clearTimeout(self.timeoutTimer);
+
         playtemEmbedded.Core.track("affiz", "onAdUnavailable", function() {
-            callback("Affiz: no ad", null);
+            self.settings.onAdUnavailable();
         });
     };
 
     var onVideoComplete = function() {
-        var always = function() {
-            playtemEmbedded.Core.track("affiz", "onVideoComplete", function() {
-                self.windowBlocker.clearBlocker();
-            });
-        };
-
-        if(self.settings.hasReward == true) {
-            var rewarder = new playtemEmbedded.Reward({
-                apiKey: self.settings.apiKey
-            });
-
-            rewarder.execute(function(error, success) {
-                always();
-            });
-        } else {
-            always();
-        }
+        playtemEmbedded.Core.track("affiz", "onVideoComplete", function() {
+            self.settings.onAdComplete();
+        });
     };
 
-    var onCloseCallback = function() {
+    var onClose = function() {
         playtemEmbedded.Core.track("affiz", "onVideoClosed", function() {
             closeWindow();
         });
@@ -53,7 +40,7 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
             load_callback: onAdAvailable,
             noads_callback: onAdUnavailable,
             complete_callback: onVideoComplete,
-            close_callback: onCloseCallback,
+            close_callback: onClose,
             modal: self.settings.modal
         });
     };
@@ -94,12 +81,12 @@ playtemEmbedded.Affiz.prototype.execute = function(callback) {
     });
     
     self.timeoutTimer = window.setTimeout(function () {
-        onAdAvailable = playtemEmbedded.Core.Operations.noop;
-        onAdUnavailable = playtemEmbedded.Core.Operations.noop;
-        onVideoComplete = playtemEmbedded.Core.Operations.noop;
+        onAdAvailable = $.noop;
+        onAdUnavailable = $.noop;
+        onVideoComplete = $.noop;
 
         playtemEmbedded.Core.track("affiz", "timeout", function() {
-            callback("Affiz: timeout", null);
+            self.settings.onError("Affiz: timeout");
         });
     }, self.settings.httpRequestTimeout);
 };

@@ -10,13 +10,13 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
         if(videoStatus === true) {
             self.onVideoComplete();
         } else {
-            onAdUnavailable();
+            self.onAdUnavailable();
         }
     };
 
-    self.init(callback, function(error, result) {
+    self.init(function(error, result) {
         if(error) {
-            callback(error, result);
+            self.settings.onError(error);
             return;
         }
 

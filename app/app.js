@@ -1,15 +1,12 @@
-var playtemEmbedded = {};
-
 playtemEmbedded.App = function(options) {
     var defaults = {
-        /*mandatory*/
         apiKey: undefined,
         hasReward: false,
         providers: [],
         gameType: undefined,
-        /* mandatory */
         outputLanguage: undefined,
-        debug: false
+        debug: false,
+        placementType: undefined
     };
 
     this.settings = {
@@ -28,10 +25,11 @@ playtemEmbedded.App.prototype.execute = function() {
         hasReward: self.settings.hasReward,
         apiKey: self.settings.apiKey,
         gameType: self.settings.gameType,
-        debug: self.settings.debug
+        debug: self.settings.debug,
+        blockWindow: self.settings.placementType === playtemEmbedded.AppSettings.placementTypes.rewardedVideo
     });
     
-    tagProviders.execute(playtemEmbedded.Core.Operations.noop);
+    tagProviders.execute();
 
     var closeBtnWatcher = new playtemEmbedded.CrossManager();
     closeBtnWatcher.watchClose();

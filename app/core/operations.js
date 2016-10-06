@@ -1,6 +1,4 @@
 playtemEmbedded.Core.Operations = {
-    noop: function () {},
-
     onceProxy: function (fn, errorCallback) {
         var returnValue, called, callbackCalled = false;
         errorCallback = errorCallback || function() {};

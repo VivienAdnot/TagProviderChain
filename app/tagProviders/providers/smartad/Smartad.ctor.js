@@ -1,8 +1,10 @@
 playtemEmbedded.Smartad = function(options) {
     var defaults = {
         debug: false,
-        apiKey: undefined,
-        hasReward: false
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onError: $.noop
     };
 
     this.settings = {

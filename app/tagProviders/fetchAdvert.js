@@ -1,4 +1,4 @@
-playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
+playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, onAdUnavailable, onAdComplete) {
     var self = this;
     var index = 0;
 
@@ -6,22 +6,28 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
         return Object.prototype.toString.call(target) == "[object Array]";
     };
 
+    var onAdUnavailablePerProvider = function() {
+        moveNext();
+    };
+
+    var onErrorPerProvider = function(errorMessage) {
+        playtemEmbedded.Core.log("TagProviders.fetchAdvert", errorMessage);
+        moveNext();
+    };
+
     var executeProvider = function (AdvertProvider) {
         var provider = new AdvertProvider({
             debug: self.settings.debug,
             apiKey: self.settings.apiKey,
-            hasReward: self.settings.hasReward
+            hasReward: self.settings.hasReward,
+
+            onAdAvailable: onAdAvailable,
+            onAdUnavailable: onAdUnavailablePerProvider,
+            onAdComplete: onAdComplete,
+            onError: onErrorPerProvider            
         });
 
-        provider.execute(function (error, result) {
-            if (error !== null) {
-                console.log("execute provider result error: " + error);
-                moveNext();
-                return;
-            }
-
-            callback(error, result);
-        });
+        provider.execute();
     };
 
     var moveNext = function () {
@@ -31,7 +37,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
 
     var run = function () {
         if (index >= self.settings.providers.length) {
-            callback("no more provider to call", null);
+            onAdUnavailable();
             return;
         }
 
@@ -40,7 +46,8 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (callback) {
     };
 
     if(!isArray(self.settings.providers)) {
-        callback("self.settings.providers must be an array", null);
+        playtemEmbedded.Core.log("TagProviders.fetchAdvert", "self.settings.providers must be an array");
+        onAdUnavailable();
         return;
     }
 

@@ -5,7 +5,7 @@ playtemEmbedded.WindowBlocker = function(options) {
 
     this.settings = {
         $blockableElement : $(".js-closeAd"),
-        crossFadeInDuration: 800
+        crossFadeInDuration: 500
     };
     
     this.defaults = $.extend(defaults, options);

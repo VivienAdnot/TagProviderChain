@@ -1,3 +1,9 @@
+var iframe = null;
+
+var getBody = function () {
+    return document.getElementsByTagName("body")[0];
+};
+
 var listener = {
     add: function (eventName, callback) {
         if (window.addEventListener) {
@@ -34,11 +40,23 @@ var eventHandler = function (postMessageEvent) {
     };
     
     switch (postMessageEvent.data) {
+        case "playtem:tagApp:adAvailable":
+            //$("#adAvailable").text("onAdAvailable fired");
+            //$(".iframe").show();
+            iframe.style.visibility = "visible";
+            console.log("adAvailable");
+            break;
+        case "playtem:tagApp:adUnavailable":
+            //$("#adUnavailable").text("adUnavailable fired");
+            console.log("adUnavailable");
+            
+            break;        
         case "playtem:tagApp:userId":
             onUserId();
             break;
         case "closeAdWindow":
-            $(".iframe").remove();
+            //$(".iframe").remove();
+            iframe.style.visibility = "hidden";
             break;
         default: break;
     }
@@ -46,14 +64,45 @@ var eventHandler = function (postMessageEvent) {
 
 listener.add("message", eventHandler);
 
-$("#spotx").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='templates/b9de-4f25v.html'></iframe>");
+var createHiddenIframe = function(url) {
+    iframe = document.createElement("iframe");
+    
+    iframe.id = 'iframe';
+    iframe.class = 'iframe-desktop';
+    iframe.src = url;
+    
+    // position
+    iframe.style.width = "755px";
+    iframe.style.height = "555px";
+    
+    // IE
+    iframe.scrolling = "no";
+    iframe.frameBorder = "0";
+
+    // HTML 5
+    iframe.style.overflow = "hidden";
+    iframe.style.visibility = "hidden";
+
+    getBody().appendChild(iframe);
+};
+
+var spotxBtn = document.getElementById("spotx");
+spotxBtn.addEventListener('click', function() {
+    createHiddenIframe('templates/TST9-43fav.html');
 });
 
-$("#affiz").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='templates/TSTb-8438v.html'></iframe>");
+/*$("#spotx").one("click", function() {
+    $("body").append("<iframe class='iframeXXX iframeXXX-desktop u-hidden' src='templates/b9de-4f25v.html'></iframe>");
+});
+
+$("#affiztest").one("click", function() {
+    $("body").append("<iframe class='iframeXXX iframeXXX-desktop u-hidden' src='templates/TSTb-8438v.html'></iframe>");
+});
+
+$("#affizprod").one("click", function() {
+    $("body").append("<iframe class='iframeXXX iframeXXX-desktop u-hidden' src='templates/4a2b-8438v.html'></iframe>");
 });
 
 $("#smartad").one("click", function() {
-    $("body").append("<iframe class='iframe iframe-desktop' src='templates/TST9-43fav.html'></iframe>");
-});
+    $("body").append("<iframe class='iframeXXX iframeXXX-desktop u-hidden' src='templates/TST9-43fav.html'></iframe>");
+});*/

@@ -40,11 +40,12 @@
         <script type="text/javascript">
             var playtemApp = new playtemEmbedded.App({
                 hasReward: true,
-                providers: [ playtemEmbedded.Smartad ],
+                providers: [ playtemEmbedded.Spotx ],
                 apiKey: "TST9-43fav",
                 outputLanguage : "en-US",
                 gameType: "desktop",
-                debug: true
+                debug: true,
+                placementType: "rewardedVideo"
             });
 
             playtemApp.execute();
