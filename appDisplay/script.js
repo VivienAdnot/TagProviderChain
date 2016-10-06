@@ -88,7 +88,7 @@ var createHiddenIframe = function(url) {
 
 var spotxBtn = document.getElementById("spotx");
 spotxBtn.addEventListener('click', function() {
-    createHiddenIframe('templates/b9de-4f25v.html');
+    createHiddenIframe('templates/TST9-43fav.html');
 });
 
 /*$("#spotx").one("click", function() {

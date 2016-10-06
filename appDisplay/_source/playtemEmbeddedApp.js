@@ -706,8 +706,9 @@ playtemEmbedded.Smartad.prototype.render = function() {
 
 playtemEmbedded.Spotx = function(options) {
     var siteIdTest = "85394";
-    var siteIdProductionInstream = "147520";
     var siteIdProductionOutstream = "146222";
+
+    var siteId = (options.debug === true) ? siteIdTest : siteIdProductionOutstream; 
 
     var defaults = {
         debug: false,
@@ -721,14 +722,14 @@ playtemEmbedded.Spotx = function(options) {
     this.settings = {
         scriptUrl: '//search.spotxchange.com/js/spotx.js',
         scriptOptions: {
-            "spotx_channel_id" : siteIdProductionOutstream,
+            "spotx_channel_id" : siteId,
             "spotx_ad_unit" : "incontent",
             "spotx_ad_done_function" : "spotXCallback",
             "spotx_content_width" : "450",
-            "spotx_content_height" : "300", // 370 default
-            "spotx_collapse" : "1",
-            "spotx_ad_volume" : "0",
-            "spotx_unmute_on_mouse" : "1",
+            "spotx_content_height" : "300",
+            "spotx_collapse" : "0",
+            "spotx_ad_volume" : "1",
+            "spotx_unmute_on_mouse" : "0",
             "spotx_autoplay" : "1",
             "spotx_ad_max_duration" : "500",
             "spotx_https" : "1",
@@ -757,58 +758,35 @@ playtemEmbedded.Spotx = function(options) {
 
     this.poll = null;
 
+
+
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);
-    
-    if(this.settings.debug === true) {
-        this.settings.siteId = siteIdTest;
-    }
 };
 
-playtemEmbedded.Spotx.prototype.onAdAvailable = playtemEmbedded.Core.Operations.onceProxy(
-    function() {
-        var self = this;
-        
-        playtemEmbedded.Core.track("spotx", "onAdAvailable", function() {
-            self.settings.onAdAvailable();
-        });
-    },
+playtemEmbedded.Spotx.prototype.onAdAvailable = function() {
+    var self = this;
+    
+    playtemEmbedded.Core.track("spotx", "onAdAvailable", function() {
+        self.settings.onAdAvailable();
+    });
+};
 
-    function() {
-        playtemEmbedded.Core.log("spotx", "attempted to call onAdAvailable more than once");
-    }
-);
+playtemEmbedded.Spotx.prototype.onAdUnavailable = function() {
+    var self = this;
+    
+    playtemEmbedded.Core.track("spotx", "onAdUnavailable", function() {
+        self.settings.onAdUnavailable();
+    });
+};
 
-playtemEmbedded.Spotx.prototype.onAdUnavailable = playtemEmbedded.Core.Operations.onceProxy(
-    function() {
-        var self = this;
-        
-        playtemEmbedded.Core.track("spotx", "onAdUnavailable", function() {
-            self.settings.onAdUnavailable();
-        });
-    },
-
-    function() {
-        playtemEmbedded.Core.log("spotx", "attempted to call onAdAvailable more than once");
-    }
-);
-
-playtemEmbedded.Spotx.prototype.onVideoComplete = playtemEmbedded.Core.Operations.onceProxy(
-    function() {
-        var self = this;
-        
-        window.clearTimeout(self.timeouts.videoCompletion.instance);
-
-        playtemEmbedded.Core.track("spotx", "onVideoComplete", function() {
-            self.settings.onAdComplete();
-        });      
-    },
-
-    function() {
-        //do nothing
-        //playtemEmbedded.Core.log("spotx", "attempted to call onAdAvailable more than once");
-    }
-);
+playtemEmbedded.Spotx.prototype.onVideoComplete = function() {
+    var self = this;
+    
+    playtemEmbedded.Core.track("spotx", "onVideoComplete", function() {
+        self.settings.onAdComplete();
+    });      
+};
 
 playtemEmbedded.Spotx.prototype.execute = function(callback) {
     var self = this;
@@ -917,7 +895,6 @@ playtemEmbedded.Spotx.prototype.watchVideoPlayerCreation = function(callback) {
             window.clearTimeout(self.timeouts.videoAvailability.instance);
 
             window.clearInterval(self.poll);
-            window.spotXCallback = $.noop;
 
             callback(true);
         }
@@ -925,7 +902,6 @@ playtemEmbedded.Spotx.prototype.watchVideoPlayerCreation = function(callback) {
 
     self.timeouts.videoAvailability.instance = window.setTimeout(function () {
         window.clearInterval(self.poll);
-        window.spotXCallback = $.noop;
 
         callback(false);
     }, self.timeouts.videoAvailability.duration);
