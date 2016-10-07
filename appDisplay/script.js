@@ -86,8 +86,8 @@ var createHiddenIframe = function(url) {
     getBody().appendChild(iframe);
 };
 
-var spotxBtn = document.getElementById("spotx");
-spotxBtn.addEventListener('click', function() {
+var playtemBtn = document.getElementById("playtem");
+playtemBtn.addEventListener('click', function() {
     createHiddenIframe('templates/TST9-43fav.html');
 });
 
