@@ -1,4 +1,4 @@
-playtemEmbedded.PlaytemVideoPlayer = function(options) {
+playtemEmbedded.PlaytemVastPlayer = function(options) {
     var defaults = {
         debug: false,
 

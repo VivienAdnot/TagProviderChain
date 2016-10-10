@@ -1,4 +1,4 @@
-playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
+playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
     var self = this;
 
     var createTarget = function() {
