@@ -3,12 +3,12 @@
     height: 40px;
 }
 
-.iframeXXX {
+.iframe {
     display: block;
     border: 1px solid blue;
 } 
 
-.iframeXXX-desktop {
+.iframe-desktop {
     width: 755px;
     height: 555px;
 }

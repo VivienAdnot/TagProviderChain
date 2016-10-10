@@ -573,6 +573,120 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     }, self.settings.httpRequestTimeout);
 };
 
+playtemEmbedded.PlaytemVideoPlayer = function(options) {
+    var defaults = {
+        debug: false,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onError: $.noop
+    };
+
+    this.settings = {
+        playerId: 'radiantVideoPlayer',
+        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.0.8/js/rmp.min.js',
+        radiantMediaPlayerSettings: {
+            width: 500,
+            height: 300,
+            adTagUrl: "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator=",
+            // adTagUrl: "http://ioms.bfmio.com/getBFMT?aid=2917925b-1c24-48f0-b9e4-ecde1008c481&i_type=test&v=1&mf=f&cb=0",
+            // adTagWaterfall: [
+            //     'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator='
+            // ],
+            licenseKey: 'Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
+            delayToFade: 0,
+            bitrates: { mp4:[['Start','outstream']] },
+            flashFallBack: false,
+            autoplay: true,
+            ads: true,
+            adOutStream: true,
+            hideControls: false,
+            hideSeekBar: true,
+            hideFullscreen: true,
+            hideCentralPlayButton: false
+        },
+        $targetContainerElement: $('.ad'),
+        cssProperties: {
+            "position": "absolute",
+            "top": "179px",
+            "left": "125px",
+            "width": "450px",
+            "margin": "0 auto",
+            "text-align": "center"
+        }
+    };
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);       
+};
+
+playtemEmbedded.PlaytemVideoPlayer.prototype.clean = function() {
+    var self = this;
+    $("#" + self.settings.playerId).remove();
+}
+
+playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
+    var self = this;
+
+    var createTarget = function() {
+        var node = "<div id='" + self.settings.playerId + "'></div>";
+
+        self.settings.$targetContainerElement.append(node);
+        $("#" + self.settings.playerId).css(self.settings.cssProperties);
+    };
+
+    createTarget();
+
+    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
+        if(error) {
+            self.settings.onError("PlaytemVideoPlayer: script couldn't be loaded");
+            return;
+        }
+
+        if(typeof RadiantMP == "undefined") {
+            self.settings.onError("RadiantMP undefined");
+            return;
+        }
+                    
+        var videoPlayer = new RadiantMP(self.settings.playerId);
+        var videoPlayerElement = document.getElementById(self.settings.playerId);
+        
+        if(!videoPlayer) {
+            self.clean();
+            self.settings.onError("RadiantMP videoPlayer is null");
+            return;
+        }
+        
+        if(typeof videoPlayer.init !== "function") {
+            self.clean();
+            self.settings.onError("RadiantMP doesn't have method init");
+            return;
+        }
+
+        videoPlayerElement.addEventListener('adloaded', function() {
+            self.settings.onAdAvailable();
+        });
+
+        videoPlayerElement.addEventListener('aderror', function() {
+            self.clean();
+            self.settings.onError("RadiantMP error detected in video");
+        });
+
+        videoPlayerElement.addEventListener('adcomplete', function() {
+            self.clean();
+            self.settings.onAdComplete();
+        });
+
+        videoPlayerElement.addEventListener('adskipped', function() {
+            self.clean();
+            self.settings.onAdComplete();
+        });
+        
+        videoPlayer.init(self.settings.radiantMediaPlayerSettings);
+    });
+};
+
 playtemEmbedded.Smartad = function(options) {
     var defaults = {
         debug: false,
