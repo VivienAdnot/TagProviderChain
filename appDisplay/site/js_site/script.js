@@ -12,7 +12,7 @@ var populateApiKeyList = function () {
 };
 
 var createHiddenIframe = function(apiKey) {
-    var url = 'templates/' + apiKey + '.html';
+    var url = '../templates/' + apiKey + '.html';
     iframe = document.createElement("iframe");
     
     iframe.id = 'iframe';
