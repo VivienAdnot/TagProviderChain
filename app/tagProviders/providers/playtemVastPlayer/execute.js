@@ -1,4 +1,4 @@
-playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
+playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
     var self = this;
 
     var createTarget = function() {
@@ -37,22 +37,33 @@ playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
         }
 
         videoPlayerElement.addEventListener('adloaded', function() {
-            self.settings.onAdAvailable();
+            playtemEmbedded.Core.track("playtemVideoPlayer", "onAdAvailable", function() {
+                self.settings.onAdAvailable();
+            });
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
             self.clean();
-            self.settings.onError("RadiantMP error detected in video");
+
+            playtemEmbedded.Core.track("playtemVideoPlayer", "onAdUnavailable", function() {
+                self.settings.onAdUnavailable();
+            });
         });
 
         videoPlayerElement.addEventListener('adcomplete', function() {
             self.clean();
-            self.settings.onAdComplete();
+
+            playtemEmbedded.Core.track("playtemVideoPlayer", "onVideoComplete", function() {
+                self.settings.onAdComplete();
+            });
         });
 
         videoPlayerElement.addEventListener('adskipped', function() {
             self.clean();
-            self.settings.onAdComplete();
+
+            playtemEmbedded.Core.track("playtemVideoPlayer", "onVideoComplete", function() {
+                self.settings.onAdComplete();
+            });
         });
         
         videoPlayer.init(self.settings.radiantMediaPlayerSettings);

@@ -3,5 +3,5 @@ playtemEmbedded.Spotx.prototype.onVideoComplete = function() {
     
     playtemEmbedded.Core.track("spotx", "onVideoComplete", function() {
         self.settings.onAdComplete();
-    });      
+    });
 };
