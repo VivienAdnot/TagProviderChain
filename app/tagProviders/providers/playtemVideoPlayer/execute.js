@@ -20,7 +20,7 @@ playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
             self.settings.onError("RadiantMP undefined");
             return;
         }
-                    
+        
         var videoPlayer = new RadiantMP(self.settings.playerId);
         var videoPlayerElement = document.getElementById(self.settings.playerId);
         

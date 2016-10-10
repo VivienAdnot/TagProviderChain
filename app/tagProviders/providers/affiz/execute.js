@@ -8,7 +8,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     var onAdAvailable = function() {
         clearTimeout(self.timeoutTimer);
 
-        playtemEmbedded.Core.track("affiz", "onAdAvailable", function() {
+        playtemEmbedded.Core.track("affiz", self.settings.apiKey, "onAdAvailable", function() {
             self.settings.onAdAvailable();
         });
     };
@@ -16,19 +16,19 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     var onAdUnavailable = function() {
         clearTimeout(self.timeoutTimer);
 
-        playtemEmbedded.Core.track("affiz", "onAdUnavailable", function() {
+        playtemEmbedded.Core.track("affiz", self.settings.apiKey, "onAdUnavailable", function() {
             self.settings.onAdUnavailable();
         });
     };
 
     var onVideoComplete = function() {
-        playtemEmbedded.Core.track("affiz", "onVideoComplete", function() {
+        playtemEmbedded.Core.track("affiz", self.settings.apiKey, "onVideoComplete", function() {
             self.settings.onAdComplete();
         });
     };
 
     var onClose = function() {
-        playtemEmbedded.Core.track("affiz", "onVideoClosed", function() {
+        playtemEmbedded.Core.track("affiz", self.settings.apiKey, "onVideoClosed", function() {
             closeWindow();
         });
     };

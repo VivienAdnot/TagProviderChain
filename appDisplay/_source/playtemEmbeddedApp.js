@@ -124,13 +124,13 @@ playtemEmbedded.Core.PostMessage.prototype.destroyListener = function(listenerId
     window.removeEventListener("message", handler, false);
 };
 
-playtemEmbedded.Core.track = function(providerName, eventType, callback) {
+playtemEmbedded.Core.track = function(providerName, apiKey, eventType, callback) {
     if(!callback || typeof callback != "function") {
         callback = $.noop;
     }
 
     var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
-    var url = "//api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&t=" + timestamp;
+    var url = "//api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&k=" + apiKey + "&t=" + timestamp;
 
     $.get(url)
         .fail(function() {
@@ -451,6 +451,7 @@ playtemEmbedded.Affiz = function(options) {
 
     var defaults = {
         debug : false,
+        apiKey: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -490,7 +491,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     var onAdAvailable = function() {
         clearTimeout(self.timeoutTimer);
 
-        playtemEmbedded.Core.track("affiz", "onAdAvailable", function() {
+        playtemEmbedded.Core.track("affiz", self.settings.apiKey, "onAdAvailable", function() {
             self.settings.onAdAvailable();
         });
     };
@@ -498,19 +499,19 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     var onAdUnavailable = function() {
         clearTimeout(self.timeoutTimer);
 
-        playtemEmbedded.Core.track("affiz", "onAdUnavailable", function() {
+        playtemEmbedded.Core.track("affiz", self.settings.apiKey, "onAdUnavailable", function() {
             self.settings.onAdUnavailable();
         });
     };
 
     var onVideoComplete = function() {
-        playtemEmbedded.Core.track("affiz", "onVideoComplete", function() {
+        playtemEmbedded.Core.track("affiz", self.settings.apiKey, "onVideoComplete", function() {
             self.settings.onAdComplete();
         });
     };
 
     var onClose = function() {
-        playtemEmbedded.Core.track("affiz", "onVideoClosed", function() {
+        playtemEmbedded.Core.track("affiz", self.settings.apiKey, "onVideoClosed", function() {
             closeWindow();
         });
     };
