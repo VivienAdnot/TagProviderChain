@@ -601,14 +601,10 @@ playtemEmbedded.PlaytemVideoPlayer = function(options) {
             autoplay: true,
             ads: true,
             adOutStream: true,
-
-// show controls
             hideControls: false,
             hideSeekBar: true,
             hideFullscreen: true,
             hideCentralPlayButton: false
-// hide controls            
-            // hideControls: true
         },
         $targetContainerElement: $('.ad'),
         cssProperties: {

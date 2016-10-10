@@ -5,7 +5,7 @@ playtemEmbedded.WindowBlocker = function(options) {
 
     this.settings = {
         $blockableElement : $(".js-closeAd"),
-        crossFadeInDuration: 500
+        fadeInDuration: 500
     };
     
     this.defaults = $.extend(defaults, options);
@@ -20,6 +20,6 @@ playtemEmbedded.WindowBlocker.prototype = {
 
     clearBlocker: function() {
         var self = this;
-        self.settings.$blockableElement.fadeIn(self.settings.crossFadeInDuration);
+        self.settings.$blockableElement.fadeIn(self.settings.fadeInDuration);
     }
 };

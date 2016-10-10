@@ -145,11 +145,64 @@ button {
     height: 70px;
 }
 
-/*.smartad {
-    position: absolute;
-    top: 179px;
-    left: 125px;
-    width: 500px;
-    margin: 0 auto;
-    text-align: center;
-}*/
+@font-face {
+    font-family: Oswald;
+    /*src: url('/Content/Fonts/Oswald-Bold.ttf');*/
+    src: url('https://static.playtem.com/Fonts/Oswald-Bold.ttf');
+}
+
+@font-face {
+    font-family: MouseMemoirs;
+    /*src: url('/Content/Fonts/mouse-memoirs.regular.ttf');*/
+    src: url('https://static.playtem.com/Fonts/mouse-memoirs.regular.ttf');
+}
+
+.ad__header__title {
+    /*top: 8px !important;*/
+	text-transform: none !important;
+
+    font-family: MouseMemoirs;
+    font-size: 32px;
+    color: #520703;
+    font-weight: normal;
+}
+
+.ad__reward__offerMessageBlock {
+    font-family: MouseMemoirs;
+    font-size: 30px;
+    color: #ffffff;
+}
+
+.ad__reward__offerMessage__brandName {
+	font-size: 30px;
+}
+
+.ad__reward__itemTitleBlock {
+    font-family: MouseMemoirs;
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.ad__campaignDescription {
+    font-family: MouseMemoirs;
+    font-size: 23px;
+    color: #ffffff;
+    letter-spacing: 2px;
+}
+
+.ad__CTAClickText,
+.ad__CTACloseText {
+    font-family: Oswald;
+    font-size: 17px;
+    color: #ffffff;
+}
+
+.ad__policy,
+.ad__policy > .ad__policy__terms,
+.ad__policy > .ad__policy__terms:hover,
+.ad__policy > .ad__policy__terms:visited {
+    font-family: Arial;
+    font-weight: normal;
+    font-size: 11px;
+    color: #ffffff;
+}
