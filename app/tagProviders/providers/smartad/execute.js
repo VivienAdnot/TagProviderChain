@@ -12,6 +12,8 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             return;
         }
 
+        playtemEmbedded.Core.track("smartad", self.settings.apiKey, "request");
+
         sas.setup({
             domain: self.settings.domain,
             async: true,
@@ -20,10 +22,15 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
 
         var loadHandler = function(result) {
             if (result && result.hasAd === true) {
-                self.settings.onAdAvailable();
+                playtemEmbedded.Core.track("smartad", self.settings.apiKey, "onAdAvailable", function() {
+                    self.settings.onAdAvailable();
+                });
             } else {
                 self.destructor();
-                self.settings.onAdUnavailable();
+
+                playtemEmbedded.Core.track("smartad", self.settings.apiKey, "onAdUnavailable", function() {
+                    self.settings.onAdUnavailable();
+                });
                 return;
             }
         };

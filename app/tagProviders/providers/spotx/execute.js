@@ -1,7 +1,7 @@
 playtemEmbedded.Spotx.prototype.execute = function(callback) {
     var self = this;
 
-    playtemEmbedded.Core.track("spotx", "request");
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
 
     window.spotXCallback = function(videoStatus) {
         window.clearInterval(self.poll);

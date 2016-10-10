@@ -36,8 +36,10 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             return;
         }
 
+        playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "request");
+
         videoPlayerElement.addEventListener('adloaded', function() {
-            playtemEmbedded.Core.track("playtemVideoPlayer", "onAdAvailable", function() {
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdAvailable", function() {
                 self.settings.onAdAvailable();
             });
         });
@@ -45,7 +47,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         videoPlayerElement.addEventListener('aderror', function() {
             self.clean();
 
-            playtemEmbedded.Core.track("playtemVideoPlayer", "onAdUnavailable", function() {
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdUnavailable", function() {
                 self.settings.onAdUnavailable();
             });
         });
@@ -53,7 +55,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         videoPlayerElement.addEventListener('adcomplete', function() {
             self.clean();
 
-            playtemEmbedded.Core.track("playtemVideoPlayer", "onVideoComplete", function() {
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
                 self.settings.onAdComplete();
             });
         });
@@ -61,7 +63,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         videoPlayerElement.addEventListener('adskipped', function() {
             self.clean();
 
-            playtemEmbedded.Core.track("playtemVideoPlayer", "onVideoComplete", function() {
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
                 self.settings.onAdComplete();
             });
         });

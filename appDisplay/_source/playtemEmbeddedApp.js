@@ -554,7 +554,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
 
     createFakePlayerImage();
 
-    playtemEmbedded.Core.track("affiz", "request");
+    playtemEmbedded.Core.track("affiz", self.settings.apiKey, "request");
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
@@ -574,7 +574,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     }, self.settings.httpRequestTimeout);
 };
 
-playtemEmbedded.PlaytemVideoPlayer = function(options) {
+playtemEmbedded.PlaytemVastPlayer = function(options) {
     var defaults = {
         debug: false,
 
@@ -625,12 +625,12 @@ playtemEmbedded.PlaytemVideoPlayer = function(options) {
     this.settings.radiantMediaPlayerSettings.adTagUrl += playtemEmbedded.Core.Date.getCurrentTimestamp();
 };
 
-playtemEmbedded.PlaytemVideoPlayer.prototype.clean = function() {
+playtemEmbedded.PlaytemVastPlayer.prototype.clean = function() {
     var self = this;
     $("#" + self.settings.playerId).remove();
 }
 
-playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
+playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
     var self = this;
 
     var createTarget = function() {
@@ -652,7 +652,7 @@ playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
             self.settings.onError("RadiantMP undefined");
             return;
         }
-                    
+        
         var videoPlayer = new RadiantMP(self.settings.playerId);
         var videoPlayerElement = document.getElementById(self.settings.playerId);
         
@@ -668,8 +668,10 @@ playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
             return;
         }
 
+        playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "request");
+
         videoPlayerElement.addEventListener('adloaded', function() {
-            playtemEmbedded.Core.track("playtemVideoPlayer", "onAdAvailable", function() {
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdAvailable", function() {
                 self.settings.onAdAvailable();
             });
         });
@@ -677,7 +679,7 @@ playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
         videoPlayerElement.addEventListener('aderror', function() {
             self.clean();
 
-            playtemEmbedded.Core.track("playtemVideoPlayer", "onAdUnavailable", function() {
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdUnavailable", function() {
                 self.settings.onAdUnavailable();
             });
         });
@@ -685,7 +687,7 @@ playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
         videoPlayerElement.addEventListener('adcomplete', function() {
             self.clean();
 
-            playtemEmbedded.Core.track("playtemVideoPlayer", "onVideoComplete", function() {
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
                 self.settings.onAdComplete();
             });
         });
@@ -693,7 +695,7 @@ playtemEmbedded.PlaytemVideoPlayer.prototype.execute = function() {
         videoPlayerElement.addEventListener('adskipped', function() {
             self.clean();
 
-            playtemEmbedded.Core.track("playtemVideoPlayer", "onVideoComplete", function() {
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
                 self.settings.onAdComplete();
             });
         });
@@ -757,6 +759,8 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             return;
         }
 
+        playtemEmbedded.Core.track("smartad", self.settings.apiKey, "request");
+
         sas.setup({
             domain: self.settings.domain,
             async: true,
@@ -765,10 +769,15 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
 
         var loadHandler = function(result) {
             if (result && result.hasAd === true) {
-                self.settings.onAdAvailable();
+                playtemEmbedded.Core.track("smartad", self.settings.apiKey, "onAdAvailable", function() {
+                    self.settings.onAdAvailable();
+                });
             } else {
                 self.destructor();
-                self.settings.onAdUnavailable();
+
+                playtemEmbedded.Core.track("smartad", self.settings.apiKey, "onAdUnavailable", function() {
+                    self.settings.onAdUnavailable();
+                });
                 return;
             }
         };
@@ -896,7 +905,7 @@ playtemEmbedded.Spotx = function(options) {
 playtemEmbedded.Spotx.prototype.onAdAvailable = function() {
     var self = this;
     
-    playtemEmbedded.Core.track("spotx", "onAdAvailable", function() {
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdAvailable", function() {
         self.settings.onAdAvailable();
     });
 };
@@ -904,7 +913,7 @@ playtemEmbedded.Spotx.prototype.onAdAvailable = function() {
 playtemEmbedded.Spotx.prototype.onAdUnavailable = function() {
     var self = this;
     
-    playtemEmbedded.Core.track("spotx", "onAdUnavailable", function() {
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdUnavailable", function() {
         self.settings.onAdUnavailable();
     });
 };
@@ -912,7 +921,7 @@ playtemEmbedded.Spotx.prototype.onAdUnavailable = function() {
 playtemEmbedded.Spotx.prototype.onVideoComplete = function() {
     var self = this;
     
-    playtemEmbedded.Core.track("spotx", "onVideoComplete", function() {
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onVideoComplete", function() {
         self.settings.onAdComplete();
     });
 };
@@ -920,7 +929,7 @@ playtemEmbedded.Spotx.prototype.onVideoComplete = function() {
 playtemEmbedded.Spotx.prototype.execute = function(callback) {
     var self = this;
 
-    playtemEmbedded.Core.track("spotx", "request");
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
 
     window.spotXCallback = function(videoStatus) {
         window.clearInterval(self.poll);

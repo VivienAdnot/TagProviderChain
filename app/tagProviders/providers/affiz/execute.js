@@ -71,7 +71,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
 
     createFakePlayerImage();
 
-    playtemEmbedded.Core.track("affiz", "request");
+    playtemEmbedded.Core.track("affiz", self.settings.apiKey, "request");
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
