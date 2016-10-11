@@ -929,8 +929,6 @@ playtemEmbedded.Spotx.prototype.onVideoComplete = function() {
 playtemEmbedded.Spotx.prototype.execute = function(callback) {
     var self = this;
 
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
-
     window.spotXCallback = function(videoStatus) {
         window.clearInterval(self.poll);
         window.clearTimeout(self.timeouts.videoAvailability.instance);
@@ -947,6 +945,8 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
             self.settings.onError(error);
             return;
         }
+
+        playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
 
         self.watchVideoPlayerCreation(function(adStartedStatus) {
             if(adStartedStatus) {
