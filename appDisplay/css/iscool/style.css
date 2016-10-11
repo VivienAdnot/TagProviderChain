@@ -1,0 +1,153 @@
+/* reset */
+body {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+}
+
+img {
+    border: 0;
+}
+
+button, input, select, textarea, p {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: middle;
+    outline: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* ui helpers */
+
+.u-tracker {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.u-hidden {
+    display: none;
+}
+
+.u-debug {
+    border: 1px solid blue;
+}
+
+.u-centerText {
+    text-align: center;
+}
+
+.img--border {
+    border: 4px solid white;
+}
+
+.img--shadow {
+    -webkit-box-shadow: 0px 10px 10px 0px rgba(50, 50, 50, 0.4);
+    -moz-box-shadow: 0px 10px 10px 0px rgba(50, 50, 50, 0.4);
+    box-shadow: 0px 10px 10px 0px rgba(50, 50, 50, 0.4);
+}
+
+.u-verticalAlignWrapper {
+    position: relative;
+    width: auto; /* must be overriden */
+    height: auto; /* must be overriden */
+}
+
+    .u-verticalAlignWrapper > .u-verticalAlignTarget {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+    }
+
+.u-verticalAlignText {
+    display: table;
+    width: auto; /* must be overriden */
+    height: auto; /* must be overriden */
+}
+
+    .u-verticalAlignText > span, .u-verticalAlignText > div {
+        display: table-cell;
+        line-height: normal;
+        vertical-align: middle;
+    }
+
+/* specific */
+
+.ad {
+    width: 750px;
+    height: 550px;
+    position: relative;
+    background: url("//static.playtem.com/templates/IsCool/750x550/background.png") no-repeat top left;
+    border-top: 1px solid transparent;
+}
+
+/* header */
+
+.ad__header__title {
+    position: absolute;
+    left: 175px;
+    top: 17px;
+    width: 400px;
+
+    text-align: center;
+    text-transform: uppercase;
+    height: 59px;
+}
+
+.ad__imgClose {
+    position: absolute;
+    left: 655px;
+    top: 0px;
+    cursor: pointer;
+}
+
+/* discover message*/
+
+.ad__discoverMessageBlock {
+    position: absolute;
+    left: 75px;
+    top: 112px;
+    width: 600px;
+}
+
+.ad__discoverMessageWrapper {
+    text-align: center;
+}
+
+.ad__discoverMessage__brandName {
+    text-transform: uppercase;
+    margin-right: 5px;
+}
+
+@font-face {
+    font-family: MegalopolisExtra;
+    src: url('https://static.playtem.com/Fonts/MegalopolisExtra.otf');
+}
+
+.ad__header__title {
+    font-family: MegalopolisExtra;
+    font-size: 28px;
+    color: #504031;
+}
+
+.ad__discoverMessageBlock {
+    font-family: MegalopolisExtra;
+    font-size: 18px;
+    color: #5d3f24;
+}
+
+.ad__discoverMessage__brandName {
+	font-size: 22px;
+}
