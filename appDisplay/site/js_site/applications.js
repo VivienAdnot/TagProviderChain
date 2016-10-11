@@ -11,5 +11,8 @@ var listApikey = {
     "IsCool video test" : "TSTc-8a80i",
     "IsCool video" : "452c-8a80i",
 
+    "Jotu video test" : "TSTf-be78j",
+    "Jotu video": "4c3f-be78j",
+
     "Playtem api reward test": "b9de-4f25v"
 };
