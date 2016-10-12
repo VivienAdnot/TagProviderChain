@@ -16,7 +16,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             return;
         }
         
-        playtemEmbedded.Core.track("PlaytemVastPlayer", "request");
+        playtemEmbedded.Core.track("PlaytemVastPlayer", self.settings.apiKey, "request");
 
         if(typeof RadiantMP == "undefined") {
             self.settings.onError("RadiantMP undefined");

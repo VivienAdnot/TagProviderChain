@@ -20,7 +20,7 @@ playtemEmbedded.Affiz = function(options) {
         httpRequestTimeout: 30000,
         sendEvents: {
             messageCloseWindow : "closeAdWindow"
-        }        
+        }
     };
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
