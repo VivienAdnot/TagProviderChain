@@ -38,8 +38,6 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             return;
         }
 
-        playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "request");
-
         videoPlayerElement.addEventListener('adloaded', function() {
             playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdAvailable", function() {
                 self.settings.onAdAvailable();

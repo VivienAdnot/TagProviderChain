@@ -1,5 +1,5 @@
 var providers = {
-    "Belote-video": [playtemEmbedded.PlaytemVastPlayer],
+    "Belote-video": [playtemEmbedded.Spotx, playtemEmbedded.PlaytemVastPlayer],
     "Ludokado-video": [playtemEmbedded.PlaytemVastPlayer, playtemEmbedded.Affiz, playtemEmbedded.Spotx],
     "Ludokado-video-test": [playtemEmbedded.Affiz],
     "IsCool-video" : [],
