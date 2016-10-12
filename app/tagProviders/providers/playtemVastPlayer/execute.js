@@ -15,6 +15,8 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             self.settings.onError("PlaytemVideoPlayer: script couldn't be loaded");
             return;
         }
+        
+        playtemEmbedded.Core.track("PlaytemVastPlayer", "request");
 
         if(typeof RadiantMP == "undefined") {
             self.settings.onError("RadiantMP undefined");
