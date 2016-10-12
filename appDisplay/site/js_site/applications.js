@@ -1,6 +1,6 @@
 var listApikey = {
-    "Belote test": "4da9-acb2b",
-    "Belote": "TST9-acb2b",
+    "Belote test": "TST9-acb2b",
+    "Belote": "4da9-acb2b",
 
     "Ludokado video test": "TSTb-8438v",
     "Ludokado video": "4a2b-8438v",
