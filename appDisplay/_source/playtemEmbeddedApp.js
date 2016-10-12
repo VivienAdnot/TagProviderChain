@@ -436,8 +436,8 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
         executeProvider(currentProviderReference);
     };
 
-    if(!isArray(self.settings.providers)) {
-        playtemEmbedded.Core.log("TagProviders.fetchAdvert", "self.settings.providers must be an array");
+    if(!isArray(self.settings.providers || self.settings.providers.length == 0)) {
+        playtemEmbedded.Core.log("TagProviders.fetchAdvert", "self.settings.providers is empty or not an array");
         onAdUnavailable();
         return;
     }
@@ -529,7 +529,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     };
 
     var createFakePlayerImage = function() {
-        var node = "<img id='playerImg' src='//static.playtem.com/tag/tagProviders/img/player.png' />";
+        var node = "<img id='playerImg' src='//static.playtem.com/tag/tagProviders/templates/img/player.png' />";
 
         $("body").append(node);
 

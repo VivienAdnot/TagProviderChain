@@ -46,7 +46,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     };
 
     var createFakePlayerImage = function() {
-        var node = "<img id='playerImg' src='//static.playtem.com/tag/tagProviders/img/player.png' />";
+        var node = "<img id='playerImg' src='//static.playtem.com/tag/tagProviders/templates/img/player.png' />";
 
         $("body").append(node);
 
