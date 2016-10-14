@@ -133,7 +133,7 @@ button {
 
 @font-face {
     font-family: MegalopolisExtra;
-    src: url('https://static.playtem.com/Fonts/MegalopolisExtra.otf');
+    src: url('//static.playtem.com/Fonts/MegalopolisExtra.otf');
 }
 
 .ad__header__title {
