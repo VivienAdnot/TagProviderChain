@@ -68,6 +68,6 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             });
         });
         
-        videoPlayer.init(self.settings.radiantMediaPlayerSettings);
+        videoPlayer.init(self.radiantMediaPlayerSettings);
     });
 };

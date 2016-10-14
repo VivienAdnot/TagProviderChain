@@ -1,9 +1,12 @@
+var isCoolGamesProfile = [playtemEmbedded.Spotx, playtemEmbedded.Actiplay];
+var empty = [];
+
 var providers = {
-    "Belote-video": [playtemEmbedded.Spotx, playtemEmbedded.PlaytemVastPlayer],
-    "Ludokado-video": [playtemEmbedded.PlaytemVastPlayer, playtemEmbedded.Affiz, playtemEmbedded.Spotx],
+    "Ludokado-video": [playtemEmbedded.Actiplay, playtemEmbedded.Affiz, playtemEmbedded.Spotx],
     "Ludokado-video-test": [playtemEmbedded.Affiz],
-    "IsCool-video" : [playtemEmbedded.Spotx, playtemEmbedded.PlaytemVastPlayer],
-    "Jotu-video": [],
-    "Ludokado-display": [ playtemEmbedded.Smartad ],
-    "Test": []
+    "Belote-video": isCoolGamesProfile,
+    "IsCool-video" : isCoolGamesProfile,
+    "Jotu-video": empty,
+    "Ludokado-display": [playtemEmbedded.Smartad],
+    "Test": empty
 };

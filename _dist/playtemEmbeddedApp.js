@@ -474,6 +474,157 @@ playtemEmbedded.TagProviders.prototype.getPlacementProfileRewarded = function ()
     };
 };
 
+playtemEmbedded.PlaytemVastPlayer = function(options) {
+    var licenseKeys = {
+        "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=='
+    };
+
+    var defaults = {
+        debug: false,
+        vastTag: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onError: $.noop,
+
+        playerPosition: {
+            top: 179,
+            width: 500,
+            height: 300
+        }
+    };
+
+    this.settings = {
+        playerId: 'radiantVideoPlayer',
+        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.0.8/js/rmp.min.js',
+
+        $targetContainerElement: $('.ad'),
+    };
+
+    this.playerPosition =  {
+        position: "absolute",
+        top: undefined,
+        left: "0",
+        right: "0",
+        margin: "auto",
+        width: undefined,
+        height: undefined,
+        "text-align": "center"
+    };
+
+    this.radiantMediaPlayerSettings = {
+        adTagUrl: undefined,
+        width: undefined,
+        height: undefined,        
+        licenseKey: licenseKeys["static.playtem.com"],
+
+        delayToFade: 0,
+        bitrates: { mp4:[['Start','outstream']] },
+        flashFallBack: false,
+        autoplay: true,
+        ads: true,
+        adOutStream: true,
+        hideControls: false,
+        hideSeekBar: true,
+        hideFullscreen: true,
+        hideCentralPlayButton: false
+    };
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+    
+    this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
+    this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;
+    this.radiantMediaPlayerSettings.height = this.settings.playerPosition.height;
+
+    this.playerPosition.top = this.settings.playerPosition.top + "px";
+    this.playerPosition.width = this.settings.playerPosition.width + "px";
+    this.playerPosition.height = this.settings.playerPosition.height + "px";
+};
+
+playtemEmbedded.PlaytemVastPlayer.prototype.clean = function() {
+    var self = this;
+    
+    $("#" + self.settings.playerId).fadeOut(500, function() {
+        $(this).remove();
+    });
+}
+
+playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
+    var self = this;
+
+    var createTarget = function() {
+        var node = "<div id='" + self.settings.playerId + "'></div>";
+
+        self.settings.$targetContainerElement.append(node);
+        $("#" + self.settings.playerId).css(self.settings.cssProperties);
+    };
+
+    createTarget();
+
+    playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "request");
+
+    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
+        if(error) {
+            self.settings.onError("PlaytemVastPlayer: script couldn't be loaded");
+            return;
+        }
+
+        if(typeof RadiantMP == "undefined") {
+            self.settings.onError("RadiantMP undefined");
+            return;
+        }
+        
+        var videoPlayer = new RadiantMP(self.settings.playerId);
+        var videoPlayerElement = document.getElementById(self.settings.playerId);
+        
+        if(!videoPlayer) {
+            self.clean();
+            self.settings.onError("PlaytemVastPlayer: RadiantMP videoPlayer is null");
+            return;
+        }
+        
+        if(typeof videoPlayer.init !== "function") {
+            self.clean();
+            self.settings.onError("PlaytemVastPlayer: RadiantMP doesn't have method init");
+            return;
+        }
+
+        videoPlayerElement.addEventListener('adloaded', function() {
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdAvailable", function() {
+                self.settings.onAdAvailable();
+            });
+        });
+
+        videoPlayerElement.addEventListener('aderror', function() {
+            self.clean();
+
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdUnavailable", function() {
+                self.settings.onAdUnavailable();
+            });
+        });
+
+        videoPlayerElement.addEventListener('adcomplete', function() {
+            self.clean();
+
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
+                self.settings.onAdComplete();
+            });
+        });
+
+        videoPlayerElement.addEventListener('adskipped', function() {
+            self.clean();
+
+            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
+                self.settings.onAdComplete();
+            });
+        });
+        
+        videoPlayer.init(self.radiantMediaPlayerSettings);
+    });
+};
+
 playtemEmbedded.Affiz = function(options) {
     var siteIdProduction = '315f315f32333439_8d31ea22dd';
     var siteIdTest = '315f315f32333530_68dafd7974';
@@ -601,148 +752,6 @@ playtemEmbedded.Affiz.prototype.execute = function() {
             self.settings.onError("Affiz: timeout");
         });
     }, self.settings.httpRequestTimeout);
-};
-
-playtemEmbedded.PlaytemVastPlayer = function(options) {
-    var defaults = {
-        debug: false,
-
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onAdComplete: $.noop,
-        onError: $.noop
-    };
-
-    var tagTestGoogle = "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator=";
-    var tagActiplayProd = "https://pubads.g.doubleclick.net/gampad/ads?sz=450x400&iu=/1163333/EXT_Playtem_InGame_Preroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=[timestamp]";
-
-    var licenseKeys = {
-        "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=='
-    };
-
-    var adTagUrl = (options.debug === true) ? tagTestGoogle : tagActiplayProd;
-
-    this.settings = {
-        playerId: 'radiantVideoPlayer',
-        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.0.8/js/rmp.min.js',
-        radiantMediaPlayerSettings: {
-            adTagUrl: adTagUrl,
-            licenseKey: licenseKeys["static.playtem.com"],
-
-            width: 500,
-            height: 300,
-            delayToFade: 0,
-            bitrates: { mp4:[['Start','outstream']] },
-            flashFallBack: false,
-            autoplay: true,
-            ads: true,
-            adOutStream: true,
-            hideControls: false,
-            hideSeekBar: true,
-            hideFullscreen: true,
-            hideCentralPlayButton: false
-
-            // adTagWaterfall: [
-            //     'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator='
-            // ],            
-        },
-        $targetContainerElement: $('.ad'),
-        cssProperties: {
-            "position": "absolute",
-            "top": "179px",
-            "left": "125px",
-            "width": "450px",
-            "margin": "0 auto",
-            "text-align": "center"
-        }
-    };
-
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
-    
-    this.settings.radiantMediaPlayerSettings.adTagUrl += playtemEmbedded.Core.Date.getCurrentTimestamp();
-};
-
-playtemEmbedded.PlaytemVastPlayer.prototype.clean = function() {
-    var self = this;
-    
-    $("#" + self.settings.playerId).fadeOut(500, function() {
-        $(this).remove();
-    });
-}
-
-playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
-    var self = this;
-
-    var createTarget = function() {
-        var node = "<div id='" + self.settings.playerId + "'></div>";
-
-        self.settings.$targetContainerElement.append(node);
-        $("#" + self.settings.playerId).css(self.settings.cssProperties);
-    };
-
-    createTarget();
-
-    playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "request");
-
-    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
-        if(error) {
-            self.settings.onError("PlaytemVastPlayer: script couldn't be loaded");
-            return;
-        }
-
-        if(typeof RadiantMP == "undefined") {
-            self.settings.onError("RadiantMP undefined");
-            return;
-        }
-        
-        var videoPlayer = new RadiantMP(self.settings.playerId);
-        var videoPlayerElement = document.getElementById(self.settings.playerId);
-        
-        if(!videoPlayer) {
-            self.clean();
-            self.settings.onError("PlaytemVastPlayer: RadiantMP videoPlayer is null");
-            return;
-        }
-        
-        if(typeof videoPlayer.init !== "function") {
-            self.clean();
-            self.settings.onError("PlaytemVastPlayer: RadiantMP doesn't have method init");
-            return;
-        }
-
-        videoPlayerElement.addEventListener('adloaded', function() {
-            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdAvailable", function() {
-                self.settings.onAdAvailable();
-            });
-        });
-
-        videoPlayerElement.addEventListener('aderror', function() {
-            self.clean();
-
-            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdUnavailable", function() {
-                self.settings.onAdUnavailable();
-            });
-        });
-
-        videoPlayerElement.addEventListener('adcomplete', function() {
-            self.clean();
-
-            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
-                self.settings.onAdComplete();
-            });
-        });
-
-        videoPlayerElement.addEventListener('adskipped', function() {
-            self.clean();
-
-            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
-                self.settings.onAdComplete();
-            });
-        });
-        
-        videoPlayer.init(self.settings.radiantMediaPlayerSettings);
-    });
 };
 
 playtemEmbedded.Smartad = function(options) {
@@ -1084,6 +1093,46 @@ playtemEmbedded.Spotx.prototype.watchVideoPlayerCreation = function(callback) {
 
         callback(false);
     }, self.timeouts.videoAvailability.duration);
+};
+
+playtemEmbedded.Actiplay = function(options) {
+    var defaults = {
+        debug: false,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onError: $.noop
+    };
+
+    this.settings = {
+        vastTag : "https://pubads.g.doubleclick.net/gampad/ads?sz=450x400&iu=/1163333/EXT_Playtem_InGame_Preroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=[timestamp]" + playtemEmbedded.Core.Date.getCurrentTimestamp()
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.Actiplay.prototype.execute = function() {
+    var self = this;
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: self.settings.vastTag,
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onError: self.settings.onError
+    });
+
+    self.vastPlayer.execute();
 };
 
 playtemEmbedded.WindowBlocker = function(options) {
