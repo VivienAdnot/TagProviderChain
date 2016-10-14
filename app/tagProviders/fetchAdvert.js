@@ -1,4 +1,4 @@
-playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, onAdUnavailable, onAdComplete) {
+playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile) {
     var self = this;
     var index = 0;
 
@@ -21,10 +21,10 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
             apiKey: self.settings.apiKey,
             hasReward: self.settings.hasReward,
 
-            onAdAvailable: onAdAvailable,
+            onAdAvailable: placementProfile.onAdAvailable,
             onAdUnavailable: onAdUnavailablePerProvider,
-            onAdComplete: onAdComplete,
-            onError: onErrorPerProvider            
+            onAdComplete: placementProfile.onAdComplete,
+            onError: onErrorPerProvider
         });
 
         provider.execute();
@@ -37,7 +37,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
 
     var run = function () {
         if (index >= self.settings.providers.length) {
-            onAdUnavailable();
+            placementProfile.onAdUnavailable();
             return;
         }
 
@@ -47,7 +47,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
 
     if(!isArray(self.settings.providers || self.settings.providers.length == 0)) {
         playtemEmbedded.Core.log("TagProviders.fetchAdvert", "self.settings.providers is empty or not an array");
-        onAdUnavailable();
+        placementProfile.onAdUnavailable();
         return;
     }
 

@@ -354,42 +354,12 @@ playtemEmbedded.TagProviders = function (options) {
 playtemEmbedded.TagProviders.prototype.execute = function () {
     var self = this;
 
-    var onAdAvailable = function() {
-        window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
+    var placementProfile = (self.settings.blockWindow == true) ? self.getPlacementProfileRewarded() : self.getPlacementProfileClassic();
 
-        if(self.settings.blockWindow == true) {
-            self.windowBlocker.setBlocker();
-        }
-    };
-
-    var onAdUnavailable = function() {
-        window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
-    };
-
-    var onAdComplete = function() {
-        var always = function() {
-            if(self.settings.blockWindow == true) {
-                self.windowBlocker.clearBlocker();
-            }
-        };
-
-        if(self.settings.hasReward == true) {
-            var rewarder = new playtemEmbedded.Reward({
-                apiKey: self.settings.apiKey
-            });
-
-            rewarder.execute(function(error, success) {
-                always();
-            });
-        } else {
-            always();
-        }
-    };
-
-    self.fetchAdvert(onAdAvailable, onAdUnavailable, onAdComplete);
+    self.fetchAdvert(placementProfile);
 };
 
-playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, onAdUnavailable, onAdComplete) {
+playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile) {
     var self = this;
     var index = 0;
 
@@ -412,10 +382,10 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
             apiKey: self.settings.apiKey,
             hasReward: self.settings.hasReward,
 
-            onAdAvailable: onAdAvailable,
+            onAdAvailable: placementProfile.onAdAvailable,
             onAdUnavailable: onAdUnavailablePerProvider,
-            onAdComplete: onAdComplete,
-            onError: onErrorPerProvider            
+            onAdComplete: placementProfile.onAdComplete,
+            onError: onErrorPerProvider
         });
 
         provider.execute();
@@ -428,7 +398,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
 
     var run = function () {
         if (index >= self.settings.providers.length) {
-            onAdUnavailable();
+            placementProfile.onAdUnavailable();
             return;
         }
 
@@ -438,11 +408,70 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (onAdAvailable, on
 
     if(!isArray(self.settings.providers || self.settings.providers.length == 0)) {
         playtemEmbedded.Core.log("TagProviders.fetchAdvert", "self.settings.providers is empty or not an array");
-        onAdUnavailable();
+        placementProfile.onAdUnavailable();
         return;
     }
 
     run();
+};
+
+playtemEmbedded.TagProviders.prototype.getPlacementProfileClassic = function () {
+    var self = this;
+
+    return {
+        onAdAvailable : function() {
+            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
+
+            if(self.settings.hasReward == true) {
+                var rewarder = new playtemEmbedded.Reward({
+                    apiKey: self.settings.apiKey
+                });
+
+                rewarder.execute(function(error, success) {
+                    // nothing to do
+                });
+            }
+        },
+
+        onAdUnavailable : function() {
+            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
+        },
+
+        onAdComplete : $.noop
+    };
+};
+
+playtemEmbedded.TagProviders.prototype.getPlacementProfileRewarded = function () {
+    var self = this;
+
+    return {
+        onAdAvailable : function() {
+            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
+            self.windowBlocker.setBlocker();
+        },
+
+        onAdUnavailable : function() {
+            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
+        },
+
+        onAdComplete : function() {
+            var always = function() {
+                self.windowBlocker.clearBlocker();
+            };
+
+            if(self.settings.hasReward == true) {
+                var rewarder = new playtemEmbedded.Reward({
+                    apiKey: self.settings.apiKey
+                });
+
+                rewarder.execute(function(error, success) {
+                    always();
+                });
+            } else {
+                always();
+            }
+        }
+    };
 };
 
 playtemEmbedded.Affiz = function(options) {
@@ -875,13 +904,13 @@ playtemEmbedded.Spotx = function(options) {
             "spotx_channel_id" : siteId,
             "spotx_ad_unit" : "incontent",
             "spotx_ad_done_function" : "spotXCallback",
-            "spotx_content_width" : "450",
+            "spotx_content_width" : "500",
             "spotx_content_height" : "300",
             "spotx_collapse" : "0",
             "spotx_ad_volume" : "1",
             "spotx_unmute_on_mouse" : "0",
             "spotx_autoplay" : "1",
-            "spotx_ad_max_duration" : "500",
+            "spotx_ad_max_duration" : "180",
             "spotx_https" : "1",
             "spotx_content_container_id" : "spotx"
         },
