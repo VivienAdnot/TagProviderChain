@@ -654,13 +654,13 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
 
     createTarget();
 
+    playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "request");
+
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
-            self.settings.onError("PlaytemVideoPlayer: script couldn't be loaded");
+            self.settings.onError("PlaytemVastPlayer: script couldn't be loaded");
             return;
         }
-        
-        playtemEmbedded.Core.track("PlaytemVastPlayer", self.settings.apiKey, "request");
 
         if(typeof RadiantMP == "undefined") {
             self.settings.onError("RadiantMP undefined");
@@ -672,13 +672,13 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         
         if(!videoPlayer) {
             self.clean();
-            self.settings.onError("RadiantMP videoPlayer is null");
+            self.settings.onError("PlaytemVastPlayer: RadiantMP videoPlayer is null");
             return;
         }
         
         if(typeof videoPlayer.init !== "function") {
             self.clean();
-            self.settings.onError("RadiantMP doesn't have method init");
+            self.settings.onError("PlaytemVastPlayer: RadiantMP doesn't have method init");
             return;
         }
 
@@ -760,6 +760,8 @@ playtemEmbedded.Smartad.prototype.destructor = function() {
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
     var self = this;
 
+    playtemEmbedded.Core.track("smartad", self.settings.apiKey, "request");
+
     self.init(function(error, data) {
         if(self.timeoutFired == true) {
             // callback has already been fired.
@@ -770,8 +772,6 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             self.settings.onError(error);
             return;
         }
-
-        playtemEmbedded.Core.track("smartad", self.settings.apiKey, "request");
 
         sas.setup({
             domain: self.settings.domain,
@@ -952,13 +952,13 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
         }
     };
 
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
+
     self.init(function(error, result) {
         if(error) {
             self.settings.onError(error);
             return;
         }
-
-        playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
 
         self.watchVideoPlayerCreation(function(adStartedStatus) {
             if(adStartedStatus) {

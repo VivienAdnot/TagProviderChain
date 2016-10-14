@@ -1,6 +1,8 @@
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
     var self = this;
 
+    playtemEmbedded.Core.track("smartad", self.settings.apiKey, "request");
+
     self.init(function(error, data) {
         if(self.timeoutFired == true) {
             // callback has already been fired.
@@ -11,8 +13,6 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             self.settings.onError(error);
             return;
         }
-
-        playtemEmbedded.Core.track("smartad", self.settings.apiKey, "request");
 
         sas.setup({
             domain: self.settings.domain,

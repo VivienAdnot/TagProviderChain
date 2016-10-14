@@ -12,13 +12,13 @@ playtemEmbedded.Spotx.prototype.execute = function(callback) {
         }
     };
 
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
+
     self.init(function(error, result) {
         if(error) {
             self.settings.onError(error);
             return;
         }
-
-        playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
 
         self.watchVideoPlayerCreation(function(adStartedStatus) {
             if(adStartedStatus) {
