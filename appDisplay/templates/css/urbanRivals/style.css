@@ -90,13 +90,14 @@ button {
     width: 750px;
     height: 550px;
     position: relative;
-    background: url("//static.playtem.com/templates/JournalsOfTheUnknown/750x550/background.png") no-repeat top left;
+    background: url("//static.playtem.com/templates/UrbanRivals/750x550/background.png") no-repeat top left;
     border-top: 1px solid transparent;
 }
 .ad__header__title {
     position: absolute;
     left: 175px;
-    top: 17px;
+    /*top: 17px;*/
+    top: 29px; /* todo bugfix */
     width: 400px;
     text-align: center;
     text-transform: uppercase;
@@ -146,36 +147,28 @@ button {
 }
 
 @font-face {
-    font-family: Bitter;
-    src: url('//static.playtem.com/Fonts/Bitter-Bold.ttf');
-}
-
-@font-face {
-    font-family: Lato;
-    src: url('//static.playtem.com/Fonts/Lato-Bold.ttf');
+    font-family: UrbanRivals;
+    src: url('//static.playtem.com/Fonts/UrbanRivals.ttf');
 }
 
 .ad__header__title {
-    font-family: Bitter;
-    font-weight: bold;
-    font-size: 26px;
-    color: #ffde5b;
+    font-family: UrbanRivals;
+    font-size: 30px;
+    color: rgb(255, 255, 255);
 }
 
 .ad__reward__offerMessageBlock {
-    font-family: Bitter;
-    font-weight: normal;
-    font-size: 22px;
-    color: #fffdfd;
+    font-family: UrbanRivals;
+    font-size: 27px;
+    color: #ffffff;
 }
 
 .ad__reward__offerMessage__brandName {
-	font-size: 22px;
+	font-size: 27px;
 }
 
 .ad__reward__itemTitleBlock {
-    font-family: Lato;
-    font-weight: normal;
-    font-size: 16px;
-    color: #836854;
+    font-family: UrbanRivals;
+    font-size: 18px;
+    color: #ffffff;
 }

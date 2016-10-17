@@ -475,10 +475,6 @@ playtemEmbedded.TagProviders.prototype.getPlacementProfileRewarded = function ()
 };
 
 playtemEmbedded.PlaytemVastPlayer = function(options) {
-    var licenseKeys = {
-        "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=='
-    };
-
     var defaults = {
         debug: false,
         vastTag: undefined,
@@ -497,7 +493,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.settings = {
         playerId: 'radiantVideoPlayer',
-        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.0.8/js/rmp.min.js',
+        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.7.2/js/rmp.min.js',
 
         $targetContainerElement: $('.ad'),
     };
@@ -517,13 +513,16 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         adTagUrl: undefined,
         width: undefined,
         height: undefined,        
-        licenseKey: licenseKeys["static.playtem.com"],
+        licenseKey: undefined,
 
+        ads: true,
+        adCountDown: true,
+        adUseWatermarkCountdownAndMessage: true,
         delayToFade: 0,
         bitrates: { mp4:[['Start','outstream']] },
         flashFallBack: false,
         autoplay: true,
-        ads: true,
+        
         adOutStream: true,
         hideControls: false,
         hideSeekBar: true,
@@ -533,6 +532,13 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);
+
+    var licenseKeys = {
+        "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
+        "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
+    };
+
+    this.radiantMediaPlayerSettings.licenseKey = (this.settings.debug == true) ? licenseKeys["poc.playtem.com"] : licenseKeys["static.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;
@@ -558,7 +564,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         var node = "<div id='" + self.settings.playerId + "'></div>";
 
         self.settings.$targetContainerElement.append(node);
-        $("#" + self.settings.playerId).css(self.settings.cssProperties);
+        $("#" + self.settings.playerId).css(self.playerPosition);
     };
 
     createTarget();
@@ -894,9 +900,9 @@ playtemEmbedded.Smartad.prototype.render = function() {
 
 playtemEmbedded.Spotx = function(options) {
     var siteIdTest = "85394";
-    var siteIdProductionOutstream = "146222";
+    var siteIdProduction = "147520";
 
-    var siteId = (options.debug === true) ? siteIdTest : siteIdProductionOutstream;
+    var siteId = (options.debug === true) ? siteIdTest : siteIdProduction;
 
     var defaults = {
         debug: false,
@@ -1106,7 +1112,7 @@ playtemEmbedded.Actiplay = function(options) {
     };
 
     this.settings = {
-        vastTag : "https://pubads.g.doubleclick.net/gampad/ads?sz=450x400&iu=/1163333/EXT_Playtem_InGame_Preroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=[timestamp]" + playtemEmbedded.Core.Date.getCurrentTimestamp()
+
     };
 
     this.vastPlayer = undefined;
@@ -1122,14 +1128,89 @@ playtemEmbedded.Actiplay = function(options) {
 playtemEmbedded.Actiplay.prototype.execute = function() {
     var self = this;
 
+    var buildTag = function() {
+        return "https://pubads.g.doubleclick.net/gampad/ads?"
+            + "sz=450x400"
+            + "&iu=" + "/1163333/EXT_Playtem_InGame_Preroll"
+            + "&impl=" + "s"
+            + "&gdfp_req=" + "1"
+            + "&env=" + "vp"
+            + "&output=" + "vast"
+            + "&unviewed_position_start=" + "1"
+            + "&url="
+            + "&description_url="
+            + "&correlator= " + playtemEmbedded.Core.Date.getCurrentTimestamp();
+    };
+
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
         debug: self.settings.debug,
-        vastTag: self.settings.vastTag,
+        vastTag: buildTag(),
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
         onError: self.settings.onError
+    });
+
+    self.vastPlayer.execute();
+};
+
+playtemEmbedded.Adreels = function(options) {
+    var defaults = {
+        debug: false,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onError: $.noop
+    };
+
+    this.settings = {
+        top: 168,
+        width: 530,
+        height: 350
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.Adreels.prototype.execute = function() {
+    var self = this;
+
+    var buildTag = function() {
+        return "http://vid.springserve.com/vast/39549?"
+            + "w=" + self.settings.width
+            + "&h=" + self.settings.height
+            + "&url=" + "poc.playtem.com" // + "{{URL}}"
+            + "&cb=" + playtemEmbedded.Core.Date.getCurrentTimestamp() // cache buster
+            + "&desc=" // + "a" // + "{{DESCRIPTION}}"
+            + "&ic=" // + "IAB24" // + "{{IAB_CATEGORY}}"
+            + "&dur=" // + 500 // "{{DURATION}}"
+            + "&ap=" // + 1 // "{{AUTOPLAY}}"
+            + "&vid=" // + 1 // + "{{VIDEO_ID}}";
+    };
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: buildTag(),
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onError: self.settings.onError,
+
+        playerPosition: {
+            top: self.settings.top,
+            width: self.settings.width,
+            height: self.settings.height
+        }        
     });
 
     self.vastPlayer.execute();

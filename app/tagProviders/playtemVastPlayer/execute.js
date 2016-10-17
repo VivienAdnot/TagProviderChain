@@ -5,7 +5,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         var node = "<div id='" + self.settings.playerId + "'></div>";
 
         self.settings.$targetContainerElement.append(node);
-        $("#" + self.settings.playerId).css(self.settings.cssProperties);
+        $("#" + self.settings.playerId).css(self.playerPosition);
     };
 
     createTarget();
