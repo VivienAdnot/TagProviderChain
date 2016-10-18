@@ -1,6 +1,7 @@
 playtemEmbedded.Adreels = function(options) {
     var defaults = {
         debug: false,
+        apiKey: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -43,6 +44,7 @@ playtemEmbedded.Adreels.prototype.execute = function() {
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
         debug: self.settings.debug,
         vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,

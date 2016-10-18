@@ -1,4 +1,4 @@
-playtemEmbedded.Spotx.prototype.onAdAvailable = function() {
+playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
     var self = this;
     
     playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdAvailable", function() {

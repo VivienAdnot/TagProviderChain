@@ -478,6 +478,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
     var defaults = {
         debug: false,
         vastTag: undefined,
+        apiKey: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -629,6 +630,204 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         
         videoPlayer.init(self.radiantMediaPlayerSettings);
     });
+};
+
+playtemEmbedded.SpotxInternal = function(options) {
+    var defaults = {
+        debug: false,
+        siteId: undefined,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onError: $.noop
+    };
+
+    this.settings = {
+        scriptUrl: '//search.spotxchange.com/js/spotx.js',
+        scriptOptions: {
+            "spotx_channel_id" : options.siteId,
+            "spotx_ad_unit" : "incontent",
+            "spotx_ad_done_function" : "spotXCallback",
+            "spotx_content_width" : "500",
+            "spotx_content_height" : "300",
+            "spotx_collapse" : "0",
+            "spotx_ad_volume" : "1",
+            "spotx_unmute_on_mouse" : "0",
+            "spotx_autoplay" : "1",
+            "spotx_ad_max_duration" : "180",
+            "spotx_https" : "1",
+            "spotx_content_container_id" : "spotx"
+        },
+        $targetContainerElement: $('.ad'),
+
+        cssProperties: {
+            "position": "absolute",
+            "top": "179px",
+            "left": "150px",
+            "width": "450px",
+            "margin": "0 auto",
+            "text-align": "center"
+        }
+    };
+
+    this.executeCallback = undefined;
+
+    this.timeouts = {
+        videoAvailability : {
+            instance: null,
+            duration: 10000
+        }
+    };
+
+    this.poll = null;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+};
+
+playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
+    var self = this;
+    
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdAvailable", function() {
+        self.settings.onAdAvailable();
+    });
+};
+
+playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
+    var self = this;
+    
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdUnavailable", function() {
+        self.settings.onAdUnavailable();
+    });
+};
+
+playtemEmbedded.SpotxInternal.prototype.onVideoComplete = function() {
+    var self = this;
+    
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onVideoComplete", function() {
+        self.settings.onAdComplete();
+    });
+};
+
+playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
+    var self = this;
+
+    window.spotXCallback = function(videoStatus) {
+        window.clearInterval(self.poll);
+        window.clearTimeout(self.timeouts.videoAvailability.instance);
+
+        if(videoStatus === true) {
+            self.onVideoComplete();
+        } else {
+            self.onAdUnavailable();
+        }
+    };
+
+    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
+
+    self.init(function(error, result) {
+        if(error) {
+            self.settings.onError(error);
+            return;
+        }
+
+        self.watchVideoPlayerCreation(function(adStartedStatus) {
+            if(adStartedStatus) {
+                self.onAdAvailable();
+                return;
+            }
+            
+            self.onAdUnavailable();
+        });
+    });
+};
+
+playtemEmbedded.SpotxInternal.prototype.init = function(callback) {
+    var self = this;
+
+    var createTarget = function(callback) {
+        var node =
+            "<div class='playerWrapper'>" +
+                "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>" +
+            "</div>";
+
+        self.settings.$targetContainerElement.append(node);
+
+        $(".playerWrapper").css(self.settings.cssProperties);
+    };
+
+    createTarget();
+
+    self.injectScript(function(error, result) {
+        if(error) {
+            callback("Spotx injectScript error: " + error, null);
+            return;
+        }
+
+        callback(null, "success");
+    });
+};
+
+playtemEmbedded.SpotxInternal.prototype.injectScript = function(callback) {
+    var self = this;
+
+    var script = document.createElement("script");
+    script.async = true;
+    script.src = self.settings.scriptUrl;
+
+    for(var key in self.settings.scriptOptions) {
+        if(self.settings.scriptOptions.hasOwnProperty(key)) {
+            script.setAttribute('data-' + key, self.settings.scriptOptions[key]);
+        }
+    }
+
+    script.onload = function () {
+        callback(null, "success");
+    };
+
+    // onload equivalent for IE
+    script.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            script.onload();
+        }
+    };
+
+    script.onerror = function () {
+        callback("error while loading script", null);
+    };
+
+    try {
+        document.getElementsByTagName("body")[0].appendChild(script);
+    } catch(e) {
+        callback("body.appendChild exception: " + e, null);
+    }
+};
+
+playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function(callback) {
+    var self = this;
+
+    self.poll = window.setInterval(function() {
+        // refresh every round
+        var $videoPlayerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
+        var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
+        var isVideoPlayerVisible = $videoPlayerContainer.height() == self.settings.scriptOptions["spotx_content_height"];
+
+        if(isVideoPlayerDefined && isVideoPlayerVisible) {
+            window.clearTimeout(self.timeouts.videoAvailability.instance);
+
+            window.clearInterval(self.poll);
+
+            callback(true);
+        }
+    }, 250);
+
+    self.timeouts.videoAvailability.instance = window.setTimeout(function () {
+        window.clearInterval(self.poll);
+
+        callback(false);
+    }, self.timeouts.videoAvailability.duration);
 };
 
 playtemEmbedded.Affiz = function(options) {
@@ -898,14 +1097,15 @@ playtemEmbedded.Smartad.prototype.render = function() {
 };
 
 
-playtemEmbedded.Spotx = function(options) {
+playtemEmbedded.SpotxInstream = function(options) {
     var siteIdTest = "85394";
-    var siteIdProduction = "147520";
+    var siteIdProductionInstream = "147520";
 
-    var siteId = (options.debug === true) ? siteIdTest : siteIdProduction;
+    this.siteId = (options.debug === true) ? siteIdTest : siteIdProductionInstream;
 
     var defaults = {
         debug: false,
+        apiKey: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -913,197 +1113,72 @@ playtemEmbedded.Spotx = function(options) {
         onError: $.noop
     };
 
-    this.settings = {
-        scriptUrl: '//search.spotxchange.com/js/spotx.js',
-        scriptOptions: {
-            "spotx_channel_id" : siteId,
-            "spotx_ad_unit" : "incontent",
-            "spotx_ad_done_function" : "spotXCallback",
-            "spotx_content_width" : "500",
-            "spotx_content_height" : "300",
-            "spotx_collapse" : "0",
-            "spotx_ad_volume" : "1",
-            "spotx_unmute_on_mouse" : "0",
-            "spotx_autoplay" : "1",
-            "spotx_ad_max_duration" : "180",
-            "spotx_https" : "1",
-            "spotx_content_container_id" : "spotx"
-        },
-        $targetContainerElement: $('.ad'),
-
-        cssProperties: {
-            "position": "absolute",
-            "top": "179px",
-            "left": "150px",
-            "width": "450px",
-            "margin": "0 auto",
-            "text-align": "center"
-        }
-    };
-
-    this.executeCallback = undefined;
-
-    this.timeouts = {
-        videoAvailability : {
-            instance: null,
-            duration: 10000
-        }
-    };
-
-    this.poll = null;
-
-
+    this.spotxInternal = null;
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);
 };
 
-playtemEmbedded.Spotx.prototype.onAdAvailable = function() {
+playtemEmbedded.SpotxInstream.prototype.execute = function() {
     var self = this;
-    
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdAvailable", function() {
-        self.settings.onAdAvailable();
+
+    self.spotxInternal = new playtemEmbedded.SpotxInternal({
+        debug: self.settings.debug,
+        siteId: self.siteId,
+        apiKey: self.settings.apiKey,
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onError: self.settings.onError
     });
+
+    self.spotxInternal.execute();
 };
 
-playtemEmbedded.Spotx.prototype.onAdUnavailable = function() {
-    var self = this;
-    
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdUnavailable", function() {
-        self.settings.onAdUnavailable();
-    });
-};
+playtemEmbedded.SpotxOutstream = function(options) {
+    var siteIdTest = "85394";
+    var siteIdProductionOutstream = "146222";
 
-playtemEmbedded.Spotx.prototype.onVideoComplete = function() {
-    var self = this;
-    
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onVideoComplete", function() {
-        self.settings.onAdComplete();
-    });
-};
+    this.siteId = (options.debug === true) ? siteIdTest : siteIdProductionOutstream;
 
-playtemEmbedded.Spotx.prototype.execute = function(callback) {
-    var self = this;
+    var defaults = {
+        debug: false,
+        apiKey: undefined,
 
-    window.spotXCallback = function(videoStatus) {
-        window.clearInterval(self.poll);
-        window.clearTimeout(self.timeouts.videoAvailability.instance);
-
-        if(videoStatus === true) {
-            self.onVideoComplete();
-        } else {
-            self.onAdUnavailable();
-        }
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onError: $.noop
     };
 
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
+    this.spotxInternal = null;
 
-    self.init(function(error, result) {
-        if(error) {
-            self.settings.onError(error);
-            return;
-        }
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+};
 
-        self.watchVideoPlayerCreation(function(adStartedStatus) {
-            if(adStartedStatus) {
-                self.onAdAvailable();
-                return;
-            }
-            
-            self.onAdUnavailable();
-        });
+playtemEmbedded.SpotxOutstream.prototype.execute = function() {
+    var self = this;
+
+    self.spotxInternal = new playtemEmbedded.SpotxInternal({
+        debug: self.settings.debug,
+        siteId: self.siteId,
+        apiKey: self.settings.apiKey,
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onError: self.settings.onError
     });
-};
 
-playtemEmbedded.Spotx.prototype.init = function(callback) {
-    var self = this;
-
-    var createTarget = function(callback) {
-        var node =
-            "<div class='playerWrapper'>" +
-                "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>" +
-            "</div>";
-
-        self.settings.$targetContainerElement.append(node);
-
-        $(".playerWrapper").css(self.settings.cssProperties);
-    };
-
-    createTarget();
-
-    self.injectScript(function(error, result) {
-        if(error) {
-            callback("Spotx injectScript error: " + error, null);
-            return;
-        }
-
-        callback(null, "success");
-    });
-};
-
-playtemEmbedded.Spotx.prototype.injectScript = function(callback) {
-    var self = this;
-
-    var script = document.createElement("script");
-    script.async = true;
-    script.src = self.settings.scriptUrl;
-
-    for(var key in self.settings.scriptOptions) {
-        if(self.settings.scriptOptions.hasOwnProperty(key)) {
-            script.setAttribute('data-' + key, self.settings.scriptOptions[key]);
-        }
-    }
-
-    script.onload = function () {
-        callback(null, "success");
-    };
-
-    // onload equivalent for IE
-    script.onreadystatechange = function () {
-        if (this.readyState === "complete") {
-            script.onload();
-        }
-    };
-
-    script.onerror = function () {
-        callback("error while loading script", null);
-    };
-
-    try {
-        document.getElementsByTagName("body")[0].appendChild(script);
-    } catch(e) {
-        callback("body.appendChild exception: " + e, null);
-    }
-};
-
-playtemEmbedded.Spotx.prototype.watchVideoPlayerCreation = function(callback) {
-    var self = this;
-
-    self.poll = window.setInterval(function() {
-        // refresh every round
-        var $videoPlayerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
-        var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
-        var isVideoPlayerVisible = $videoPlayerContainer.height() == self.settings.scriptOptions["spotx_content_height"];
-
-        if(isVideoPlayerDefined && isVideoPlayerVisible) {
-            window.clearTimeout(self.timeouts.videoAvailability.instance);
-
-            window.clearInterval(self.poll);
-
-            callback(true);
-        }
-    }, 250);
-
-    self.timeouts.videoAvailability.instance = window.setTimeout(function () {
-        window.clearInterval(self.poll);
-
-        callback(false);
-    }, self.timeouts.videoAvailability.duration);
+    self.spotxInternal.execute();
 };
 
 playtemEmbedded.Actiplay = function(options) {
     var defaults = {
         debug: false,
+        apiKey: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -1145,6 +1220,7 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
         debug: self.settings.debug,
         vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
@@ -1158,6 +1234,7 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
 playtemEmbedded.Adreels = function(options) {
     var defaults = {
         debug: false,
+        apiKey: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -1200,6 +1277,7 @@ playtemEmbedded.Adreels.prototype.execute = function() {
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
         debug: self.settings.debug,
         vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,

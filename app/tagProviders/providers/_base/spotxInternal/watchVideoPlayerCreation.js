@@ -1,4 +1,4 @@
-playtemEmbedded.Spotx.prototype.watchVideoPlayerCreation = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function(callback) {
     var self = this;
 
     self.poll = window.setInterval(function() {

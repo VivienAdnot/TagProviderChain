@@ -1,4 +1,4 @@
-playtemEmbedded.Spotx.prototype.injectScript = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.injectScript = function(callback) {
     var self = this;
 
     var script = document.createElement("script");

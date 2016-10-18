@@ -1,18 +1,10 @@
 var listApikey = {
-    "Belote test": "TST9-acb2b",
-    "Belote": "4da9-acb2b",
-
-    "Ludokado video test": "TSTb-8438v",
-    "Ludokado video": "4a2b-8438v",
-
-    "Ludokado display test": "9a19-43fav",
-    "Ludokado display": "9a19-43fav",
-
-    "IsCool video test" : "TSTc-8a80i",
-    "IsCool video" : "452c-8a80i",
-
-    "UrbanRivals video": "494f-8f1bv",
-
-    "Jotu video test" : "TSTf-be78j",
-    "Jotu video": "4c3f-be78j"
+    "Ludokado rewarded": "4a2b-8438v",
+    "Belote rewarded": "4da9-acb2b",
+    "IsCool rewarded" : "452c-8a80i",
+    "UrbanRivals rewarded": "494f-8f1bv",
+    "Jotu rewarded": "4c3f-be78j",
+    
+    "Ludokado oustream": "9a19-43fav",
+    "Jotu oustream": "1c27-4684v"
 };

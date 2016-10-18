@@ -1,4 +1,4 @@
-playtemEmbedded.Spotx.prototype.onVideoComplete = function() {
+playtemEmbedded.SpotxInternal.prototype.onVideoComplete = function() {
     var self = this;
     
     playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onVideoComplete", function() {

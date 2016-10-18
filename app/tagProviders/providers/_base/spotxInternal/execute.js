@@ -1,4 +1,4 @@
-playtemEmbedded.Spotx.prototype.execute = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
     var self = this;
 
     window.spotXCallback = function(videoStatus) {

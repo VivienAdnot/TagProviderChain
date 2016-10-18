@@ -1,4 +1,4 @@
-playtemEmbedded.Spotx.prototype.onAdUnavailable = function() {
+playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
     var self = this;
     
     playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdUnavailable", function() {

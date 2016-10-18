@@ -1,4 +1,4 @@
-playtemEmbedded.Spotx.prototype.init = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.init = function(callback) {
     var self = this;
 
     var createTarget = function(callback) {
