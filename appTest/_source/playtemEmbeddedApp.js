@@ -692,7 +692,7 @@ playtemEmbedded.SpotxInternal = function(options) {
 playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
     var self = this;
     
-    track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
         self.settings.onAdAvailable();
     });
 };
@@ -700,7 +700,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
 playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
     var self = this;
     
-    track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
         self.settings.onAdUnavailable();
     });
 };
@@ -708,7 +708,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
 playtemEmbedded.SpotxInternal.prototype.onVideoComplete = function() {
     var self = this;
     
-    track(self.settings.providerName, self.settings.apiKey, "onVideoComplete", function() {
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onVideoComplete", function() {
         self.settings.onAdComplete();
     });
 };
@@ -727,7 +727,7 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
         }
     };
 
-    track(self.settings.providerName, self.settings.apiKey, "request");
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request");
 
     self.init(function(error, result) {
         if(error) {
