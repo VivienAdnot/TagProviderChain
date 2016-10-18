@@ -479,6 +479,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         debug: false,
         vastTag: undefined,
         apiKey: undefined,
+        providerName: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -570,7 +571,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
 
     createTarget();
 
-    playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "request");
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request");
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
@@ -599,7 +600,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         }
 
         videoPlayerElement.addEventListener('adloaded', function() {
-            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdAvailable", function() {
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
                 self.settings.onAdAvailable();
             });
         });
@@ -607,7 +608,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         videoPlayerElement.addEventListener('aderror', function() {
             self.clean();
 
-            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onAdUnavailable", function() {
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
                 self.settings.onAdUnavailable();
             });
         });
@@ -615,7 +616,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         videoPlayerElement.addEventListener('adcomplete', function() {
             self.clean();
 
-            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onVideoComplete", function() {
                 self.settings.onAdComplete();
             });
         });
@@ -623,7 +624,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         videoPlayerElement.addEventListener('adskipped', function() {
             self.clean();
 
-            playtemEmbedded.Core.track("playtemVastPlayer", self.settings.apiKey, "onVideoComplete", function() {
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onVideoComplete", function() {
                 self.settings.onAdComplete();
             });
         });
@@ -637,6 +638,7 @@ playtemEmbedded.SpotxInternal = function(options) {
         debug: false,
         siteId: undefined,
         apiKey: undefined,
+        providerName: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -690,7 +692,7 @@ playtemEmbedded.SpotxInternal = function(options) {
 playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
     var self = this;
     
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdAvailable", function() {
+    track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
         self.settings.onAdAvailable();
     });
 };
@@ -698,7 +700,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
 playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
     var self = this;
     
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onAdUnavailable", function() {
+    track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
         self.settings.onAdUnavailable();
     });
 };
@@ -706,7 +708,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
 playtemEmbedded.SpotxInternal.prototype.onVideoComplete = function() {
     var self = this;
     
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "onVideoComplete", function() {
+    track(self.settings.providerName, self.settings.apiKey, "onVideoComplete", function() {
         self.settings.onAdComplete();
     });
 };
@@ -725,7 +727,7 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
         }
     };
 
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
+    track(self.settings.providerName, self.settings.apiKey, "request");
 
     self.init(function(error, result) {
         if(error) {
@@ -1126,6 +1128,7 @@ playtemEmbedded.SpotxInstream.prototype.execute = function() {
         debug: self.settings.debug,
         siteId: self.siteId,
         apiKey: self.settings.apiKey,
+        providerName: "SpotxInstream",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
@@ -1165,6 +1168,7 @@ playtemEmbedded.SpotxOutstream.prototype.execute = function() {
         debug: self.settings.debug,
         siteId: self.siteId,
         apiKey: self.settings.apiKey,
+        providerName: "SpotxOutstream",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
@@ -1221,6 +1225,7 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
         debug: self.settings.debug,
         vastTag: buildTag(),
         apiKey: self.settings.apiKey,
+        providerName: "Actiplay",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
@@ -1278,6 +1283,7 @@ playtemEmbedded.Adreels.prototype.execute = function() {
         debug: self.settings.debug,
         vastTag: buildTag(),
         apiKey: self.settings.apiKey,
+        providerName: "Adreels",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,

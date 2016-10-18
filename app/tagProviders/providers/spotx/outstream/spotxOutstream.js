@@ -27,6 +27,7 @@ playtemEmbedded.SpotxOutstream.prototype.execute = function() {
         debug: self.settings.debug,
         siteId: self.siteId,
         apiKey: self.settings.apiKey,
+        providerName: "SpotxOutstream",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,

@@ -12,7 +12,7 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
         }
     };
 
-    playtemEmbedded.Core.track("spotx", self.settings.apiKey, "request");
+    track(self.settings.providerName, self.settings.apiKey, "request");
 
     self.init(function(error, result) {
         if(error) {

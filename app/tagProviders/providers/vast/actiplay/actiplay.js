@@ -44,6 +44,7 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
         debug: self.settings.debug,
         vastTag: buildTag(),
         apiKey: self.settings.apiKey,
+        providerName: "Actiplay",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
