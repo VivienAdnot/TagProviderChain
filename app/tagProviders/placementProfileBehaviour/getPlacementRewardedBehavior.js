@@ -1,4 +1,4 @@
-playtemEmbedded.TagProviders.prototype.getPlacementProfileRewarded = function () {
+playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function () {
     var self = this;
 
     return {

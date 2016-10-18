@@ -18,8 +18,8 @@ var providersRewarded = {
     },
 
     urbanRivals: {
-        prod: empty,
-        test: [playtemEmbedded.Affiz]
+        prod: [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay],
+        test: empty
     },
 
     jotu: {

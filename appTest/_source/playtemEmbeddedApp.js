@@ -28,7 +28,7 @@ playtemEmbedded.App.prototype.execute = function() {
         apiKey: self.settings.apiKey,
         gameType: self.settings.gameType,
         debug: self.settings.debug,
-        blockWindow: self.settings.placementType === playtemEmbedded.AppSettings.placementTypes.rewardedVideo
+        blockWindow: self.settings.placementType === playtemEmbedded.AppSettings.placementTypes.rewarded
     });
     
     tagProviders.execute();
@@ -39,8 +39,8 @@ playtemEmbedded.App.prototype.execute = function() {
 
 playtemEmbedded.AppSettings = {
     placementTypes: {
-        classic: "classic",
-        rewardedVideo: "rewardedVideo"
+        outstream: "outstream",
+        rewarded: "rewarded"
     }
 };
 
@@ -354,7 +354,7 @@ playtemEmbedded.TagProviders = function (options) {
 playtemEmbedded.TagProviders.prototype.execute = function () {
     var self = this;
 
-    var placementProfile = (self.settings.blockWindow == true) ? self.getPlacementProfileRewarded() : self.getPlacementProfileClassic();
+    var placementProfile = (self.settings.blockWindow == true) ? self.getPlacementRewardedBehavior() : self.getPlacementOutstreamBehavior();
 
     self.fetchAdvert(placementProfile);
 };
@@ -415,7 +415,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile)
     run();
 };
 
-playtemEmbedded.TagProviders.prototype.getPlacementProfileClassic = function () {
+playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function () {
     var self = this;
 
     return {
@@ -441,7 +441,7 @@ playtemEmbedded.TagProviders.prototype.getPlacementProfileClassic = function () 
     };
 };
 
-playtemEmbedded.TagProviders.prototype.getPlacementProfileRewarded = function () {
+playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function () {
     var self = this;
 
     return {

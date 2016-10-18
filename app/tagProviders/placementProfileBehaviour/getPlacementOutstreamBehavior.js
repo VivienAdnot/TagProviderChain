@@ -1,4 +1,4 @@
-playtemEmbedded.TagProviders.prototype.getPlacementProfileClassic = function () {
+playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function () {
     var self = this;
 
     return {
