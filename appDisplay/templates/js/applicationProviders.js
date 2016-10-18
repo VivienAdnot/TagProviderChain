@@ -3,7 +3,7 @@ var empty = [];
 
 var providersRewarded = {
     ludokado: {
-        prod: [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream],
+        prod: [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay],
         test: empty
     },
 
