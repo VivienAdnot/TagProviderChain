@@ -6,7 +6,7 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
         window.clearTimeout(self.timeouts.videoAvailability.instance);
 
         if(videoStatus === true) {
-            self.onVideoComplete();
+            self.onAdComplete();
         } else {
             self.onAdUnavailable();
         }
@@ -16,7 +16,7 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
 
     self.init(function(error, result) {
         if(error) {
-            self.settings.onError(error);
+            self.onInternalError();
             return;
         }
 

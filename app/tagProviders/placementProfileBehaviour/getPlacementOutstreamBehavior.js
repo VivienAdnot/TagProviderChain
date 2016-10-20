@@ -16,10 +16,12 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
             }
         },
 
-        onAdUnavailable : function() {
+        onAllAdUnavailable : function() {
             window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
         },
 
-        onAdComplete : $.noop
+        onAdComplete : $.noop,
+
+        onAdError: $.noop
     };
 };

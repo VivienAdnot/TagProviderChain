@@ -13,8 +13,10 @@ playtemEmbedded.Affiz = function(options) {
     };
 
     this.settings = {
+        providerName: 'affiz',
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
         siteId : siteIdProduction,
+        clientId: "12345", // TBD
         $targetContainerElement: $('.ad'),
         modal: true,
         httpRequestTimeout: 30000,
@@ -23,8 +25,10 @@ playtemEmbedded.Affiz = function(options) {
         }
     };
 
+    playtemEmbedded.Core.globals.affizContext = undefined;
+
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
-    this.timeoutTimer = null;
+    this.adFound = false;
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);

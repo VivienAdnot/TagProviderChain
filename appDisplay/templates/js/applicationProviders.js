@@ -3,7 +3,7 @@ var empty = [];
 
 var providersRewarded = {
     ludokado: {
-        prod: [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay],
+        prod: [playtemEmbedded.SpotxInstream, playtemEmbedded.Affiz, playtemEmbedded.Actiplay],
         test: empty
     },
 
@@ -18,14 +18,19 @@ var providersRewarded = {
     },
 
     urbanRivals: {
-        prod: [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay],
-        test: empty
+        prod: [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz],
+        test: [playtemEmbedded.Actiplay]
     },
 
     jotu: {
-        prod: empty,
+        prod: [playtemEmbedded.Adreels],
+        test: empty
+    },
+
+    ladyPopular: {
+        prod: [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz],
         test: [playtemEmbedded.Actiplay]
-    }
+    },
 };
 
 var providersOutstream = {

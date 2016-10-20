@@ -23,7 +23,7 @@ playtemEmbedded.SpotxInternal = function(options) {
             "spotx_ad_volume" : "1",
             "spotx_unmute_on_mouse" : "0",
             "spotx_autoplay" : "1",
-            "spotx_ad_max_duration" : "180",
+            "spotx_ad_max_duration" : "30",
             "spotx_https" : "1",
             "spotx_content_container_id" : "spotx"
         },
@@ -49,6 +49,7 @@ playtemEmbedded.SpotxInternal = function(options) {
     };
 
     this.poll = null;
+    this.adFound = false;
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);

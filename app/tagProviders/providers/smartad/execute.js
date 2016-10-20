@@ -1,16 +1,21 @@
 playtemEmbedded.Smartad.prototype.execute = function(callback) {
     var self = this;
 
-    playtemEmbedded.Core.track("smartad", self.settings.apiKey, "request");
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request");
 
-    self.init(function(error, data) {
-        if(self.timeoutFired == true) {
-            // callback has already been fired.
-            return;
+    var onLoadHandler = function(result) {
+        if (result && result.hasAd === true) {
+            self.onAdAvailable();
         }
         
+        else {
+            self.onAdUnavailable();
+        }
+    };
+
+    self.init(function(error) {
         if(error != null) {
-            self.settings.onError(error);
+            self.onInternalError();
             return;
         }
 
@@ -20,21 +25,6 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             renderMode: 0
         });
 
-        var loadHandler = function(result) {
-            if (result && result.hasAd === true) {
-                playtemEmbedded.Core.track("smartad", self.settings.apiKey, "onAdAvailable", function() {
-                    self.settings.onAdAvailable();
-                });
-            } else {
-                self.destructor();
-
-                playtemEmbedded.Core.track("smartad", self.settings.apiKey, "onAdUnavailable", function() {
-                    self.settings.onAdUnavailable();
-                });
-                return;
-            }
-        };
-
         sas.call("onecall",
             {
                 siteId: self.settings.siteId,
@@ -43,23 +33,11 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
             },
             {
                 onLoad: function(result) {
-                    if(self.timeoutFired) {
-                        return;
-                    }
-
-                    window.clearTimeout(self.timeoutTimer);
-                    loadHandler(result);
+                    onLoadHandler(result);
                 }
             }
         );
 
-        // we have to call it outside of the callback
         self.render();
     });
-
-    self.timeoutTimer = window.setTimeout(function () {
-        self.destructor();
-        self.timeoutFired = true;
-        self.settings.onError("Smartad: timeout");
-    }, self.settings.httpRequestTimeout);
 };

@@ -8,7 +8,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onError: $.noop,
+        onAdError: $.noop,
 
         playerPosition: {
             top: 179,
@@ -58,6 +58,8 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);
+
+    this.adFound = false;
 
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
