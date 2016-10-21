@@ -6,7 +6,7 @@ playtemEmbedded.Actiplay = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onError: $.noop
+        onAdError: $.noop
     };
 
     this.settings = {
@@ -49,7 +49,7 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onError: self.settings.onError
+        onAdError: self.settings.onAdError
     });
 
     self.vastPlayer.execute();

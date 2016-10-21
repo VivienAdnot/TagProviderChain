@@ -341,7 +341,8 @@ playtemEmbedded.TagProviders = function (options) {
     this.settings = {
         sendEvents: {
             onAdAvailable: "playtem:tagApp:adAvailable",
-            onAdUnavailable: "playtem:tagApp:adUnavailable"
+            onAdUnavailable: "playtem:tagApp:adUnavailable",
+            messageCloseWindow: "closeAdWindow"
         }
     };
 
@@ -432,7 +433,10 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
 
         onAdComplete : $.noop,
 
-        onAdError: $.noop
+        onAdError: function() {
+            //request close window
+            window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+        }
     };
 };
 
@@ -484,7 +488,7 @@ playtemEmbedded.Affiz = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onError: $.noop
+        onAdError: $.noop
     };
 
     this.settings = {
@@ -640,7 +644,7 @@ playtemEmbedded.Smartad = function(options) {
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
-        onError: $.noop
+        onAdError: $.noop
     };
 
     this.settings = {
@@ -786,7 +790,7 @@ playtemEmbedded.SpotxInternal = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onError: $.noop
+        onAdError: $.noop
     };
 
     this.settings = {
@@ -1015,7 +1019,7 @@ playtemEmbedded.SpotxInstream = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onError: $.noop
+        onAdError: $.noop
     };
 
     this.spotxInternal = null;
@@ -1036,7 +1040,7 @@ playtemEmbedded.SpotxInstream.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onError: self.settings.onError
+        onAdError: self.settings.onAdError
     });
 
     self.spotxInternal.execute();
@@ -1055,7 +1059,7 @@ playtemEmbedded.SpotxOutstream = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onError: $.noop
+        onAdError: $.noop
     };
 
     this.spotxInternal = null;
@@ -1076,7 +1080,7 @@ playtemEmbedded.SpotxOutstream.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onError: self.settings.onError
+        onAdError: self.settings.onAdError
     });
 
     self.spotxInternal.execute();
@@ -1103,7 +1107,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.settings = {
         playerId: 'radiantVideoPlayer',
-        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.7.2/js/rmp.min.js',
+        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.8.3/js/rmp.min.js',
 
         $targetContainerElement: $('.ad'),
     };
@@ -1150,7 +1154,8 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    this.radiantMediaPlayerSettings.licenseKey = (this.settings.debug == true) ? licenseKeys["poc.playtem.com"] : licenseKeys["static.playtem.com"];
+    //this.radiantMediaPlayerSettings.licenseKey = (this.settings.debug == true) ? licenseKeys["poc.playtem.com"] : licenseKeys["static.playtem.com"];
+    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;
@@ -1256,11 +1261,11 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         });
 
         videoPlayerElement.addEventListener('adcomplete', function() {
-            self.onVideoComplete();
+            self.onAdComplete();
         });
 
         videoPlayerElement.addEventListener('adskipped', function() {
-            self.onVideoComplete();
+            self.onAdComplete();
         });
         
         videoPlayer.init(self.radiantMediaPlayerSettings);
@@ -1294,7 +1299,7 @@ playtemEmbedded.Actiplay = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onError: $.noop
+        onAdError: $.noop
     };
 
     this.settings = {
@@ -1337,7 +1342,7 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onError: self.settings.onError
+        onAdError: self.settings.onAdError
     });
 
     self.vastPlayer.execute();
@@ -1351,7 +1356,7 @@ playtemEmbedded.Adreels = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onError: $.noop
+        onAdError: $.noop
     };
 
     this.settings = {
@@ -1395,7 +1400,7 @@ playtemEmbedded.Adreels.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onError: self.settings.onError,
+        onAdError: self.settings.onAdError,
 
         playerPosition: {
             top: self.settings.top,

@@ -3,15 +3,15 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>LadyPopular rewarded</title>
+    <title>Mediastay outstream</title>
 
-    <link rel="stylesheet" href="css/ladyPopular/style.css"/>
+    <link rel="stylesheet" href="css/genericReward/style.css"/>
 </head>
 <body>
     <div class="ad">
         <!-- title-->
         <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">Congratulations</h1>
-        <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/LadyPopular/750x550/cross-close.png"/>
+        <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/Generic_with_reward_desktop/750x550/cross-close.png"/>
 
         <!-- reward block-->
         <div class="ad__reward__offerMessageBlock">
@@ -40,13 +40,13 @@
 
     <script type="text/javascript">
         var playtemApp = new playtemEmbedded.App({
-            hasReward: false,
-            providers: providers["rewarded"]["r47c7-9c9b"],
-            apiKey: "r47c7-9c9b",
+            hasReward: true,
+            providers: providers["outstream"]["e048-4cdev"],
+            apiKey: "e048-4cdev",
             outputLanguage : "en-US",
             gameType: "desktop",
             debug: false,
-            placementType: "rewarded"
+            placementType: "outstream"
         });
 
         playtemApp.execute();

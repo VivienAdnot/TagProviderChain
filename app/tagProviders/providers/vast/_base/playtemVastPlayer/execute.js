@@ -29,11 +29,11 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         });
 
         videoPlayerElement.addEventListener('adcomplete', function() {
-            self.onVideoComplete();
+            self.onAdComplete();
         });
 
         videoPlayerElement.addEventListener('adskipped', function() {
-            self.onVideoComplete();
+            self.onAdComplete();
         });
         
         videoPlayer.init(self.radiantMediaPlayerSettings);

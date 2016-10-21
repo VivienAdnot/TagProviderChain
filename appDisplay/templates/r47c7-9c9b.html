@@ -13,11 +13,22 @@
         <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">Congratulations</h1>
         <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/LadyPopular/750x550/cross-close.png"/>
 
-        <!-- discover Message block-->
-        <div class="ad__discoverMessageBlock u-verticalAlignText">
-            <div class="ad__discoverMessageWrapper">
-                <span class="ad__discoverMessage__brandName">Our partner</span>
-                <span id="js-discoverMessage">invites you to discover</span>
+        <!-- reward block-->
+        <div class="ad__reward__offerMessageBlock">
+            <div class="ad__reward__offerMessage u-verticalAlignText">
+                <div>
+                    <span class="ad__reward__offerMessage__brandName"></span>
+                    <span id="js-rewardOfferingMessage"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ad__rewardImageBlock">
+            <img id="rewardImageUri" class="ad__reward__image" src="img/pixel.png" alt="" />
+            <div class="ad__reward__itemTitleBlock">
+                <div class="ad__reward__itemTitle u-verticalAlignText">
+                    <span id="rewardName"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -29,8 +40,8 @@
 
     <script type="text/javascript">
         var playtemApp = new playtemEmbedded.App({
-            hasReward: false,
-            providers: providersRewarded.ladyPopular.test,
+            hasReward: true,
+            providers: providers["rewarded"]["r47c7-9c9b"],
             apiKey: "r47c7-9c9b",
             outputLanguage : "en-US",
             gameType: "desktop",

@@ -5,6 +5,9 @@ var listApikey = {
     "UrbanRivals rewarded": "494f-8f1bv",
     "Jotu rewarded": "4c3f-be78j",
     
+    "Jotu outstream": "1c27-4684v",
     "Ludokado outstream": "9a19-43fav",
-    "Jotu outstream": "1c27-4684v"
+    "LadyPopular outstream": "92c6-497ff",
+    "Mediastay outstream": "e048-4cdev",
+    "ActiplayNoReward outstream": "4f63-b20df"
 };
