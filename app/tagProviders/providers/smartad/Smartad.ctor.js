@@ -1,13 +1,15 @@
 playtemEmbedded.Smartad = function(options) {
     var defaults = {
         debug: false,
+        apiKey: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
-        onError: $.noop
+        onAdError: $.noop
     };
 
     this.settings = {
+        providerName: "Smart",
         scriptUrl: '//www8.smartadserver.com/config.js?nwid=1901',
         siteId : 100394,
         pageName : "home",

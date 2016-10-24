@@ -5,7 +5,7 @@ test("fail: url 404", function (assert) {
     assert.expect(2);
 
     //Arrange
-    var provider = new playtemEmbedded.Spotx({
+    var provider = new playtemEmbedded.SpotxInternal({
         scriptUrl : "http://playtem1234/script.js"
     });
 
@@ -21,7 +21,7 @@ test("fail: url 404", function (assert) {
 //     assert.expect(2);
 
 //     //Arrange
-//     var provider = new playtemEmbedded.Spotx();
+//     var provider = new playtemEmbedded.SpotxInternal();
 //     provider.timeouts.scriptInjected.duration = 10;
 
 //     provider.execute(function (error, result) {
@@ -36,7 +36,7 @@ test("fail: url 404", function (assert) {
 //     assert.expect(2);
 
 //     //Arrange
-//     var provider = new playtemEmbedded.Spotx();
+//     var provider = new playtemEmbedded.SpotxInternal();
 //     provider.settings.scriptOptions["spotx_channel_id"] = "0000";
 
 //     provider.execute(function (error, result) {

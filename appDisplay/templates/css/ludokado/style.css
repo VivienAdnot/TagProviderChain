@@ -90,7 +90,7 @@ button {
     width: 750px;
     height: 550px;
     position: relative;
-    background: url("https://static.playtem.com/templates/Ludokado/750x550/background.png") no-repeat top left;
+    background: url("//static.playtem.com/templates/Ludokado/750x550/background.png") no-repeat top left;
     border-top: 1px solid transparent;
 }
 .ad__header__title {
@@ -148,13 +148,13 @@ button {
 @font-face {
     font-family: Oswald;
     /*src: url('/Content/Fonts/Oswald-Bold.ttf');*/
-    src: url('https://static.playtem.com/Fonts/Oswald-Bold.ttf');
+    src: url('//static.playtem.com/Fonts/Oswald-Bold.ttf');
 }
 
 @font-face {
     font-family: MouseMemoirs;
     /*src: url('/Content/Fonts/mouse-memoirs.regular.ttf');*/
-    src: url('https://static.playtem.com/Fonts/mouse-memoirs.regular.ttf');
+    src: url('//static.playtem.com/Fonts/mouse-memoirs.regular.ttf');
 }
 
 .ad__header__title {

@@ -11,10 +11,10 @@ playtemEmbedded.Smartad.prototype.init = function(callback) {
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(!error && data == "success") {
             createTarget();
-            callback(null, "success");
+            callback(null);
             return;
         }
         
-        callback("smartad: script couldn't be loaded", null);
+        callback("smartad: script couldn't be loaded");
     });
 };

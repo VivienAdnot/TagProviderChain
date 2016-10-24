@@ -11,7 +11,8 @@ playtemEmbedded.TagProviders = function (options) {
     this.settings = {
         sendEvents: {
             onAdAvailable: "playtem:tagApp:adAvailable",
-            onAdUnavailable: "playtem:tagApp:adUnavailable"
+            onAdUnavailable: "playtem:tagApp:adUnavailable",
+            messageCloseWindow: "closeAdWindow"
         }
     };
 

@@ -2,7 +2,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
-        <title>Ludokado video</title>
+        <title>Ludokado rewarded</title>
 
         <link rel="stylesheet" href="css/ludokado/style.css"/>
     </head>
@@ -10,7 +10,7 @@
         <div class="ad">
             <!-- title-->
             <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">Congratulations</h1>
-            <img class="js-closeAd ad__imgClose" src="https://static.playtem.com/templates/Ludokado/750x550/cross-close.png"/>
+            <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/Ludokado/750x550/cross-close.png"/>
 
             <!-- reward block-->
             <div class="ad__reward__offerMessageBlock">
@@ -34,18 +34,18 @@
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>        
 
-    <script type="text/javascript" src="../_source/playtemEmbeddedApp.js?13102016"></script>
-    <script type="text/javascript" src="js/applicationProviders.js?13102016"></script>
+        <script type="text/javascript" src="../_source/playtemEmbeddedApp.js?1"></script>
+        <script type="text/javascript" src="js/applicationProviders.js?1"></script>
 
         <script type="text/javascript">
             var playtemApp = new playtemEmbedded.App({
                 hasReward: true,
-                providers: providers["Ludokado-video"],
+                providers: providers["rewarded"]["4a2b-8438v"],
                 apiKey: "4a2b-8438v",
                 outputLanguage : "en-US",
                 gameType: "desktop",
                 debug: false,
-                placementType: "rewardedVideo"
+                placementType: "rewarded"
             });
 
             playtemApp.execute();

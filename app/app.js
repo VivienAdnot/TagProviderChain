@@ -26,7 +26,7 @@ playtemEmbedded.App.prototype.execute = function() {
         apiKey: self.settings.apiKey,
         gameType: self.settings.gameType,
         debug: self.settings.debug,
-        blockWindow: self.settings.placementType === playtemEmbedded.AppSettings.placementTypes.rewardedVideo
+        blockWindow: self.settings.placementType === playtemEmbedded.AppSettings.placementTypes.rewarded
     });
     
     tagProviders.execute();
