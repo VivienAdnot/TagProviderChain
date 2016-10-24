@@ -9,7 +9,7 @@ playtemEmbedded.Smartad = function(options) {
     };
 
     this.settings = {
-        providerName: "Smart",
+        providerName: "Smartad",
         scriptUrl: '//www8.smartadserver.com/config.js?nwid=1901',
         siteId : 100394,
         pageName : "home",
@@ -29,6 +29,8 @@ playtemEmbedded.Smartad = function(options) {
             "text-align": "center"
         }
     };
+
+    this.adFound = false;
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);       

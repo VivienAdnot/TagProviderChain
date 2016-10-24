@@ -14,10 +14,12 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
     };
 
     self.init(function(error) {
-        if(error != null) {
-            self.onInternalError();
+        if(error) {
+            self.onScriptLoadingError();
             return;
         }
+        
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         sas.setup({
             domain: self.settings.domain,

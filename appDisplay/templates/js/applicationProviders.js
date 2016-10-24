@@ -39,14 +39,14 @@ var providers = {
         //ludokado
         "9a19-43fav": allProvidersOutstream,
 
-        //ladypopular
-        "92c6-497ff": allProvidersOutstream,
-
         //mediastay
         "e048-4cdev": allProvidersOutstream,
 
         //actiplayNoReward
-        "4f63-b20df": allProvidersOutstream
+        "4f63-b20df": allProvidersOutstream,
+
+        //ladypopular
+        "92c6-497ff": allProvidersOutstream,        
     }
 }
 

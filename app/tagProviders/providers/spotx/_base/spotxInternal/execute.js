@@ -16,9 +16,11 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
 
     self.init(function(error, result) {
         if(error) {
-            self.onInternalError();
+            self.onScriptLoadingError();
             return;
         }
+        
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         self.watchVideoPlayerCreation(function(adStartedStatus) {
             if(adStartedStatus) {
