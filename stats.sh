@@ -30,15 +30,17 @@ function globalStats() {
 	echo " " >> $OUT
 	echo "global" >> $OUT
 
-	grep -i "Call" $1/$1.log > $1/Call.log
-	grep -i "a=CampaignAvailable" $1/$1.log > $1/CampaignAvailable.log
-	grep -i "a=NoCampaignAvailable" $1/$1.log > $1/NoCampaignAvailable.log
-	grep -i "Timeout" $1/$1.log > $1/Timeout.log
+	grep -i "a=Call&" $1/$1.log > $1/Call.log
+	grep -i "a=CampaignAvailable&" $1/$1.log > $1/CampaignAvailable.log
+	grep -i "a=NoCampaignAvailable&" $1/$1.log > $1/NoCampaignAvailable.log
+	grep -i "a=Timeout&" $1/$1.log > $1/Timeout.log
+	grep -i "a=AdBlocker&" $1/$1.log > $1/AdBlocker.log
 
 	cat $1/Call.log | wc -l >> $OUT
 	cat $1/CampaignAvailable.log | wc -l >> $OUT
 	cat $1/NoCampaignAvailable.log | wc -l >> $OUT
 	cat $1/Timeout.log | wc -l >> $OUT
+	cat $1/AdBlocker.log | wc -l >> $OUT
 }
 
 #statsPerprovider $providerName $gameName
@@ -54,21 +56,37 @@ function statsPerprovider() {
 	grep -i "onAdUnavailable" $2/$1/$1.log > $2/$1/onAdUnavailable.log
 	#grep -i "onVideoComplete" $2/$1/$1.log > $2/$1/onVideoComplete.log
 	grep -i "onAdComplete" $2/$1/$1.log > $2/$1/onAdComplete.log
-	grep -i "onInternalError" $2/$1/$1.log > $2/$1/onInternalError.log
+
+	grep -i "requestSuccess" $2/$1/$1.log > $2/$1/requestSuccess.log
+	grep -i "initSuccess" $2/$1/$1.log > $2/$1/initSuccess.log
+
+	grep -i "onScriptLoadingError" $2/$1/$1.log > $2/$1/onScriptLoadingError.log
+	grep -i "onAdError" $2/$1/$1.log > $2/$1/onAdError.log
 	grep -i "onVideoClosed" $2/$1/$1.log > $2/$1/onVideoClosed.log
 	grep -i "onAdClosed" $2/$1/$1.log > $2/$1/onAdClosed.log
 
 	cat $2/$1/request.log | wc -l >> $OUT
 	cat $2/$1/onAdAvailable.log | wc -l >> $OUT
 	cat $2/$1/onAdUnavailable.log | wc -l >> $OUT
+
 	#cat $2/$1/onVideoComplete.log | wc -l >> $OUT
-	#echo "onAdComplete" >> $OUT
-	cat $2/$1/onAdComplete.log | wc -l >> $OUT	
+	cat $2/$1/onAdComplete.log | wc -l >> $OUT
+
+	echo "requestSuccess" >> $OUT
+	cat $2/$1/requestSuccess.log | wc -l >> $OUT
+
+	echo "initSuccess" >> $OUT
+	cat $2/$1/initSuccess.log | wc -l >> $OUT
+
+	echo "onScriptLoadingError" >> $OUT
+	cat $2/$1/onScriptLoadingError.log | wc -l >> $OUT
+	
+	echo "onAdError" >> $OUT
+	cat $2/$1/onAdError.log | wc -l >> $OUT	
+
 	echo "onVideoClosed" >> $OUT
 	cat $2/$1/onVideoClosed.log | wc -l >> $OUT
 	cat $2/$1/onAdClosed.log | wc -l >> $OUT
-	echo "onInternalError" >> $OUT
-	cat $2/$1/onInternalError.log | wc -l >> $OUT
 }
 
 init
