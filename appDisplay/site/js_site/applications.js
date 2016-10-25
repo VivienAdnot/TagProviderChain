@@ -9,5 +9,6 @@ var listApikey = {
     "Ludokado outstream": "9a19-43fav",
     "LadyPopular outstream": "92c6-497ff",
     "Mediastay outstream": "e048-4cdev",
-    "ActiplayNoReward outstream": "4f63-b20df"
+    "ActiplayNoReward outstream": "4f63-b20df",
+    "Test": "XXXX-xxxxx"
 };

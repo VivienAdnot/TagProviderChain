@@ -1210,17 +1210,9 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdError = function() {
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdUnavailable = function() {
     var self = this;
     
-    if(self.adFound === true) {
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError", function() {
-            self.settings.onAdError();
-        });
-    }
-    
-    else {
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
-            self.settings.onAdUnavailable();
-        });
-    }
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
+        self.settings.onAdUnavailable();
+    });
 };
 
 playtemEmbedded.PlaytemVastPlayer.prototype.onScriptLoadingError = function() {
@@ -1270,7 +1262,22 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
-            self.onAdUnavailable();
+            var errorType = videoPlayer.getAdErrorType();
+
+            var setErrorType = function() {
+                (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
+            };
+
+            switch(errorType) {
+                case "adLoadError":
+                    self.onAdUnavailable();
+                    break;
+                case "adPlayError":
+                    self.onAdError();
+                    break;
+                default:
+                    setErrorType();
+            }
         });
 
         videoPlayerElement.addEventListener('adcomplete', function() {

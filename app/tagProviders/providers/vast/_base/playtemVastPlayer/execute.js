@@ -27,7 +27,22 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
-            self.onAdUnavailable();
+            var errorType = videoPlayer.getAdErrorType();
+
+            var setErrorType = function() {
+                (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
+            };
+
+            switch(errorType) {
+                case "adLoadError":
+                    self.onAdUnavailable();
+                    break;
+                case "adPlayError":
+                    self.onAdError();
+                    break;
+                default:
+                    setErrorType();
+            }
         });
 
         videoPlayerElement.addEventListener('adcomplete', function() {
