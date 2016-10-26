@@ -28,7 +28,7 @@ var providers = {
         "r47c7-9c9b": allProvidersInstream,
         "TSTr7-9c9b": instreamTest,
 
-        "XXXX-xxxxx": [playtemEmbedded.Yume]
+        "XXXX-xxxxx": []
     },
 
     outstream: {

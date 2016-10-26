@@ -59,8 +59,6 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);
 
-    this.stateMachine = new playtemEmbedded.Core.VideoPlayerStateMachine();
-
     this.adFound = false;
 
     var licenseKeys = {
