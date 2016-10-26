@@ -4,6 +4,8 @@ var listApikey = {
     "IsCool rewarded" : "452c-8a80i",
     "UrbanRivals rewarded": "494f-8f1bv",
     "Jotu rewarded": "4c3f-be78j",
+    "LadyPopular rewarded": "r47c7-9c9b",
+    "LadyPopular rewarded test": "TSTr7-9c9b",
     
     "Jotu outstream": "1c27-4684v",
     "Ludokado outstream": "9a19-43fav",

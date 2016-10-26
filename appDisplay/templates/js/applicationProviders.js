@@ -1,10 +1,9 @@
 var empty = [];
 
-//var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Affiz, playtemEmbedded.Actiplay];
-var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay];
+var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
 
 var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay];
-var instreamTest = [playtemEmbedded.Actiplay];
+var instreamTest = [playtemEmbedded.Affiz];
 
 var allProvidersOutstream = [playtemEmbedded.SpotxOutstream, playtemEmbedded.Smartad];
 
@@ -29,7 +28,7 @@ var providers = {
         "r47c7-9c9b": allProvidersInstream,
         "TSTr7-9c9b": instreamTest,
 
-        "XXXX-xxxxx": [playtemEmbedded.Adreels]
+        "XXXX-xxxxx": [playtemEmbedded.Yume]
     },
 
     outstream: {

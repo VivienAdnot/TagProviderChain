@@ -51,7 +51,7 @@ function statsPerprovider() {
 	mkdir $2/$1
 	grep -i "&p=$1&" $2/$2.log > $2/$1/$1.log
 
-	grep -i "request" $2/$1/$1.log > $2/$1/request.log
+	grep -i "request&" $2/$1/$1.log > $2/$1/request.log
 	grep -i "onAdAvailable" $2/$1/$1.log > $2/$1/onAdAvailable.log
 	grep -i "onAdUnavailable" $2/$1/$1.log > $2/$1/onAdUnavailable.log
 	#grep -i "onVideoComplete" $2/$1/$1.log > $2/$1/onVideoComplete.log
@@ -115,11 +115,22 @@ providersInstreamIscool=("SpotxInstream" "Actiplay")
 
 providersOutstreamAll=("SpotxOutstream" "Smartad" "Smart")
 
+providersIscoolTemp=("VexigoInstream" "SpotxInstream" "Actiplay")
+providersJotuTemp=("VexigoOutstream" "SpotxOutstream" "Smartad")
+
+#rewarded
 game "ludokadoRewarded" "4a2b-8438v" "${providersInstreamAll[@]}"
 game "beloteRewarded" "4da9-acb2b" "${providersInstreamIscool[@]}"
+#custom
+#game "iscoolRewarded" "452c-8a80i" "${providersIscoolTemp[@]}"
+#!custom
 game "iscoolRewarded" "452c-8a80i" "${providersInstreamIscool[@]}"
 game "urbanRivalsRewarded" "494f-8f1bv" "${providersInstreamAll[@]}"
 
+#outstream
+#custom
+#game "jotuOutstream" "1c27-4684v" "${providersJotuTemp[@]}"
+#!custom
 game "jotuOutstream" "1c27-4684v" "${providersOutstreamAll[@]}"
 game "ludokadoOutstream" "9a19-43fav" "${providersOutstreamAll[@]}"
 game "mediastayOutstream" "e048-4cdev" "${providersOutstreamAll[@]}"
