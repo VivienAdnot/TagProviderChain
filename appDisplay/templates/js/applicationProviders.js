@@ -26,9 +26,7 @@ var providers = {
 
         //ladyPopular
         "r47c7-9c9b": allProvidersInstream,
-        "TSTr7-9c9b": instreamTest,
-
-        "XXXX-xxxxx": [playtemEmbedded.Yume]
+        "TSTr7-9c9b": instreamTest
     },
 
     outstream: {
@@ -46,64 +44,9 @@ var providers = {
 
         //ladypopular
         "92c6-497ff": allProvidersOutstream,        
-    }
-}
-
-var providersRewarded = {
-    ludokado: {
-        prod: allProvidersInstream,
-        test: empty
     },
 
-    belote: {
-        prod: iscoolsInstream,
-        test: empty
-    },
-
-    isCool: {
-        prod: iscoolsInstream,
-        test: empty
-    },
-
-    urbanRivals: {
-        prod: allProvidersInstream,
-        test: [playtemEmbedded.Actiplay]
-    },
-
-    jotu: {
-        prod: [playtemEmbedded.Adreels],
-        test: empty
-    },
-
-    ladyPopular: {
-        prod: allProvidersInstream,
-        test: [playtemEmbedded.Actiplay]
-    },
-};
-
-var providersOutstream = {
-    jotu: {
-        prod: allProvidersOutstream,
-        test: empty
-    },
-
-    ludokado: {
-        prod: allProvidersOutstream,
-        test: empty
-    },
-
-    ladyPopular: {
-        prod: allProvidersOutstream,
-        test: empty
-    },
-
-    mediastay: {
-        prod: allProvidersOutstream,
-        test: empty
-    },
-
-    actiplayNoReward: {
-        prod: allProvidersOutstream,
-        test: empty
+    test: {
+        "XXXX-xxxxx": [playtemEmbedded.Smartad]
     }
 };
