@@ -22,25 +22,6 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
 
         playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
-        // var automaticErrorDetection = function() {
-        //     var errorType = videoPlayer.getAdErrorType();
-
-        //     var setErrorType = function() {
-        //         (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
-        //     };
-
-        //     switch(errorType) {
-        //         case "adLoadError":
-        //             self.onAdUnavailable();
-        //             break;
-        //         case "adPlayError":
-        //             self.onAdError();
-        //             break;
-        //         default:
-        //             self.onAdUnavailable();
-        //     }
-        // }
-
         videoPlayerElement.addEventListener('adstarted', function() {
             self.onAdAvailable();
         });
