@@ -66,14 +66,11 @@ function statsPerprovider() {
 	grep -i "onAdClosed" $2/$1/$1.log > $2/$1/onAdClosed.log
 
 	cat $2/$1/request.log | wc -l >> $OUT
+	cat $2/$1/requestSuccess.log | wc -l >> $OUT
 	cat $2/$1/onAdAvailable.log | wc -l >> $OUT
 	cat $2/$1/onAdUnavailable.log | wc -l >> $OUT
-
-	#cat $2/$1/onVideoComplete.log | wc -l >> $OUT
 	cat $2/$1/onAdComplete.log | wc -l >> $OUT
-
-	echo "requestSuccess" >> $OUT
-	cat $2/$1/requestSuccess.log | wc -l >> $OUT
+	cat $2/$1/onAdError.log | wc -l >> $OUT
 
 	echo "initSuccess" >> $OUT
 	cat $2/$1/initSuccess.log | wc -l >> $OUT
@@ -81,9 +78,6 @@ function statsPerprovider() {
 	echo "onScriptLoadingError" >> $OUT
 	cat $2/$1/onScriptLoadingError.log | wc -l >> $OUT
 	
-	echo "onAdError" >> $OUT
-	cat $2/$1/onAdError.log | wc -l >> $OUT	
-
 	echo "onVideoClosed" >> $OUT
 	cat $2/$1/onVideoClosed.log | wc -l >> $OUT
 	cat $2/$1/onAdClosed.log | wc -l >> $OUT
