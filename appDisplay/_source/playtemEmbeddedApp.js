@@ -124,48 +124,6 @@ playtemEmbedded.Core.PostMessage.prototype.destroyListener = function(listenerId
     window.removeEventListener("message", handler, false);
 };
 
-playtemEmbedded.Core.VideoPlayerStateMachine = function() {
-    this.states = {
-        none: "none",
-        adAvailable: "adAvailable",
-        adUnavailable: "adUnavailable",
-        adComplete: "adComplete",
-        adError: "adError"
-    };
-
-    this.state = this.states.none;
-
-    this.stateManager = {
-        none: null,
-        adAvailable: "none",
-        adUnavailable: "none",
-        adComplete: "adAvailable"
-    };
-};
-
-playtemEmbedded.Core.VideoPlayerStateMachine.prototype.validateNexState = function(nexState, callback) {
-    var self = this;
-    
-    var stateExists = function() {
-        return typeof self.states[nextState] == "string";
-    };
-
-    if(stateExists == false) {
-        return false;
-    }
-
-    var allowedPreviousState = self.stateManager[nextState];
-
-    var isNextStateAllowed = this.currentState === allowedPreviousState;
-
-    if(isNextStateAllowed) {
-        self.currentState = this.states[nextState];
-        return true;
-    } else {
-        return false;
-    }
-};
-
 playtemEmbedded.Core.track = function(providerName, apiKey, eventType, callback) {
     if(!callback || typeof callback != "function") {
         callback = $.noop;
@@ -1200,16 +1158,14 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);
 
-    this.stateMachine = new playtemEmbedded.Core.VideoPlayerStateMachine();
-
     this.adFound = false;
+    this.stateMachine = new TagProviderStateMachine();
 
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    //this.radiantMediaPlayerSettings.licenseKey = (this.settings.debug == true) ? licenseKeys["poc.playtem.com"] : licenseKeys["static.playtem.com"];
     this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
@@ -1223,6 +1179,10 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
     var self = this;
+
+    if (self.stateMachine.validateNextState("adAvailable")) {
+        self.stateMachine.setState("adAvailable");
+    }
 
     self.adFound = true;
     
@@ -1259,14 +1219,6 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdUnavailable = function() {
     });
 };
 
-playtemEmbedded.PlaytemVastPlayer.prototype.onInternalError = playtemEmbedded.Core.Operations.onceProxy(function() {
-    var self = this;
-
-    self.clean();
-    
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onInternalError");
-});
-
 playtemEmbedded.PlaytemVastPlayer.prototype.onScriptLoadingError = function() {
     var self = this;
 
@@ -1280,9 +1232,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onScriptLoadingError = function() {
 playtemEmbedded.PlaytemVastPlayer.prototype.clean = function() {
     var self = this;
     
-    $("#" + self.settings.playerId).fadeOut(500, function() {
-        $(this).remove();
-    });
+    $("#" + self.settings.playerId).remove();
 }
 
 playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
@@ -1308,25 +1258,6 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         }
 
         playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
-
-        // var automaticErrorDetection = function() {
-        //     var errorType = videoPlayer.getAdErrorType();
-
-        //     var setErrorType = function() {
-        //         (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
-        //     };
-
-        //     switch(errorType) {
-        //         case "adLoadError":
-        //             self.onAdUnavailable();
-        //             break;
-        //         case "adPlayError":
-        //             self.onAdError();
-        //             break;
-        //         default:
-        //             self.onAdUnavailable();
-        //     }
-        // }
 
         videoPlayerElement.addEventListener('adstarted', function() {
             self.onAdAvailable();
@@ -1424,243 +1355,52 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
     self.vastPlayer.execute();
 };
 
-playtemEmbedded.Adreels = function(options) {
-    var defaults = {
-        debug: false,
-        apiKey: undefined,
-
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onAdComplete: $.noop,
-        onAdError: $.noop
+playtemEmbedded.Core.TagProviderStateMachine = function() {
+    this.states = {
+        none: "none",
+        adAvailable: "adAvailable",
+        adUnavailable: "adUnavailable",
+        adComplete: "adComplete",
+        adError: "adError"
     };
 
-    this.settings = {
-        top: 168,
-        width: 530,
-        height: 350
+    this.state = this.states.none;
+
+    this.stateManager = {
+        none: null,
+        adAvailable: "none",
+        adUnavailable: "none",
+        adComplete: "adAvailable"
+    };
+};
+
+playtemEmbedded.Core.TagProviderStateMachine.prototype.validateNextState = function(nexState) {
+    var self = this;
+    
+    var stateExists = function() {
+        return typeof self.states[nextState] == "string";
     };
 
-    this.vastPlayer = undefined;
+    if(stateExists == false) {
+        return false;
+    }
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    var allowedPreviousState = self.stateManager[nextState];
 
-    if(this.settings.debug === true) {
-        // nothing to do
+    var isNextStateAllowed = this.currentState === allowedPreviousState;
+
+    if(isNextStateAllowed) {
+        self.currentState = this.states[nextState];
+        return true;
+    } else {
+        return false;
     }
 };
 
-playtemEmbedded.Adreels.prototype.execute = function() {
+playtemEmbedded.Core.TagProviderStateMachine.prototype.setState = function(nexState) {
     var self = this;
-
-    var buildTag = function() {
-        return "http://vid.springserve.com/vast/39549?"
-            + "w=" + self.settings.width
-            + "&h=" + self.settings.height
-            + "&url=" + "poc.playtem.com" // + "{{URL}}"
-            + "&cb=" + playtemEmbedded.Core.Date.getCurrentTimestamp() // cache buster
-            + "&desc=" // + "a" // + "{{DESCRIPTION}}"
-            + "&ic=" // + "IAB24" // + "{{IAB_CATEGORY}}"
-            + "&dur=" // + 500 // "{{DURATION}}"
-            + "&ap=" // + 1 // "{{AUTOPLAY}}"
-            + "&vid=" // + 1 // + "{{VIDEO_ID}}";
-    };
-
-    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
-        debug: self.settings.debug,
-        vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
-        providerName: "Adreels",
-
-        onAdAvailable: self.settings.onAdAvailable,
-        onAdUnavailable: self.settings.onAdUnavailable,
-        onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError,
-
-        playerPosition: {
-            top: self.settings.top,
-            width: self.settings.width,
-            height: self.settings.height
-        }        
-    });
-
-    self.vastPlayer.execute();
-};
-
-playtemEmbedded.VexigoInstream = function(options) {
-    var defaults = {
-        debug: false,
-        apiKey: undefined,
-
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onAdComplete: $.noop,
-        onAdError: $.noop
-    };
-
-    this.settings = {
-
-    };
-
-    this.vastPlayer = undefined;
-
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
-
-    if(this.settings.debug === true) {
-        // nothing to do
-    }
-};
-
-playtemEmbedded.VexigoInstream.prototype.execute = function() {
-    var self = this;
-
-    var buildTag = function() {
-        return "http://search.spotxchange.com/vast/2.00/168105?"
-        + "VPAID=1"
-        + "&content_page_url="
-        + "&cb=" + playtemEmbedded.Core.Date.getCurrentTimestamp()
-        + "&player_width=" + "500"
-        + "&player_height=" + "300"
-        + "&vid_duration=" + "30"
-        + "&vid_url=" +
-        + "&vid_id="
-        + "&vid_title="
-        + "&vid_description=";
-    };
-
-    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
-        debug: self.settings.debug,
-        vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
-        providerName: "VexigoInstream",
-
-        onAdAvailable: self.settings.onAdAvailable,
-        onAdUnavailable: self.settings.onAdUnavailable,
-        onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError
-    });
-
-    self.vastPlayer.execute();
-};
-
-playtemEmbedded.VexigoOutstream = function(options) {
-    var defaults = {
-        debug: false,
-        apiKey: undefined,
-
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onAdComplete: $.noop,
-        onAdError: $.noop
-    };
-
-    this.settings = {
-
-    };
-
-    this.vastPlayer = undefined;
-
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
-
-    if(this.settings.debug === true) {
-        // nothing to do
-    }
-};
-
-playtemEmbedded.VexigoOutstream.prototype.execute = function() {
-    var self = this;
-
-    var buildTag = function() {
-        return "http://search.spotxchange.com/vast/2.00/168138?"
-        + "VPAID=1"
-        + "&content_page_url="
-        + "&cb=" + playtemEmbedded.Core.Date.getCurrentTimestamp()
-        + "&player_width=" + "500"
-        + "&player_height=" + "300"
-        + "&vid_duration=" + "30"
-        + "&vid_url=" +
-        + "&vid_id="
-        + "&vid_title="
-        + "&vid_description=";
-    };
-
-    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
-        debug: self.settings.debug,
-        vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
-        providerName: "VexigoOutstream",
-
-        onAdAvailable: self.settings.onAdAvailable,
-        onAdUnavailable: self.settings.onAdUnavailable,
-        onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError
-    });
-
-    self.vastPlayer.execute();
-};
-
-playtemEmbedded.Yume = function(options) {
-    var defaults = {
-        debug: false,
-        apiKey: undefined,
-
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onAdComplete: $.noop,
-        onAdError: $.noop
-    };
-
-    this.settings = {
-
-    };
-
-    this.vastPlayer = undefined;
-
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
-
-    if(this.settings.debug === true) {
-        // nothing to do
-    }
-};
-
-playtemEmbedded.Yume.prototype.execute = function() {
-    var self = this;
-
-    // var buildTag = function() {
-    //     return "//[YuMe_TSE_WILL_REPLACE_THIS]" + ".yumenetworks.com/dynamic_preroll_playlist.vast2xml?"
-    //     + "domain=" + "[YuMe_TSE_WILL_REPLACE_THIS]"
-    //     + "&delivery_point=" + "[YuMe_TSE_WILL_REPLACE_THIS]"
-    //     + "&domain_app_type=" + "[YuMe_TSE_WILL_REPLACE_THIS]"
-    //     +" &height=" + "300"
-    //     + "&width=" + "500"
-    //     + "&source_url=[PARTNER_REPLACE_THIS]"
-    //     + "&rand=" + playtemEmbedded.Core.Date.getCurrentTimestamp()
-    //     + "&ad_length=" + "30"
-    //     + "&dnt=" + "0";
-    // };
-
-    var buildTag = function() {
-        return "http://shadow01.yumenetworks.com/dynamic_preroll_playlist.vast2xml?domain=1552hCkaKYjg&delivery_point=PC&domain_app_type=Web&height=300&width=250&source_url=www.yume.com&rand=222&ad_length=60&dnt=0";
-    };
-
-    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
-        debug: self.settings.debug,
-        vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
-        providerName: "Yume",
-
-        onAdAvailable: self.settings.onAdAvailable,
-        onAdUnavailable: self.settings.onAdUnavailable,
-        onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError
-    });
-
-    self.vastPlayer.execute();
-};
+    self.state = self.states[nextState]; 
+}
 
 playtemEmbedded.WindowBlocker = function(options) {
     var defaults = {

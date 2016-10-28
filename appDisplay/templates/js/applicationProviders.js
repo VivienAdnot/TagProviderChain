@@ -26,9 +26,7 @@ var providers = {
 
         //ladyPopular
         "r47c7-9c9b": allProvidersInstream,
-        "TSTr7-9c9b": instreamTest,
-
-        "XXXX-xxxxx": []
+        "TSTr7-9c9b": instreamTest
     },
 
     outstream: {
@@ -49,6 +47,6 @@ var providers = {
     },
 
     test: {
-        "XXXX-xxxxx": [playtemEmbedded.Smartad]
+        "XXXX-xxxxx": [playtemEmbedded.Actiplay]
     }
 };
