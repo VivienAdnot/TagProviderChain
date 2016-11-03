@@ -1,11 +1,14 @@
 var empty = [];
 
-var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
+// var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
+var allProvidersInstream = [playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
 
-var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay];
+// var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay];
+var iscoolsInstream = [playtemEmbedded.Actiplay];
+
 var instreamTest = [playtemEmbedded.Affiz];
 
-var allProvidersOutstream = [playtemEmbedded.SpotxOutstream, playtemEmbedded.Smartad];
+var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
 
 var providers = {
     rewarded: {
