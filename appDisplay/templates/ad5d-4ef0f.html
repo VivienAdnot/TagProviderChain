@@ -3,15 +3,15 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Mediastay outstream</title>
+    <title>TLM outstream</title>
 
-    <link rel="stylesheet" href="css/genericReward/style.css"/>
+    <link rel="stylesheet" href="css/tlm/style.css"/>
 </head>
 <body>
     <div class="ad">
         <!-- title-->
-        <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">TEST</h1>
-        <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/Generic_with_reward_desktop/750x550/cross-close.png"/>
+        <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">Congratulations</h1>
+        <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/TLM/750x550/cross-close.png"/>
 
         <!-- reward block-->
         <div class="ad__reward__offerMessageBlock">
@@ -40,13 +40,13 @@
 
     <script type="text/javascript">
         var playtemApp = new playtemEmbedded.App({
-            hasReward: false,
-            providers: providers["test"]["XXXX-xxxxx"],
-            apiKey: "e048-4cdev", // Mediastay
+            hasReward: true,
+            providers: providers["outstream"]["ad5d-4ef0f"],
+            apiKey: "ad5d-4ef0f",
             outputLanguage : "en-US",
             gameType: "desktop",
             debug: false,
-            placementType: "rewarded"
+            placementType: "outstream"
         });
 
         playtemApp.execute();
