@@ -43,7 +43,9 @@ var providers = {
         "4f63-b20df": allProvidersOutstream,
 
         //ladypopular
-        "92c6-497ff": allProvidersOutstream,        
+        "92c6-497ff": allProvidersOutstream,
+        
+        "ad5d-4ef0f": allProvidersOutstream
     },
 
     test: {
