@@ -23,6 +23,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         videoPlayerElement.addEventListener('adstarted', function() {
+            console.log(videoPlayer.getAdSystem());
             self.onAdAvailable();
         });
 

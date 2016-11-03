@@ -1180,7 +1180,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
     var self = this;
 
     self.adFound = true;
-    
+
     playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
         self.settings.onAdAvailable();
     });
@@ -1255,6 +1255,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         videoPlayerElement.addEventListener('adstarted', function() {
+            console.log(videoPlayer.getAdSystem());
             self.onAdAvailable();
         });
 
