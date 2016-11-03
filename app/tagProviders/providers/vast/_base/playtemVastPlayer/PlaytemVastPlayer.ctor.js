@@ -60,7 +60,6 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
     this.settings = $.extend(this.settings, defaults);
 
     this.adFound = false;
-    this.stateMachine = new TagProviderStateMachine();
 
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',

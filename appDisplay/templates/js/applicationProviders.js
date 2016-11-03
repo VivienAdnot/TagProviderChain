@@ -47,6 +47,6 @@ var providers = {
     },
 
     test: {
-        "XXXX-xxxxx": [playtemEmbedded.Actiplay]
+        "XXXX-xxxxx": [playtemEmbedded.PlaytemVastWrapper]
     }
 };

@@ -1159,7 +1159,6 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
     this.settings = $.extend(this.settings, defaults);
 
     this.adFound = false;
-    this.stateMachine = new TagProviderStateMachine();
 
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
@@ -1179,10 +1178,6 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
     var self = this;
-
-    if (self.stateMachine.validateNextState("adAvailable")) {
-        self.stateMachine.setState("adAvailable");
-    }
 
     self.adFound = true;
     
@@ -1264,6 +1259,10 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
+            console.log(videoPlayer.getAdErrorType());
+            console.log(videoPlayer.getAdErrorCode());
+            console.log(videoPlayer.getAdErrorMessage());
+            console.log(videoPlayer.getAdVastErrorCode());
             (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
         });
 
@@ -1345,6 +1344,53 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
         vastTag: buildTag(),
         apiKey: self.settings.apiKey,
         providerName: "Actiplay",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onAdError: self.settings.onAdError
+    });
+
+    self.vastPlayer.execute();
+};
+
+playtemEmbedded.PlaytemVastWrapper = function(options) {
+    var defaults = {
+        debug: false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onAdError: $.noop
+    };
+
+    this.settings = {
+
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.PlaytemVastWrapper.prototype.execute = function() {
+    var self = this;
+
+    var buildTag = function() {
+        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast.xml";
+    };
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
+        providerName: "PlaytemVastWrapper",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,

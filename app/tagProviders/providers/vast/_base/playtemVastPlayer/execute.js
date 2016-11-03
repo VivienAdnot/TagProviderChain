@@ -27,6 +27,10 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
+            console.log(videoPlayer.getAdErrorType());
+            console.log(videoPlayer.getAdErrorCode());
+            console.log(videoPlayer.getAdErrorMessage());
+            console.log(videoPlayer.getAdVastErrorCode());
             (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
         });
 
