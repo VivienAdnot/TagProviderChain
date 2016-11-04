@@ -27,7 +27,7 @@ playtemEmbedded.PlaytemVastWrapper.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast.xml";
+        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper.xml";
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({

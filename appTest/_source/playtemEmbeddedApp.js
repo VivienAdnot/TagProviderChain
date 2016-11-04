@@ -1255,15 +1255,10 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         videoPlayerElement.addEventListener('adstarted', function() {
-            console.log(videoPlayer.getAdSystem());
             self.onAdAvailable();
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
-            console.log(videoPlayer.getAdErrorType());
-            console.log(videoPlayer.getAdErrorCode());
-            console.log(videoPlayer.getAdErrorMessage());
-            console.log(videoPlayer.getAdVastErrorCode());
             (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
         });
 
@@ -1327,17 +1322,7 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "https://pubads.g.doubleclick.net/gampad/ads?"
-            + "sz=450x400"
-            + "&iu=" + "/1163333/EXT_Playtem_InGame_Preroll"
-            + "&impl=" + "s"
-            + "&gdfp_req=" + "1"
-            + "&env=" + "vp"
-            + "&output=" + "vast"
-            + "&unviewed_position_start=" + "1"
-            + "&url="
-            + "&description_url="
-            + "&correlator= " + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "https://pubads.g.doubleclick.net/gampad/ads?sz=450x400&iu=/1163333/EXT_Playtem_InGame_Preroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
@@ -1384,7 +1369,7 @@ playtemEmbedded.PlaytemVastWrapper.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast.xml";
+        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper.xml";
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({

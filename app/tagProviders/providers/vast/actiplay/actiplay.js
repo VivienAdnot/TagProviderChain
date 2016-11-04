@@ -27,17 +27,7 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "https://pubads.g.doubleclick.net/gampad/ads?"
-            + "sz=450x400"
-            + "&iu=" + "/1163333/EXT_Playtem_InGame_Preroll"
-            + "&impl=" + "s"
-            + "&gdfp_req=" + "1"
-            + "&env=" + "vp"
-            + "&output=" + "vast"
-            + "&unviewed_position_start=" + "1"
-            + "&url="
-            + "&description_url="
-            + "&correlator= " + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "https://pubads.g.doubleclick.net/gampad/ads?sz=450x400&iu=/1163333/EXT_Playtem_InGame_Preroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({

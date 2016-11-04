@@ -23,15 +23,10 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         videoPlayerElement.addEventListener('adstarted', function() {
-            console.log(videoPlayer.getAdSystem());
             self.onAdAvailable();
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
-            console.log(videoPlayer.getAdErrorType());
-            console.log(videoPlayer.getAdErrorCode());
-            console.log(videoPlayer.getAdErrorMessage());
-            console.log(videoPlayer.getAdVastErrorCode());
             (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
         });
 
