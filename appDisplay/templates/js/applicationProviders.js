@@ -1,7 +1,6 @@
 var empty = [];
 
-// var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
-var allProvidersInstream = [playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
+var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
 
 // var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay];
 var iscoolsInstream = [playtemEmbedded.Actiplay];
