@@ -1,8 +1,8 @@
 var empty = [];
 
-var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
+var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastWrapper, playtemEmbedded.Affiz];
 
-var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay];
+var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastWrapper];
 var instreamTest = [playtemEmbedded.Affiz];
 
 var allProvidersOutstream = [playtemEmbedded.SpotxOutstream, playtemEmbedded.Smartad];
@@ -26,7 +26,10 @@ var providers = {
 
         //ladyPopular
         "r47c7-9c9b": allProvidersInstream,
-        "TSTr7-9c9b": instreamTest
+        "TSTr7-9c9b": instreamTest,
+
+        //mediastay rewarded
+        "r4b75-8a76": allProvidersInstream
     },
 
     outstream: {
@@ -45,6 +48,7 @@ var providers = {
         //ladypopular
         "92c6-497ff": allProvidersOutstream,
         
+        //TLM
         "ad5d-4ef0f": allProvidersOutstream
     },
 
