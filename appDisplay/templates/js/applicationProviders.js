@@ -1,9 +1,9 @@
 var empty = [];
 
-var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
+var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastWrapper, playtemEmbedded.Affiz];
 
-// var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay];
-var iscoolsInstream = [playtemEmbedded.Actiplay];
+// var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastWrapper];
+var iscoolsInstream = [playtemEmbedded.PlaytemVastWrapper];
 
 var instreamTest = [playtemEmbedded.Affiz];
 var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
