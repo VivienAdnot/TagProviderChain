@@ -7,6 +7,7 @@ var listApikey = {
     "LadyPopular rewarded": "r47c7-9c9b",
     "LadyPopular rewarded test": "TSTr7-9c9b",
     "Mediastay rewarded": "r4b75-8a76",
+    "Mediastay rewarded test": "TSTr5-8a76",
     
     "Jotu outstream": "1c27-4684v",
     "Ludokado outstream": "9a19-43fav",
