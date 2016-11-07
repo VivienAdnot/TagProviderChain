@@ -7,7 +7,6 @@ var allProvidersInstream = [playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
 var iscoolsInstream = [playtemEmbedded.Actiplay];
 
 var instreamTest = [playtemEmbedded.Affiz];
-
 var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
 
 var providers = {
@@ -29,7 +28,11 @@ var providers = {
 
         //ladyPopular
         "r47c7-9c9b": allProvidersInstream,
-        "TSTr7-9c9b": instreamTest
+        "TSTr7-9c9b": instreamTest,
+
+        //mediastay rewarded
+        "r4b75-8a76": allProvidersInstream,
+        "TSTr5-8a76": instreamTest
     },
 
     outstream: {
@@ -46,12 +49,13 @@ var providers = {
         "4f63-b20df": allProvidersOutstream,
 
         //ladypopular
-        "92c6-497ff": allProvidersOutstream,  
-
-        "ad5d-4ef0f": allProvidersOutstream    
+        "92c6-497ff": allProvidersOutstream,
+        
+        //TLM
+        "ad5d-4ef0f": allProvidersOutstream
     },
 
     test: {
-        "XXXX-xxxxx": []
+        "XXXX-xxxxx": [playtemEmbedded.PlaytemVastWrapper]
     }
 };
