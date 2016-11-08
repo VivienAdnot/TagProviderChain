@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
+	<Ad id="VexigoInstream">
+		<Wrapper>
+			<AdSystem>VexigoInstream</AdSystem>
+			<VASTAdTagURI>
+				<![CDATA[https://ssp.lkqd.net/ad?pid=77&sid=92276&output=vastvpaid&support=html5flash&execution=any&placement=&playinit=auto&volume=100&width=500&height=300&dnt=0&ip=&ua=&pageurl=&contentid=&contenttitle=&contentlength=&contenturl=&rnd=1234]]>
+			</VASTAdTagURI>
+			<Error>
+				<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoInstream&a=error]]>
+			</Error>
+			<Impression>
+				<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoInstream&a=impression]]>
+			</Impression>
+			<Creatives>
+				<Creative id="57861858976" sequence="1">
+					<Linear>
+						<TrackingEvents>
+							<Tracking event="start">
+								<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoInstream&a=start]]>
+							</Tracking>
+							<Tracking event="complete">
+								<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoInstream&a=complete]]>
+							</Tracking>
+						</TrackingEvents>
+					</Linear>
+				</Creative>
+			</Creatives>
+			<Extensions>
+				<Extension type="waterfall" fallback_index="0" />
+			</Extensions>
+		</Wrapper>
+	</Ad>
+</VAST>

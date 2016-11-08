@@ -1,26 +1,32 @@
 var empty = [];
 
-var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastWrapper, playtemEmbedded.Affiz];
+var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Affiz];
 
 // var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastWrapper];
-var iscoolsInstream = [playtemEmbedded.PlaytemVastWrapper];
+//var iscoolsInstream = [playtemEmbedded.PlaytemVastWrapper];
 
 var instreamTest = [playtemEmbedded.Affiz];
 var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
 
+// vast tag test
+
 var providers = {
     rewarded: {
+        //===== prod =====
+
         //ludokado
-        "4a2b-8438v": allProvidersInstream,
+        "4a2b-8438v": [playtemEmbedded.PlaytemVastActiplay],
 
         //belote
-        "4da9-acb2b": iscoolsInstream,
+        "4da9-acb2b": [playtemEmbedded.PlaytemVastVexigoInstream],
 
         //isCool
-        "452c-8a80i": iscoolsInstream,
+        "452c-8a80i": [playtemEmbedded.PlaytemVastActiplay],
 
         //urbanRivals
-        "494f-8f1bv": allProvidersInstream,
+        "494f-8f1bv": [playtemEmbedded.PlaytemVastVexigoInstream],
+
+        //===== ! prod =====
 
         //jotu
         "4c3f-be78j": allProvidersInstream,
@@ -35,26 +41,30 @@ var providers = {
     },
 
     outstream: {
+        //===== prod =====
+
         //jotu
         "1c27-4684v": allProvidersOutstream,
-
-        //ludokado
-        "9a19-43fav": allProvidersOutstream,
 
         //mediastay
         "e048-4cdev": allProvidersOutstream,
 
         //actiplayNoReward
-        "4f63-b20df": allProvidersOutstream,
+        "4f63-b20df": [playtemEmbedded.PlaytemVastVexigoOutstream],
 
         //ladypopular
         "92c6-497ff": allProvidersOutstream,
+
+        //===== ! prod =====
+
+        //ludokado
+        "9a19-43fav": allProvidersOutstream,        
         
         //TLM
         "ad5d-4ef0f": allProvidersOutstream
     },
 
     test: {
-        "XXXX-xxxxx": [playtemEmbedded.PlaytemVastWrapper]
+        "XXXX-xxxxx": [playtemEmbedded.RevContent]
     }
 };

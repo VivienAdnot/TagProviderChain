@@ -107,26 +107,26 @@ function game() {
 providersInstreamAll=("affiz" "SpotxInstream" "Actiplay")
 providersInstreamIscool=("SpotxInstream" "Actiplay")
 
-providersOutstreamAll=("SpotxOutstream" "Smartad" "Smart")
+providersOutstreamAll=("Smartad" "SpotxOutstream")
 
 providersIscoolTemp=("VexigoInstream" "SpotxInstream" "Actiplay")
 providersJotuTemp=("VexigoOutstream" "SpotxOutstream" "Smartad")
 
+#vast
+vastActiplay=("PlaytemVastActiplay")
+vastVexigoInstream=("PlaytemVastVexigoInstream")
+vastVexigoOutstream=("PlaytemVastVexigoOutstream")
+vastYume=("PlaytemVastYume")
+
 #rewarded
-game "ludokadoRewarded" "4a2b-8438v" "${providersInstreamAll[@]}"
-game "beloteRewarded" "4da9-acb2b" "${providersInstreamIscool[@]}"
-#custom
-#game "iscoolRewarded" "452c-8a80i" "${providersIscoolTemp[@]}"
-#!custom
-game "iscoolRewarded" "452c-8a80i" "${providersInstreamIscool[@]}"
-game "urbanRivalsRewarded" "494f-8f1bv" "${providersInstreamAll[@]}"
+game "ludokadoRewarded" "4a2b-8438v" "${vastActiplay[@]}"
+game "beloteRewarded" "4da9-acb2b" "${vastVexigoInstream[@]}"
+game "iscoolRewarded" "452c-8a80i" "${vastActiplay[@]}"
+game "urbanRivalsRewarded" "494f-8f1bv" "${vastVexigoInstream[@]}"
 
 #outstream
-#custom
-#game "jotuOutstream" "1c27-4684v" "${providersJotuTemp[@]}"
-#!custom
 game "jotuOutstream" "1c27-4684v" "${providersOutstreamAll[@]}"
 game "ludokadoOutstream" "9a19-43fav" "${providersOutstreamAll[@]}"
 game "mediastayOutstream" "e048-4cdev" "${providersOutstreamAll[@]}"
-game "actiplayNoRewardOutstream" "4f63-b20df" "${providersOutstreamAll[@]}"
-game "ladyPopularOutstream" "92c6-497ff" "${providersOutstreamAll[@]}"
+game "actiplayNoRewardOutstream" "4f63-b20df" "${vastVexigoOutstream[@]}"
+game "ladyPopularOutstream" "92c6-497ff" "${vastYume[@]}"

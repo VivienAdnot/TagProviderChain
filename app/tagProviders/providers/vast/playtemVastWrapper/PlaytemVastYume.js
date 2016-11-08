@@ -1,4 +1,4 @@
-playtemEmbedded.PlaytemVastWrapper = function(options) {
+playtemEmbedded.PlaytemVastYume = function(options) {
     var defaults = {
         debug: false,
         apiKey: undefined,
@@ -23,18 +23,18 @@ playtemEmbedded.PlaytemVastWrapper = function(options) {
     }
 };
 
-playtemEmbedded.PlaytemVastWrapper.prototype.execute = function() {
+playtemEmbedded.PlaytemVastYume.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-yume.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
         debug: self.settings.debug,
         vastTag: buildTag(),
         apiKey: self.settings.apiKey,
-        providerName: "PlaytemVastWrapper",
+        providerName: "PlaytemVastYume",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
+	<Ad id="Yume">
+		<Wrapper>
+			<AdSystem>Yume</AdSystem>
+			<VASTAdTagURI>
+				<![CDATA[https://plg2.yumenetworks.com/dynamic_preroll_playlist.vast2xml?domain=2657XVtAroEI&delivery_point=PC&domain_app_type=Web&height=300&width=500&source_url=&rand=1234&ad_length=30&dnt=0&dnt=0]]>
+			</VASTAdTagURI>
+			<Error>
+				<![CDATA[https://api.playtem.com/tracker.gif?t=VastYume&a=error]]>
+			</Error>
+			<Impression>
+				<![CDATA[https://api.playtem.com/tracker.gif?t=VastYume&a=impression]]>
+			</Impression>
+			<Creatives>
+				<Creative id="57861858976" sequence="1">
+					<Linear>
+						<TrackingEvents>
+							<Tracking event="start">
+								<![CDATA[https://api.playtem.com/tracker.gif?t=VastYume&a=start]]>
+							</Tracking>
+							<Tracking event="complete">
+								<![CDATA[https://api.playtem.com/tracker.gif?t=VastYume&a=complete]]>
+							</Tracking>
+						</TrackingEvents>
+					</Linear>
+				</Creative>
+			</Creatives>
+			<Extensions>
+				<Extension type="waterfall" fallback_index="0" />
+			</Extensions>
+		</Wrapper>
+	</Ad>
+</VAST>
