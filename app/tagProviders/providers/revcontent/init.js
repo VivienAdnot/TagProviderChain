@@ -5,7 +5,7 @@ playtemEmbedded.RevContent.prototype.init = function(callback) {
         self.settings.$targetContainerElement.append("<div id='revcontent'></div>");
         $("#revcontent").css({
             position: "absolute",
-            top: 150,
+            top: 200,
             left: "0",
             right: "0",
             margin: "auto",
@@ -27,12 +27,11 @@ playtemEmbedded.RevContent.prototype.init = function(callback) {
 
     createTarget();    
 
-
     var rcel = document.createElement("script");
     rcel.id = 'rc_' + Math.floor(Math.random() * 1000);
     rcel.type = 'text/javascript';
     rcel.src = "//trends.revcontent.com/serve.js.php?"
-        + "w=4384"
+        + "w=50804"
         + "&t=" + rcel.id
         + "&c=" + (new Date()).getTime()
         + "&width=500"

@@ -11,7 +11,7 @@ playtemEmbedded.RevContent = function(options) {
 
     this.settings = {
         providerName: 'revContent',
-        scriptUrl: '//trends.revcontent.com/serve.js.php?w=49648&t=1234&c=12345&width=500&referer=',
+        //scriptUrl: '//trends.revcontent.com/serve.js.php?w=50804&t=1234&c=12345&width=500&referer=',
         $targetContainerElement: $('.ad'),
         modal: true,
         httpRequestTimeout: 3000

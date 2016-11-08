@@ -44,7 +44,7 @@ var providers = {
         //===== prod =====
 
         //jotu
-        "1c27-4684v": allProvidersOutstream,
+        "1c27-4684v": [playtemEmbedded.RevContent],
 
         //mediastay
         "e048-4cdev": allProvidersOutstream,
@@ -58,10 +58,10 @@ var providers = {
         //===== ! prod =====
 
         //ludokado
-        "9a19-43fav": allProvidersOutstream,        
+        "9a19-43fav": allProvidersOutstream,
         
         //TLM
-        "ad5d-4ef0f": allProvidersOutstream
+        "ad5d-4ef0f": allProvidersOutstream,
     },
 
     test: {
