@@ -39,7 +39,7 @@ var providers = {
         "1c27-4684v": allProvidersOutstream,
 
         //ludokado
-        "9a19-43fav": allProvidersOutstream,
+        "9a19-43fav": [playtemEmbedded.Smartad],
 
         //mediastay
         "e048-4cdev": allProvidersOutstream,
