@@ -59,7 +59,10 @@ var providers = {
         "1206-4ce9f": allProvidersOutstream,
 
         //Voyage to Fantasy
-        "9a56-4422f": allProvidersOutstream,        
+        "9a56-4422f": allProvidersOutstream,
+
+        //Equideow
+        "ff3d-4b8cf": allProvidersOutstream,                 
 
         //ludokado
         "9a19-43fav": [playtemEmbedded.Affiz],

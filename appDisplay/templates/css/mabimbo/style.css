@@ -146,41 +146,6 @@ button {
 }
 
 @font-face {
-    font-family: Bitter;
-    src: url('//static.playtem.com/Fonts/Bitter-Bold.ttf');
-}
-
-@font-face {
-    font-family: Lato;
-    src: url('//static.playtem.com/Fonts/Lato-Bold.ttf');
-}
-
-.ad__header__title {
-    font-family: Bitter;
-    font-weight: bold;
-    font-size: 26px;
-    color: #ffde5b;
-}
-
-.ad__reward__offerMessageBlock {
-    font-family: Bitter;
-    font-weight: normal;
-    font-size: 22px;
-    color: #fffdfd;
-}
-
-.ad__reward__offerMessage__brandName {
-	font-size: 22px;
-}
-
-.ad__reward__itemTitleBlock {
-    font-family: Lato;
-    font-weight: normal;
-    font-size: 16px;
-    color: #836854;
-}
-
-@font-face {
     font-family: Pacifico;
     src: url('//static.playtem.com/Fonts/Pacifico.ttf');
 }
