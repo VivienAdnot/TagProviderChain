@@ -16,6 +16,8 @@ var listApikey = {
     "ActiplayNoReward outstream": "4f63-b20df",
     "MaBimbo outstream": "1206-4ce9f",
     "Voyage to Fantasy outstream": "9a56-4422f",
-    "Equideow": "ff3d-4b8cf",
+    "Equideow outstream": "ff3d-4b8cf",
+    "Prizee outstream": "Fj68VbKzEe",
+    "FairyMix outstream": "Hn78Uf8iRy",
     "Test": "XXXX-xxxxx"
 };

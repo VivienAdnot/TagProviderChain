@@ -62,7 +62,13 @@ var providers = {
         "9a56-4422f": allProvidersOutstream,
 
         //Equideow
-        "ff3d-4b8cf": allProvidersOutstream,                 
+        "ff3d-4b8cf": allProvidersOutstream,
+        
+        //Prizee
+        "Fj68VbKzEe": allProvidersOutstream,
+
+        //FairyMix
+        "Hn78Uf8iRy": allProvidersOutstream,
 
         //ludokado
         "9a19-43fav": [playtemEmbedded.Affiz],
