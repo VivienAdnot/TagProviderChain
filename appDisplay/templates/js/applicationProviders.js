@@ -58,6 +58,9 @@ var providers = {
         //Ma Bimbo
         "1206-4ce9f": allProvidersOutstream,
 
+        //Voyage to Fantasy
+        "9a56-4422f": allProvidersOutstream,        
+
         //ludokado
         "9a19-43fav": [playtemEmbedded.Affiz],
 

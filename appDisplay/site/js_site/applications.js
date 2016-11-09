@@ -15,5 +15,6 @@ var listApikey = {
     "Mediastay outstream": "e048-4cdev",
     "ActiplayNoReward outstream": "4f63-b20df",
     "MaBimbo outstream": "1206-4ce9f",
+    "Voyage to Fantasy outstream": "9a56-4422f",
     "Test": "XXXX-xxxxx"
 };
