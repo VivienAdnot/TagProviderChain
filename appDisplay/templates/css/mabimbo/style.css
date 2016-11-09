@@ -1,0 +1,214 @@
+body {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+}
+img {
+    border: 0;
+}
+button,
+input,
+select,
+textarea,
+p {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: middle;
+    outline: none;
+}
+button {
+    cursor: pointer;
+}
+/* ui helpers */
+
+.u-tracker {
+    display: none;
+    width: 0;
+    height: 0;
+}
+.u-hidden {
+    display: none;
+}
+.u-debug {
+    border: 1px solid blue;
+}
+.u-centerText {
+    text-align: center;
+}
+.img--border {
+    border: 4px solid white;
+}
+.img--shadow {
+    -webkit-box-shadow: 0px 10px 10px 0px rgba(50, 50, 50, 0.4);
+    -moz-box-shadow: 0px 10px 10px 0px rgba(50, 50, 50, 0.4);
+    box-shadow: 0px 10px 10px 0px rgba(50, 50, 50, 0.4);
+}
+.u-verticalAlignWrapper {
+    position: relative;
+    width: auto;
+    /* must be overriden */
+    
+    height: auto;
+    /* must be overriden */
+}
+.u-verticalAlignWrapper > .u-verticalAlignTarget {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+}
+.u-verticalAlignText {
+    display: table;
+    width: auto;
+    /* must be overriden */
+    
+    height: auto;
+    /* must be overriden */
+}
+.u-verticalAlignText > span,
+.u-verticalAlignText > div {
+    display: table-cell;
+    line-height: normal;
+    vertical-align: middle;
+}
+/* specific */
+
+.ad {
+    width: 750px;
+    height: 550px;
+    position: relative;
+    background: url("//static.playtem.com/templates/MaBimbo/750x550/background.png") no-repeat top left;
+    border-top: 1px solid transparent;
+}
+.ad__header__title {
+    position: absolute;
+    left: 175px;
+    top: 17px;
+    width: 400px;
+    text-align: center;
+    text-transform: uppercase;
+    height: 59px;
+}
+.ad__imgClose {
+    position: absolute;
+    left: 655px;
+    top: 0px;
+    cursor: pointer;
+}
+
+.ad__reward__offerMessageBlock {
+    position: absolute;
+    left: 67px;
+    top: 93px;
+    text-align: center;
+}
+
+.ad__reward__offerMessage {
+    height: 60px;
+    width: 410px;
+}
+
+.ad__reward__offerMessage__brandName {
+    text-transform: uppercase;
+    margin-right: 5px;
+}
+
+.ad__reward__image {
+    position: absolute;
+    left: 515px;
+    top: 99px;
+    max-width: 50px;
+    max-height: 50px;
+}
+
+.ad__reward__itemTitleBlock {
+    position: absolute;
+    left: 570px;
+    top: 88px;
+}
+
+.ad__reward__itemTitle {
+    width: 85px;
+    height: 70px;
+}
+
+@font-face {
+    font-family: Bitter;
+    src: url('//static.playtem.com/Fonts/Bitter-Bold.ttf');
+}
+
+@font-face {
+    font-family: Lato;
+    src: url('//static.playtem.com/Fonts/Lato-Bold.ttf');
+}
+
+.ad__header__title {
+    font-family: Bitter;
+    font-weight: bold;
+    font-size: 26px;
+    color: #ffde5b;
+}
+
+.ad__reward__offerMessageBlock {
+    font-family: Bitter;
+    font-weight: normal;
+    font-size: 22px;
+    color: #fffdfd;
+}
+
+.ad__reward__offerMessage__brandName {
+	font-size: 22px;
+}
+
+.ad__reward__itemTitleBlock {
+    font-family: Lato;
+    font-weight: normal;
+    font-size: 16px;
+    color: #836854;
+}
+
+@font-face {
+    font-family: Pacifico;
+    src: url('//static.playtem.com/Fonts/Pacifico.ttf');
+}
+
+.ad__header__title {
+    font-family: Pacifico;
+    font-weight: normal;
+    font-size: 38px;
+    color: #ed5978;
+    text-shadow: 3px 0px 0px #FFFFFF, -3px 0px 0px #FFFFFF, 0px 3px 0px #FFFFFF, 0px -3px 0px #FFFFFF;
+    text-transform: none;
+}
+
+.ad__reward__offerMessageBlock {
+    font-family: Pacifico;
+    font-weight: normal;
+    font-size: 25px;
+    color: #ed5978;
+}
+
+.ad__reward__offerMessage__brandName {
+	font-size: 30px;
+	text-transform: none;
+}
+
+.ad__reward__itemTitleBlock {
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 14px;
+    color: #ffffff;
+}

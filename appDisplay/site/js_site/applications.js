@@ -14,5 +14,6 @@ var listApikey = {
     "LadyPopular outstream": "92c6-497ff",
     "Mediastay outstream": "e048-4cdev",
     "ActiplayNoReward outstream": "4f63-b20df",
+    "MaBimbo outstream": "1206-4ce9f",
     "Test": "XXXX-xxxxx"
 };

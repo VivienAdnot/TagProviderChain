@@ -6,7 +6,7 @@ var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Affiz
 //var iscoolsInstream = [playtemEmbedded.PlaytemVastWrapper];
 
 var instreamTest = [playtemEmbedded.Affiz];
-var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
+var allProvidersOutstream = [playtemEmbedded.RevContent, playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
 
 // vast tag test
 
@@ -18,13 +18,13 @@ var providers = {
         "4a2b-8438v": [playtemEmbedded.PlaytemVastActiplay],
 
         //belote
-        "4da9-acb2b": [playtemEmbedded.PlaytemVastVexigoInstream],
+        "4da9-acb2b": [playtemEmbedded.PlaytemVastActiplay],
 
         //isCool
         "452c-8a80i": [playtemEmbedded.PlaytemVastActiplay],
 
         //urbanRivals
-        "494f-8f1bv": [playtemEmbedded.PlaytemVastVexigoInstream],
+        "494f-8f1bv": [playtemEmbedded.PlaytemVastActiplay],
 
         //===== ! prod =====
 
@@ -44,21 +44,24 @@ var providers = {
         //===== prod =====
 
         //jotu
-        "1c27-4684v": [playtemEmbedded.RevContent],
+        "1c27-4684v": allProvidersOutstream,
 
         //mediastay
         "e048-4cdev": allProvidersOutstream,
 
         //actiplayNoReward
-        "4f63-b20df": [playtemEmbedded.PlaytemVastVexigoOutstream],
+        "4f63-b20df": allProvidersOutstream,
 
         //ladypopular
         "92c6-497ff": allProvidersOutstream,
 
-        //===== ! prod =====
+        //Ma Bimbo
+        "1206-4ce9f": allProvidersOutstream,
 
         //ludokado
-        "9a19-43fav": allProvidersOutstream,
+        "9a19-43fav": [playtemEmbedded.Affiz],
+
+        //===== ! prod =====
         
         //TLM
         "ad5d-4ef0f": allProvidersOutstream,
