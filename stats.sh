@@ -107,7 +107,7 @@ function game() {
 providersInstreamAll=("affiz" "SpotxInstream" "Actiplay")
 providersInstreamIscool=("SpotxInstream" "Actiplay")
 
-providersOutstreamAll=("Smartad" "SpotxOutstream")
+providersOutstreamAll=("Smartad" "SpotxOutstream" "revContent")
 
 providersIscoolTemp=("VexigoInstream" "SpotxInstream" "Actiplay")
 providersJotuTemp=("VexigoOutstream" "SpotxOutstream" "Smartad")

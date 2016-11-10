@@ -1444,6 +1444,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
+            console.log(videoPlayer.getAdErrorCode());
             (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
         });
 

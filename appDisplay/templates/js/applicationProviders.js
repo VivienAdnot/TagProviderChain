@@ -1,12 +1,11 @@
 var empty = [];
 
-var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Affiz];
+var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay, playtemEmbedded.Affiz];
+var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
 
-// var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastWrapper];
-//var iscoolsInstream = [playtemEmbedded.PlaytemVastWrapper];
+var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
 
 var instreamTest = [playtemEmbedded.Affiz];
-var allProvidersOutstream = [playtemEmbedded.RevContent, playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
 
 // vast tag test
 
@@ -15,16 +14,16 @@ var providers = {
         //===== prod =====
 
         //ludokado
-        "4a2b-8438v": [playtemEmbedded.PlaytemVastActiplay],
-
-        //belote
-        "4da9-acb2b": [playtemEmbedded.PlaytemVastActiplay],
-
-        //isCool
-        "452c-8a80i": [playtemEmbedded.PlaytemVastActiplay],
+        "4a2b-8438v": allProvidersInstream,
 
         //urbanRivals
-        "494f-8f1bv": [playtemEmbedded.PlaytemVastActiplay],
+        "494f-8f1bv": allProvidersInstream,        
+
+        //belote
+        "4da9-acb2b": iscoolsInstream,
+
+        //isCool
+        "452c-8a80i": iscoolsInstream,
 
         //===== ! prod =====
 
@@ -71,15 +70,15 @@ var providers = {
         "Hn78Uf8iRy": allProvidersOutstream,
 
         //ludokado
-        "9a19-43fav": [playtemEmbedded.Affiz],
+        "9a19-43fav": [playtemEmbedded.Smartad],
 
         //===== ! prod =====
         
         //TLM
-        "ad5d-4ef0f": allProvidersOutstream,
+        "ad5d-4ef0f": allProvidersOutstream
     },
 
     test: {
-        "XXXX-xxxxx": [playtemEmbedded.RevContent]
+        "XXXX-xxxxx": [playtemEmbedded.PlaytemVastVexigoInstream]
     }
 };
