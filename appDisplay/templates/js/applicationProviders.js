@@ -3,7 +3,7 @@ var empty = [];
 var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay, playtemEmbedded.Affiz];
 var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
 
-var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
+var allProvidersOutstream = [playtemEmbedded.SpotxOutstream, playtemEmbedded.Smartad, playtemEmbedded.RevContent];
 
 var instreamTest = [playtemEmbedded.Affiz];
 

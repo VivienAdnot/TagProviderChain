@@ -51,36 +51,36 @@ function statsPerprovider() {
 	mkdir $2/$1
 	grep -i "&p=$1&" $2/$2.log > $2/$1/$1.log
 
-	grep -i "request&" $2/$1/$1.log > $2/$1/request.log
+	#grep -i "request&" $2/$1/$1.log > $2/$1/request.log
 	grep -i "onAdAvailable" $2/$1/$1.log > $2/$1/onAdAvailable.log
 	grep -i "onAdUnavailable" $2/$1/$1.log > $2/$1/onAdUnavailable.log
 	#grep -i "onVideoComplete" $2/$1/$1.log > $2/$1/onVideoComplete.log
 	grep -i "onAdComplete" $2/$1/$1.log > $2/$1/onAdComplete.log
 
 	grep -i "requestSuccess" $2/$1/$1.log > $2/$1/requestSuccess.log
-	grep -i "initSuccess" $2/$1/$1.log > $2/$1/initSuccess.log
+	#grep -i "initSuccess" $2/$1/$1.log > $2/$1/initSuccess.log
 
-	grep -i "onScriptLoadingError" $2/$1/$1.log > $2/$1/onScriptLoadingError.log
-	grep -i "onAdError" $2/$1/$1.log > $2/$1/onAdError.log
-	grep -i "onVideoClosed" $2/$1/$1.log > $2/$1/onVideoClosed.log
-	grep -i "onAdClosed" $2/$1/$1.log > $2/$1/onAdClosed.log
+	#grep -i "onScriptLoadingError" $2/$1/$1.log > $2/$1/onScriptLoadingError.log
+	#grep -i "onAdError" $2/$1/$1.log > $2/$1/onAdError.log
+	#grep -i "onVideoClosed" $2/$1/$1.log > $2/$1/onVideoClosed.log
+	#grep -i "onAdClosed" $2/$1/$1.log > $2/$1/onAdClosed.log
 
-	cat $2/$1/request.log | wc -l >> $OUT
+	#cat $2/$1/request.log | wc -l >> $OUT
 	cat $2/$1/requestSuccess.log | wc -l >> $OUT
 	cat $2/$1/onAdAvailable.log | wc -l >> $OUT
 	cat $2/$1/onAdUnavailable.log | wc -l >> $OUT
 	cat $2/$1/onAdComplete.log | wc -l >> $OUT
-	cat $2/$1/onAdError.log | wc -l >> $OUT
+	#cat $2/$1/onAdError.log | wc -l >> $OUT
 
-	echo "initSuccess" >> $OUT
-	cat $2/$1/initSuccess.log | wc -l >> $OUT
+	#echo "initSuccess" >> $OUT
+	#cat $2/$1/initSuccess.log | wc -l >> $OUT
 
-	echo "onScriptLoadingError" >> $OUT
-	cat $2/$1/onScriptLoadingError.log | wc -l >> $OUT
+	#echo "onScriptLoadingError" >> $OUT
+	#cat $2/$1/onScriptLoadingError.log | wc -l >> $OUT
 	
-	echo "onVideoClosed" >> $OUT
-	cat $2/$1/onVideoClosed.log | wc -l >> $OUT
-	cat $2/$1/onAdClosed.log | wc -l >> $OUT
+	#echo "onVideoClosed" >> $OUT
+	#cat $2/$1/onVideoClosed.log | wc -l >> $OUT
+	#cat $2/$1/onAdClosed.log | wc -l >> $OUT
 }
 
 init
@@ -104,29 +104,25 @@ function game() {
 	done
 }
 
-providersInstreamAll=("affiz" "SpotxInstream" "Actiplay")
-providersInstreamIscool=("SpotxInstream" "Actiplay")
-
+providersInstreamAll=("affiz" "SpotxInstream" "PlaytemVastActiplay")
 providersOutstreamAll=("Smartad" "SpotxOutstream" "revContent")
 
-providersIscoolTemp=("VexigoInstream" "SpotxInstream" "Actiplay")
-providersJotuTemp=("VexigoOutstream" "SpotxOutstream" "Smartad")
-
-#vast
-vastActiplay=("PlaytemVastActiplay")
-vastVexigoInstream=("PlaytemVastVexigoInstream")
-vastVexigoOutstream=("PlaytemVastVexigoOutstream")
-vastYume=("PlaytemVastYume")
-
 #rewarded
-game "ludokadoRewarded" "4a2b-8438v" "${vastActiplay[@]}"
-game "beloteRewarded" "4da9-acb2b" "${vastVexigoInstream[@]}"
-game "iscoolRewarded" "452c-8a80i" "${vastActiplay[@]}"
-game "urbanRivalsRewarded" "494f-8f1bv" "${vastVexigoInstream[@]}"
+#game "ludokadoRewarded" "4a2b-8438v" "${providersInstreamAll[@]}"
+#game "beloteRewarded" "4da9-acb2b" "${providersInstreamAll[@]}"
+#game "iscoolRewarded" "452c-8a80i" "${providersInstreamAll[@]}"
+#game "urbanRivalsRewarded" "494f-8f1bv" "${providersInstreamAll[@]}"
 
 #outstream
 game "jotuOutstream" "1c27-4684v" "${providersOutstreamAll[@]}"
-game "ludokadoOutstream" "9a19-43fav" "${providersOutstreamAll[@]}"
 game "mediastayOutstream" "e048-4cdev" "${providersOutstreamAll[@]}"
-game "actiplayNoRewardOutstream" "4f63-b20df" "${vastVexigoOutstream[@]}"
-game "ladyPopularOutstream" "92c6-497ff" "${vastYume[@]}"
+game "actiplayNoRewardOutstream" "4f63-b20df" "${providersOutstreamAll[@]}"
+game "ladyPopularOutstream" "92c6-497ff" "${providersOutstreamAll[@]}"
+
+game "mabimbo" "1206-4ce9f" "${providersOutstreamAll[@]}"
+game "VoyageToFantasy" "9a56-4422f" "${providersOutstreamAll[@]}"
+game "Equideow" "ff3d-4b8cf" "${providersOutstreamAll[@]}"
+game "Prizee" "Fj68VbKzEe" "${providersOutstreamAll[@]}"
+game "FairyMix" "Hn78Uf8iRy" "${providersOutstreamAll[@]}"
+
+game "ludokadoOutstream" "9a19-43fav" "${providersOutstreamAll[@]}"
