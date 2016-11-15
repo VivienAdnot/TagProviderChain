@@ -22,20 +22,37 @@ playtemEmbedded.Affiz.prototype.init = function() {
         });
 
         $playerImg.one("click", function() {
-            AFFIZVIDEO.show();
+            try {
+                AFFIZVIDEO.show();
+            } catch(e) {
+
+            }
+            
             $playerImg.hide();
         });
     };
 
     createFakePlayerImage();
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request");
-
-    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
-        if(error) {
-            self.onScriptLoadingError();
-        } else {
-            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
-        }
+    
+    var injectScript = function() {
+        playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
+            if(error) {
+                self.onScriptLoadingError();
+            } else {
+                playtemEmbedded.Core.track({
+                    providerName: self.settings.providerName,
+                    apiKey:  self.settings.apiKey,
+                    eventType: "requestSuccess"
+                });
+            }
+        });
+    };
+    
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "request",
+        onDone: injectScript,
+        onFail: self.settings.onError
     });
 };

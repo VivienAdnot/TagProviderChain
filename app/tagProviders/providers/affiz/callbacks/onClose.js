@@ -5,7 +5,12 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
         window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
     };
 
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdClosed", function() {
-        closeWindow();
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "onAdClosed",
+        onDone: closeWindow,
+        onFail: self.settings.onError,
+        onAlways: $.noop
     });
 };

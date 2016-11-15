@@ -124,31 +124,40 @@ playtemEmbedded.Core.PostMessage.prototype.destroyListener = function(listenerId
     window.removeEventListener("message", handler, false);
 };
 
-playtemEmbedded.Core.track = function(providerName, apiKey, eventType, callback) {
-    if(!callback || typeof callback != "function") {
-        callback = $.noop;
+playtemEmbedded.Core.track = function(options) {
+
+    var defaults = {
+        providerName: undefined,
+        apiKey: undefined,
+        eventType: undefined,
+        onDone: $.noop,
+        onFail: $.noop,
+        onAlways: $.noop
+    };
+
+    var settings = $.extend({}, defaults, options);
+
+    if(!settings.providerName || !settings.apiKey || !settings.eventType) {
+        settings.onFail();
+        settings.onAlways();
+        return;
     }
 
-    var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
-    var url = "//api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&k=" + apiKey + "&t=" + timestamp;
+    var url = "//api.playtem.com/tracker.gif?a=" + settings.eventType
+        + "&c=&p=" + settings.providerName
+        + "&k=" + settings.apiKey
+        + "&t=" + playtemEmbedded.Core.Date.getCurrentTimestamp();
 
     $.get(url)
-        .fail(function(jqxhr) {
-            var message = "pixel tracking fail.";
-            var thisArgs = arguments;
-
-            for(var key in thisArgs) {
-                if(!thisArgs.hasOwnProperty(key)) {
-                    continue;
-                }
-
-                message += " " + thisArgs[key].toString();
-            }
-
-            playtemEmbedded.Core.log("playtemEmbedded", message);
+        .done(function() {
+            settings.onDone();
+        })
+        .fail(function() {
+            playtemEmbedded.Core.log("playtemEmbedded", "pixel tracking fail.");
+            settings.onFail();
         })
         .always(function() {
-            callback();
+            settings.onAlways();
         });
 };
 
@@ -499,7 +508,7 @@ playtemEmbedded.Affiz = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop
+        onError: $.noop
     };
 
     this.settings = {
@@ -532,10 +541,55 @@ playtemEmbedded.Affiz.prototype.onAdAvailable = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
 
     self.adFound = true;
-    
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
-        self.settings.onAdAvailable();
+
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "onAdAvailable",
+        onDone: self.settings.onAdAvailable,
+        onFail: self.settings.onError
     });
+};
+
+playtemEmbedded.Affiz.prototype.onAdComplete = function() {
+    var self = playtemEmbedded.Core.globals.affizContext;
+
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "onAdComplete",
+        onDone: self.settings.onAdComplete,
+        onFail: self.settings.onError
+    });
+};
+
+playtemEmbedded.Affiz.prototype.onAdError = function() {
+    var self = playtemEmbedded.Core.globals.affizContext;
+
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "onAdError",
+        onAlways: self.settings.onError
+    });    
+};
+
+playtemEmbedded.Affiz.prototype.onAdUnavailable = function() {
+    var self = playtemEmbedded.Core.globals.affizContext;
+    
+    if(self.adFound === true) {
+        self.onAdError();
+    }
+    
+    else {
+        playtemEmbedded.Core.track({
+            providerName: self.settings.providerName,
+            apiKey:  self.settings.apiKey,
+            eventType: "onAdUnavailable",
+            onDone: self.settings.onAdUnavailable,
+            onFail: self.settings.onError
+        });
+    }
 };
 
 playtemEmbedded.Affiz.prototype.onClose = function() {
@@ -545,48 +599,25 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
         window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
     };
 
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdClosed", function() {
-        closeWindow();
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "onAdClosed",
+        onDone: closeWindow,
+        onFail: self.settings.onError,
+        onAlways: $.noop
     });
-};
-
-playtemEmbedded.Affiz.prototype.onAdComplete = function() {
-    var self = playtemEmbedded.Core.globals.affizContext;
-    
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete", function() {
-        self.settings.onAdComplete();
-    });
-};
-
-playtemEmbedded.Affiz.prototype.onAdError = function() {
-    var self = playtemEmbedded.Core.globals.affizContext;
-    
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError", function() {
-        self.settings.onAdError();
-    });
-};
-
-playtemEmbedded.Affiz.prototype.onAdUnavailable = function() {
-    var self = playtemEmbedded.Core.globals.affizContext;
-    
-    if(self.adFound === true) {
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError", function() {
-            self.settings.onAdError();
-        });
-    }
-    
-    else {
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
-            self.settings.onAdUnavailable();
-        });
-    }
 };
 
 playtemEmbedded.Affiz.prototype.onScriptLoadingError = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
-    
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onScriptLoadingError", function() {
-        self.settings.onAdUnavailable();
+
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "onScriptLoadingError",
+        onDone: self.settings.onAdUnavailable,
+        onFail: self.settings.onError
     });
 };
 
@@ -594,16 +625,24 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     var self = this;
 
     window.avAsyncInit = function() {
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "initSuccess");
+        var initAffiz = function() {
+            AFFIZVIDEO.init({
+                site_id: self.settings.siteId,
+                clientid: self.settings.clientid,
+                load_callback: self.onAdAvailable,
+                noads_callback: self.onAdUnavailable,
+                complete_callback: self.onAdComplete,
+                close_callback: self.onClose,
+                modal: self.settings.modal
+            });
+        }
 
-        AFFIZVIDEO.init({
-            site_id: self.settings.siteId,
-            clientid: self.settings.clientid,
-            load_callback: self.onAdAvailable,
-            noads_callback: self.onAdUnavailable,
-            complete_callback: self.onAdComplete,
-            close_callback: self.onClose,
-            modal: self.settings.modal
+        playtemEmbedded.Core.track({
+            providerName: self.settings.providerName,
+            apiKey:  self.settings.apiKey,
+            eventType: "onAdAvailable",
+            onDone: initAffiz,
+            onFail: self.settings.onError
         });
     };
 
@@ -634,21 +673,38 @@ playtemEmbedded.Affiz.prototype.init = function() {
         });
 
         $playerImg.one("click", function() {
-            AFFIZVIDEO.show();
+            try {
+                AFFIZVIDEO.show();
+            } catch(e) {
+
+            }
+            
             $playerImg.hide();
         });
     };
 
     createFakePlayerImage();
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request");
-
-    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
-        if(error) {
-            self.onScriptLoadingError();
-        } else {
-            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
-        }
+    
+    var injectScript = function() {
+        playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
+            if(error) {
+                self.onScriptLoadingError();
+            } else {
+                playtemEmbedded.Core.track({
+                    providerName: self.settings.providerName,
+                    apiKey:  self.settings.apiKey,
+                    eventType: "requestSuccess"
+                });
+            }
+        });
+    };
+    
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "request",
+        onDone: injectScript,
+        onFail: self.settings.onError
     });
 };
 
