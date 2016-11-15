@@ -67,7 +67,7 @@ var providers = {
         "Fj68VbKzEe": allProvidersOutstream,
 
         //FairyMix
-        "Hn78Uf8iRy": allProvidersOutstream,
+        "Hn78Uf8iRy": instreamTest,
 
         //ludokado
         "9a19-43fav": [playtemEmbedded.Smartad],
@@ -79,6 +79,6 @@ var providers = {
     },
 
     test: {
-        "XXXX-xxxxx": [playtemEmbedded.PlaytemVastVexigoInstream]
+        "XXXX-xxxxx": instreamTest
     }
 };

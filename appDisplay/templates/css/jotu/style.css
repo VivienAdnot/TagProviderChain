@@ -158,24 +158,25 @@ button {
 .ad__header__title {
     font-family: Bitter;
     font-weight: bold;
-    font-size: 26px;
+    font-size: 28px;
+    text-transform: none;
     color: #ffde5b;
 }
 
 .ad__reward__offerMessageBlock {
     font-family: Bitter;
     font-weight: normal;
-    font-size: 22px;
-    color: #fffdfd;
+    font-size: 20px;
+    color: #543222;
 }
 
 .ad__reward__offerMessage__brandName {
-	font-size: 22px;
+	font-size: 20px;
 }
 
 .ad__reward__itemTitleBlock {
     font-family: Lato;
     font-weight: normal;
     font-size: 16px;
-    color: #836854;
+    color: #6a4b3b;
 }
