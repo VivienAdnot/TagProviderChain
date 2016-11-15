@@ -8,11 +8,18 @@ playtemEmbedded.Core.track = function(providerName, apiKey, eventType, callback)
 
     $.get(url)
         .fail(function(jqxhr) {
-            if(typeof jqxhr == "object" && jqxhr.status && jqxhr.statusText) {
-                playtemEmbedded.Core.log("playtemEmbedded", "pixel tracking fail. " + jqxhr.status + ": " + jqxhr.statusText);
-            } else {
-                playtemEmbedded.Core.log("playtemEmbedded", "pixel tracking fail. unknown reason");
+            var message = "pixel tracking fail.";
+            var thisArgs = arguments;
+
+            for(var key in thisArgs) {
+                if(!thisArgs.hasOwnProperty(key)) {
+                    continue;
+                }
+
+                message += " " + thisArgs[key].toString();
             }
+
+            playtemEmbedded.Core.log("playtemEmbedded", message);
         })
         .always(function() {
             callback();
