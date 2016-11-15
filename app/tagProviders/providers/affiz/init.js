@@ -33,7 +33,9 @@ playtemEmbedded.Affiz.prototype.init = function() {
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
-            self.onInternalError();
+            self.onScriptLoadingError();
+        } else {
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
         }
     });
 };

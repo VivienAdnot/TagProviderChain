@@ -3,12 +3,12 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
 
     self.init(function(error) {
         if(error) {
-            self.onInternalError();
+            self.onScriptLoadingError();
             return;
         }
-
+        
         if(typeof RadiantMP == "undefined") {
-            self.onInternalError();
+            self.onScriptLoadingError();
             return;
         }
         
@@ -16,16 +16,18 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         var videoPlayerElement = document.getElementById(self.settings.playerId);
         
         if(!videoPlayer || typeof videoPlayer.init !== "function") {
-            self.onInternalError();
+            self.onScriptLoadingError();
             return;
         }
+
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         videoPlayerElement.addEventListener('adstarted', function() {
             self.onAdAvailable();
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
-            self.onAdUnavailable();
+            (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
         });
 
         videoPlayerElement.addEventListener('adcomplete', function() {

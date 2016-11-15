@@ -527,6 +527,18 @@ playtemEmbedded.Affiz.prototype.onAdAvailable = function() {
     });
 };
 
+playtemEmbedded.Affiz.prototype.onClose = function() {
+    var self = playtemEmbedded.Core.globals.affizContext;
+
+    var closeWindow = function() {
+        window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+    };
+
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdClosed", function() {
+        closeWindow();
+    });
+};
+
 playtemEmbedded.Affiz.prototype.onAdComplete = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
     
@@ -559,22 +571,10 @@ playtemEmbedded.Affiz.prototype.onAdUnavailable = function() {
     }
 };
 
-playtemEmbedded.Affiz.prototype.onClose = function() {
-    var self = playtemEmbedded.Core.globals.affizContext;
-
-    var closeWindow = function() {
-        window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
-    };
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onVideoClosed", function() {
-        closeWindow();
-    });
-};
-
-playtemEmbedded.Affiz.prototype.onInternalError = function() {
+playtemEmbedded.Affiz.prototype.onScriptLoadingError = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
     
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onInternalError", function() {
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onScriptLoadingError", function() {
         self.settings.onAdUnavailable();
     });
 };
@@ -583,6 +583,8 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     var self = this;
 
     window.avAsyncInit = function() {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "initSuccess");
+
         AFFIZVIDEO.init({
             site_id: self.settings.siteId,
             clientid: self.settings.clientid,
@@ -632,7 +634,9 @@ playtemEmbedded.Affiz.prototype.init = function() {
 
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
         if(error) {
-            self.onInternalError();
+            self.onScriptLoadingError();
+        } else {
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
         }
     });
 };
@@ -648,7 +652,7 @@ playtemEmbedded.Smartad = function(options) {
     };
 
     this.settings = {
-        providerName: "Smart",
+        providerName: "Smartad",
         scriptUrl: '//www8.smartadserver.com/config.js?nwid=1901',
         siteId : 100394,
         pageName : "home",
@@ -669,12 +673,16 @@ playtemEmbedded.Smartad = function(options) {
         }
     };
 
+    this.adFound = false;
+
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);       
 };
 
 playtemEmbedded.Smartad.prototype.onAdAvailable = function() {
     var self = this;
+
+    self.adFound = true;
     
     playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
         self.settings.onAdAvailable();
@@ -692,15 +700,23 @@ playtemEmbedded.Smartad.prototype.onAdError = function(errorMessage) {
 playtemEmbedded.Smartad.prototype.onAdUnavailable = function() {
     var self = this;
     
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
-        self.settings.onAdUnavailable();
-    });
+    if(self.adFound === true) {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError", function() {
+            self.settings.onAdError();
+        });
+    }
+    
+    else {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
+            self.settings.onAdUnavailable();
+        });
+    }
 };
 
-playtemEmbedded.Smartad.prototype.onInternalError = function() {
+playtemEmbedded.Smartad.prototype.onScriptLoadingError = function() {
     var self = this;
     
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onInternalError", function() {
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onScriptLoadingError", function() {
         self.settings.onAdUnavailable();
     });
 };
@@ -721,10 +737,12 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
     };
 
     self.init(function(error) {
-        if(error != null) {
-            self.onInternalError();
+        if(error) {
+            self.onScriptLoadingError();
             return;
         }
+        
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         sas.setup({
             domain: self.settings.domain,
@@ -759,14 +777,10 @@ playtemEmbedded.Smartad.prototype.init = function(callback) {
         $("." + self.settings.targetClass).css(self.settings.cssProperties);
     };
 
+    createTarget();
+    
     playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
-        if(!error && data == "success") {
-            createTarget();
-            callback(null);
-            return;
-        }
-        
-        callback("smartad: script couldn't be loaded");
+        callback(error);
     });
 };
 
@@ -790,7 +804,7 @@ playtemEmbedded.SpotxInternal = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop
+        onError: $.noop
     };
 
     this.settings = {
@@ -879,10 +893,10 @@ playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
     }
 };
 
-playtemEmbedded.SpotxInternal.prototype.onInternalError = function() {
+playtemEmbedded.SpotxInternal.prototype.onScriptLoadingError = function() {
     var self = this;
     
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onInternalError", function() {
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onScriptLoadingError", function() {
         self.settings.onAdUnavailable();
     });
 };
@@ -905,9 +919,11 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
 
     self.init(function(error, result) {
         if(error) {
-            self.onInternalError();
+            self.onScriptLoadingError();
             return;
         }
+        
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         self.watchVideoPlayerCreation(function(adStartedStatus) {
             if(adStartedStatus) {
@@ -936,17 +952,12 @@ playtemEmbedded.SpotxInternal.prototype.init = function(callback) {
 
     createTarget();
 
-    self.injectScript(function(error, result) {
-        if(error) {
-            callback("Spotx injectScript error: " + error, null);
-            return;
-        }
-
-        callback(null, "success");
+    self.injectScriptCustom(function(error, result) {
+        callback(error);
     });
 };
 
-playtemEmbedded.SpotxInternal.prototype.injectScript = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(callback) {
     var self = this;
 
     var script = document.createElement("script");
@@ -1199,25 +1210,17 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdError = function() {
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdUnavailable = function() {
     var self = this;
     
-    if(self.adFound === true) {
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError", function() {
-            self.settings.onAdError();
-        });
-    }
-    
-    else {
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
-            self.settings.onAdUnavailable();
-        });
-    }
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
+        self.settings.onAdUnavailable();
+    });
 };
 
-playtemEmbedded.PlaytemVastPlayer.prototype.onInternalError = function() {
+playtemEmbedded.PlaytemVastPlayer.prototype.onScriptLoadingError = function() {
     var self = this;
 
     self.clean();
     
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onInternalError", function() {
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onScriptLoadingError", function() {
         self.settings.onAdUnavailable();
     });
 };
@@ -1235,12 +1238,12 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
 
     self.init(function(error) {
         if(error) {
-            self.onInternalError();
+            self.onScriptLoadingError();
             return;
         }
-
+        
         if(typeof RadiantMP == "undefined") {
-            self.onInternalError();
+            self.onScriptLoadingError();
             return;
         }
         
@@ -1248,16 +1251,18 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         var videoPlayerElement = document.getElementById(self.settings.playerId);
         
         if(!videoPlayer || typeof videoPlayer.init !== "function") {
-            self.onInternalError();
+            self.onScriptLoadingError();
             return;
         }
+
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
 
         videoPlayerElement.addEventListener('adstarted', function() {
             self.onAdAvailable();
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
-            self.onAdUnavailable();
+            (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
         });
 
         videoPlayerElement.addEventListener('adcomplete', function() {
@@ -1343,70 +1348,6 @@ playtemEmbedded.Actiplay.prototype.execute = function() {
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
         onAdError: self.settings.onAdError
-    });
-
-    self.vastPlayer.execute();
-};
-
-playtemEmbedded.Adreels = function(options) {
-    var defaults = {
-        debug: false,
-        apiKey: undefined,
-
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onAdComplete: $.noop,
-        onAdError: $.noop
-    };
-
-    this.settings = {
-        top: 168,
-        width: 530,
-        height: 350
-    };
-
-    this.vastPlayer = undefined;
-
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
-
-    if(this.settings.debug === true) {
-        // nothing to do
-    }
-};
-
-playtemEmbedded.Adreels.prototype.execute = function() {
-    var self = this;
-
-    var buildTag = function() {
-        return "http://vid.springserve.com/vast/39549?"
-            + "w=" + self.settings.width
-            + "&h=" + self.settings.height
-            + "&url=" + "poc.playtem.com" // + "{{URL}}"
-            + "&cb=" + playtemEmbedded.Core.Date.getCurrentTimestamp() // cache buster
-            + "&desc=" // + "a" // + "{{DESCRIPTION}}"
-            + "&ic=" // + "IAB24" // + "{{IAB_CATEGORY}}"
-            + "&dur=" // + 500 // "{{DURATION}}"
-            + "&ap=" // + 1 // "{{AUTOPLAY}}"
-            + "&vid=" // + 1 // + "{{VIDEO_ID}}";
-    };
-
-    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
-        debug: self.settings.debug,
-        vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
-        providerName: "Adreels",
-
-        onAdAvailable: self.settings.onAdAvailable,
-        onAdUnavailable: self.settings.onAdUnavailable,
-        onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError,
-
-        playerPosition: {
-            top: self.settings.top,
-            width: self.settings.width,
-            height: self.settings.height
-        }        
     });
 
     self.vastPlayer.execute();

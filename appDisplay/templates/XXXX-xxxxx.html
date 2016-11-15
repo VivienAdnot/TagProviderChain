@@ -1,18 +1,17 @@
+<!DOCTYPE html>
+
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>JournalsOfTheUnknown outstream</title>
+    <meta name="viewport" content="width=device-width" />
+    <title>Mediastay outstream</title>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="css/jotu/style.css"/>
+    <link rel="stylesheet" href="css/genericReward/style.css"/>
 </head>
 <body>
     <div class="ad">
         <!-- title-->
-        <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">Congratulations</h1>
-        <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/JournalsOfTheUnknown/750x550/cross-close.png"/>
+        <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">TEST</h1>
+        <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/Generic_with_reward_desktop/750x550/cross-close.png"/>
 
         <!-- reward block-->
         <div class="ad__reward__offerMessageBlock">
@@ -34,18 +33,20 @@
         </div>
     </div>
 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
     <script type="text/javascript" src="../_source/playtemEmbeddedApp.js?3"></script>
     <script type="text/javascript" src="js/applicationProviders.js?3"></script>
 
     <script type="text/javascript">
         var playtemApp = new playtemEmbedded.App({
-            hasReward: true,
-            providers: providers["outstream"]["1c27-4684v"],
-            apiKey: "1c27-4684v",
+            hasReward: false,
+            providers: providers["test"]["XXXX-xxxxx"],
+            apiKey: "e048-4cdev", // Mediastay
             outputLanguage : "en-US",
             gameType: "desktop",
             debug: false,
-            placementType: "outstream"
+            placementType: "rewarded"
         });
 
         playtemApp.execute();

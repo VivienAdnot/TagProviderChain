@@ -2,6 +2,8 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     var self = this;
 
     window.avAsyncInit = function() {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "initSuccess");
+
         AFFIZVIDEO.init({
             site_id: self.settings.siteId,
             clientid: self.settings.clientid,

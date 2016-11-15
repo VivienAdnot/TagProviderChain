@@ -14,12 +14,7 @@ playtemEmbedded.SpotxInternal.prototype.init = function(callback) {
 
     createTarget();
 
-    self.injectScript(function(error, result) {
-        if(error) {
-            callback("Spotx injectScript error: " + error, null);
-            return;
-        }
-
-        callback(null, "success");
+    self.injectScriptCustom(function(error, result) {
+        callback(error);
     });
 };
