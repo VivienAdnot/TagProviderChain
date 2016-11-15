@@ -7,8 +7,6 @@ var allProvidersOutstream = [playtemEmbedded.SpotxOutstream, playtemEmbedded.Sma
 
 var instreamTest = [playtemEmbedded.Affiz];
 
-// vast tag test
-
 var providers = {
     rewarded: {
         //===== prod =====
@@ -67,7 +65,7 @@ var providers = {
         "Fj68VbKzEe": allProvidersOutstream,
 
         //FairyMix
-        "Hn78Uf8iRy": instreamTest,
+        "Hn78Uf8iRy": allProvidersOutstream,
 
         //ludokado
         "9a19-43fav": [playtemEmbedded.Smartad],
