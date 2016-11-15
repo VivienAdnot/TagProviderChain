@@ -11,7 +11,7 @@ playtemEmbedded.Core.track = function(providerName, apiKey, eventType, callback)
             if(typeof jqxhr == "object" && jqxhr.status && jqxhr.statusText) {
                 playtemEmbedded.Core.log("playtemEmbedded", "pixel tracking fail. " + jqxhr.status + ": " + jqxhr.statusText);
             } else {
-                playtemEmbedded.Core.log("playtemEmbedded", "pixel tracking fail. UNKNOWN");
+                playtemEmbedded.Core.log("playtemEmbedded", "pixel tracking fail. unknown reason");
             }
         })
         .always(function() {
