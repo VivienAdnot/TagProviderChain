@@ -1,82 +1,88 @@
-var empty = [];
+var instreamTest = [playtemEmbedded.RevContent];
+
+var providers = {};
+
+providers.test = {
+    "XXXX-xxxxx": instreamTest
+};
+
+//===========================
+// INSTREAM
+//===========================
 
 var allProvidersInstream = [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
 var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
 
+providers.rewarded = {
+    //===== prod =====
+
+    //ludokado
+    "4a2b-8438v": allProvidersInstream,
+
+    //urbanRivals
+    "494f-8f1bv": allProvidersInstream,        
+
+    //belote
+    "4da9-acb2b": iscoolsInstream,
+
+    //isCool
+    "452c-8a80i": iscoolsInstream,
+
+    //===== ! prod =====
+
+    //jotu
+    "4c3f-be78j": allProvidersInstream,
+
+    //ladyPopular
+    "r47c7-9c9b": allProvidersInstream,
+    "TSTr7-9c9b": instreamTest,
+
+    //mediastay rewarded
+    "r4b75-8a76": allProvidersInstream,
+    "TSTr5-8a76": instreamTest
+};
+
+//===========================
+// OUTSTREAM
+//===========================
+
 var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
 
-var instreamTest = [playtemEmbedded.RevContent];
+providers.outstream = {
+    //===== prod =====
 
-var providers = {
-    rewarded: {
-        //===== prod =====
+    //jotu
+    "1c27-4684v": allProvidersOutstream,
 
-        //ludokado
-        "4a2b-8438v": allProvidersInstream,
+    //mediastay
+    "e048-4cdev": allProvidersOutstream,
 
-        //urbanRivals
-        "494f-8f1bv": allProvidersInstream,        
+    //actiplayNoReward
+    "4f63-b20df": allProvidersOutstream,
 
-        //belote
-        "4da9-acb2b": iscoolsInstream,
+    //ladypopular
+    "92c6-497ff": allProvidersOutstream,
 
-        //isCool
-        "452c-8a80i": iscoolsInstream,
+    //Ma Bimbo
+    "1206-4ce9f": allProvidersOutstream,
 
-        //===== ! prod =====
+    //Voyage to Fantasy
+    "9a56-4422f": allProvidersOutstream,
 
-        //jotu
-        "4c3f-be78j": allProvidersInstream,
+    //Equideow
+    "ff3d-4b8cf": allProvidersOutstream,
+    
+    //Prizee
+    "Fj68VbKzEe": allProvidersOutstream,
 
-        //ladyPopular
-        "r47c7-9c9b": allProvidersInstream,
-        "TSTr7-9c9b": instreamTest,
+    //FairyMix
+    "Hn78Uf8iRy": allProvidersOutstream,
 
-        //mediastay rewarded
-        "r4b75-8a76": allProvidersInstream,
-        "TSTr5-8a76": instreamTest
-    },
+    //ludokado
+    "9a19-43fav": [playtemEmbedded.Smartad],
 
-    outstream: {
-        //===== prod =====
-
-        //jotu
-        "1c27-4684v": allProvidersOutstream,
-
-        //mediastay
-        "e048-4cdev": allProvidersOutstream,
-
-        //actiplayNoReward
-        "4f63-b20df": allProvidersOutstream,
-
-        //ladypopular
-        "92c6-497ff": allProvidersOutstream,
-
-        //Ma Bimbo
-        "1206-4ce9f": allProvidersOutstream,
-
-        //Voyage to Fantasy
-        "9a56-4422f": allProvidersOutstream,
-
-        //Equideow
-        "ff3d-4b8cf": allProvidersOutstream,
-        
-        //Prizee
-        "Fj68VbKzEe": allProvidersOutstream,
-
-        //FairyMix
-        "Hn78Uf8iRy": allProvidersOutstream,
-
-        //ludokado
-        "9a19-43fav": [playtemEmbedded.Smartad],
-
-        //===== ! prod =====
-        
-        //TLM
-        "ad5d-4ef0f": allProvidersOutstream
-    },
-
-    test: {
-        "XXXX-xxxxx": instreamTest
-    }
+    //===== ! prod =====
+    
+    //TLM
+    "ad5d-4ef0f": allProvidersOutstream
 };

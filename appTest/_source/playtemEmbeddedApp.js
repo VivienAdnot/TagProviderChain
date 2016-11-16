@@ -517,7 +517,6 @@ playtemEmbedded.Affiz = function(options) {
         clientId: "12345", // TBD
         $targetContainerElement: $('.ad'),
         modal: true,
-        httpRequestTimeout: 30000,
         sendEvents: {
             messageCloseWindow : "closeAdWindow"
         }
@@ -596,11 +595,12 @@ playtemEmbedded.Affiz.prototype.execute = function() {
             AFFIZVIDEO.init({
                 site_id: self.settings.siteId,
                 clientid: self.settings.clientid,
+                modal: self.settings.modal,
+
                 load_callback: self.onAdAvailable,
                 noads_callback: self.onAdUnavailable,
                 complete_callback: self.onAdComplete,
-                close_callback: self.onClose,
-                modal: self.settings.modal
+                close_callback: self.onClose
             });
         }
 
@@ -791,37 +791,38 @@ playtemEmbedded.RevContent.prototype.injectScriptCustom = function(callback) {
         }
         thisReferrer = thisReferrer.substr(0, 700);
         return thisReferrer;
-    };    
+    };
 
-    var rcel = document.createElement("script");
-    rcel.id = 'rc_' + Math.floor(Math.random() * 1000);
-    rcel.type = 'text/javascript';
-    rcel.src = "//trends.revcontent.com/serve.js.php?"
+    var scriptElement = document.createElement("script");
+
+    scriptElement.id = 'rc_' + Math.floor(Math.random() * 1000);
+    scriptElement.type = 'text/javascript';
+    scriptElement.src = "//trends.revcontent.com/serve.js.php?"
         + "w=50811"
-        + "&t=" + rcel.id
-        + "&c=" + (new Date()).getTime()
+        + "&t=" + scriptElement.id
+        + "&c=" + playtemEmbedded.Core.Date.getCurrentTimestamp()
         + "&width=400"
         + "&referer=" + getReferrer();
 
-    rcel.async = true;
+    scriptElement.async = true;
 
-    rcel.onload = function () {
+    scriptElement.onload = function () {
         callback(true);
     };
 
     // onload equivalent for IE
-    rcel.onreadystatechange = function () {
+    scriptElement.onreadystatechange = function () {
         if (this.readyState === "complete") {
-            rcel.onload();
+            scriptElement.onload();
         }
     };
 
-    rcel.onerror = function () {
+    scriptElement.onerror = function () {
         callback(false);
     };
 
-    var rcds = document.getElementById("revcontent");
-    rcds.appendChild(rcel);
+    var revcontentElement = document.getElementById("revcontent");
+    revcontentElement.appendChild(scriptElement);
 };
 
 playtemEmbedded.RevContent.prototype.watchAdCreation = function(callback) {
