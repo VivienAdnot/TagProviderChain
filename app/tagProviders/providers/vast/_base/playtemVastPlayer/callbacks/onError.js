@@ -1,4 +1,4 @@
-playtemEmbedded.PlaytemVastPlayer.prototype.onAdError = function() {
+playtemEmbedded.PlaytemVastPlayer.prototype.onError = function() {
     var self = this;
 
     self.clean();

@@ -14,7 +14,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
     var initialize = function() {
         self.init(function(error) {
             if(error) {
-                self.onScriptLoadingError();
+                self.settings.onAdUnavailable();
                 return;
             }
             

@@ -5,7 +5,7 @@ var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVas
 
 var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
 
-var instreamTest = [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream];
+var instreamTest = [playtemEmbedded.PlaytemVastActiplay];
 
 var providers = {
     rewarded: {

@@ -17,7 +17,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
             apiKey:  self.settings.apiKey,
-            eventType: "initSuccess",
+            eventType: "requestSuccess",
             onDone: initAffiz,
             onFail: self.settings.onAdUnavailable
         });

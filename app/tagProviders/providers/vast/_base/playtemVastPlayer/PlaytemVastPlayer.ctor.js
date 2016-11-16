@@ -8,7 +8,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop,
+        onError: $.noop,
 
         playerPosition: {
             top: 179,

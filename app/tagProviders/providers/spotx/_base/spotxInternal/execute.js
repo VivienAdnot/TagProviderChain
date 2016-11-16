@@ -15,7 +15,7 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
     var initialize = function() {
         self.init(function(error, result) {
             if(error) {
-                self.onScriptLoadingError();
+                self.settings.onAdUnavailable();
                 return;
             }
 

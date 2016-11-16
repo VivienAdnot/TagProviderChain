@@ -1,4 +1,4 @@
-playtemEmbedded.SpotxInternal.prototype.onAdError = function() {
+playtemEmbedded.SpotxInternal.prototype.onError = function() {
     var self = this;
     
     playtemEmbedded.Core.track({

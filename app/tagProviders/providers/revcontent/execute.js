@@ -4,7 +4,7 @@ playtemEmbedded.RevContent.prototype.execute = function() {
     var initialize = function() {
         self.init(function(status) {
             if(status === false) {
-                self.onScriptLoadingError();
+                self.settings.onAdUnavailable();
                 return;
             }
 

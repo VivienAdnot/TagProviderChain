@@ -11,7 +11,7 @@ playtemEmbedded.SpotxInstream = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop
+        onError: $.noop
     };
 
     this.spotxInternal = null;
@@ -32,7 +32,7 @@ playtemEmbedded.SpotxInstream.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError
+        onError: self.settings.onError
     });
 
     self.spotxInternal.execute();

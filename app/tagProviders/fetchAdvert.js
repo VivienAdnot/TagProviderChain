@@ -13,7 +13,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile)
 
             onAdAvailable: placementProfile.onAdAvailable,
             onAdComplete: placementProfile.onAdComplete,
-            onAdError: placementProfile.onAdError,
+            onError: placementProfile.onError,
 
             onAdUnavailable: function() {
                 moveNext();

@@ -22,7 +22,7 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
 
         onAdComplete : $.noop,
 
-        onAdError: function() {
+        onError: function() {
             //request close window
             window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
         }

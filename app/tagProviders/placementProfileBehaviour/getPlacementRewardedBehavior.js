@@ -31,6 +31,6 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
 
         onAdComplete : adCompleteOrError,
 
-        onAdError: adCompleteOrError
+        onError: adCompleteOrError
     };
 };
