@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
+	<Ad id="VexigoOutstream">
+		<Wrapper>
+			<AdSystem>VexigoOutstream</AdSystem>
+			<VASTAdTagURI>
+				<![CDATA[https://search.spotxchange.com/vast/2.00/168138?VPAID=1&content_page_url=playtem.com&cb=1234&player_width=500&player_height=300&vid_duration=30&vid_url=&vid_id=&vid_title=&vid_description=]]>
+			</VASTAdTagURI>
+			<Error>
+				<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoOutstream&a=error]]>
+			</Error>
+			<Impression>
+				<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoOutstream&a=impression]]>
+			</Impression>
+			<Creatives>
+				<Creative id="57861858976" sequence="1">
+					<Linear>
+						<TrackingEvents>
+							<Tracking event="start">
+								<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoOutstream&a=start]]>
+							</Tracking>
+							<Tracking event="complete">
+								<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoOutstream&a=complete]]>
+							</Tracking>
+						</TrackingEvents>
+					</Linear>
+				</Creative>
+			</Creatives>			
+		  <Extensions>
+			<Extension type="waterfall" fallback_index="0" />
+		  </Extensions>			
+		</Wrapper>
+	</Ad>
+</VAST>

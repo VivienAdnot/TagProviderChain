@@ -133,8 +133,19 @@ playtemEmbedded.Core.track = function(providerName, apiKey, eventType, callback)
     var url = "//api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&k=" + apiKey + "&t=" + timestamp;
 
     $.get(url)
-        .fail(function() {
-            playtemEmbedded.Core.log("playtemEmbedded", "couldn't retrieve pixel tracking from: " + url);
+        .fail(function(jqxhr) {
+            var message = "pixel tracking fail.";
+            var thisArgs = arguments;
+
+            for(var key in thisArgs) {
+                if(!thisArgs.hasOwnProperty(key)) {
+                    continue;
+                }
+
+                message += " " + thisArgs[key].toString();
+            }
+
+            playtemEmbedded.Core.log("playtemEmbedded", message);
         })
         .always(function() {
             callback();
@@ -639,6 +650,191 @@ playtemEmbedded.Affiz.prototype.init = function() {
             playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
         }
     });
+};
+
+playtemEmbedded.RevContent = function(options) {
+    var defaults = {
+        debug : false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onAdError: $.noop
+    };
+
+    this.settings = {
+        providerName: 'revContent',
+        //scriptUrl: '//trends.revcontent.com/serve.js.php?w=50804&t=1234&c=12345&width=500&referer=',
+        $targetContainerElement: $('.ad'),
+        modal: true,
+        httpRequestTimeout: 3000
+    };
+
+    this.adFound = false;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+};
+
+playtemEmbedded.RevContent.prototype.onAdAvailable = function() {
+    var self = this;
+
+    self.adFound = true;
+    
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
+        self.settings.onAdAvailable();
+    });
+};
+
+playtemEmbedded.RevContent.prototype.onAdComplete = function() {
+    var self = this;
+    
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete", function() {
+        self.settings.onAdComplete();
+    });
+};
+
+playtemEmbedded.RevContent.prototype.onAdError = function() {
+    var self = this;
+    
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError", function() {
+        self.settings.onAdError();
+    });
+};
+
+playtemEmbedded.RevContent.prototype.onAdUnavailable = function() {
+    var self = this;
+    
+    if(self.adFound === true) {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError", function() {
+            self.settings.onAdError();
+        });
+    }
+    
+    else {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable", function() {
+            self.settings.onAdUnavailable();
+        });
+    }
+};
+
+playtemEmbedded.RevContent.prototype.onScriptLoadingError = function() {
+    var self = this;
+    
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onScriptLoadingError", function() {
+        self.settings.onAdUnavailable();
+    });
+};
+
+playtemEmbedded.RevContent.prototype.execute = function() {
+    var self = this;
+
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request");
+
+    self.init(function(success) {
+        if(!success) {
+            self.onScriptLoadingError();
+            return;
+        }
+        
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
+
+        self.watchAdCreation(function(adStartedStatus) {
+            if(adStartedStatus) {
+                self.onAdAvailable();
+                return;
+            }
+            
+            self.onAdUnavailable();
+        });
+    });
+};
+
+playtemEmbedded.RevContent.prototype.init = function(callback) {
+    var self = this;
+
+    var createTarget = function(callback) {
+        self.settings.$targetContainerElement.append("<div id='revcontent'></div>");
+        $("#revcontent").css({
+            position: "absolute",
+            top: 170,
+            left: "0",
+            right: "0",
+            margin: "auto",
+            width: 400,
+            "text-align": "center"            
+        });
+    };
+
+    var getReferrer = function() {
+        var thisReferrer = "";
+        try {
+            if (thisReferrer = document.referrer, "undefined" == typeof thisReferrer) throw "undefined";
+        } catch (exception) {
+            thisReferrer = document.location.href, ("" == thisReferrer || "undefined" == typeof thisReferrer) && (thisReferrer = document.URL)
+        }
+        thisReferrer = thisReferrer.substr(0, 700);
+        return thisReferrer;
+    };
+
+    createTarget();    
+
+    var rcel = document.createElement("script");
+    rcel.id = 'rc_' + Math.floor(Math.random() * 1000);
+    rcel.type = 'text/javascript';
+    rcel.src = "//trends.revcontent.com/serve.js.php?"
+        + "w=50811"
+        + "&t=" + rcel.id
+        + "&c=" + (new Date()).getTime()
+        + "&width=400"
+        + "&referer=" + getReferrer();
+
+    rcel.async = true;
+
+    rcel.onload = function () {
+        callback(true);
+    };
+
+    // onload equivalent for IE
+    rcel.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            rcel.onload();
+        }
+    };
+
+    rcel.onerror = function () {
+        callback(false);
+    };
+
+    var rcds = document.getElementById("revcontent");
+    rcds.appendChild(rcel);
+};
+
+playtemEmbedded.RevContent.prototype.watchAdCreation = function(callback) {
+    var self = this;
+    var timeoutTimer = null;
+
+    var poll = window.setInterval(function() {
+        // refresh every round
+        var $videoPlayerContainer = $("#revcontent");
+        var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
+        var isVideoPlayerVisible = $videoPlayerContainer.height() > 10; // 10 is near random, real test should be height > 0
+
+        if(isVideoPlayerDefined && isVideoPlayerVisible) {
+            window.clearTimeout(timeoutTimer);
+
+            window.clearInterval(poll);
+
+            callback(true);
+        }
+    }, 250);
+
+    timeoutTimer = window.setTimeout(function () {
+        window.clearInterval(poll);
+
+        callback(false);
+    }, 30000);
 };
 
 playtemEmbedded.Smartad = function(options) {
@@ -1165,7 +1361,6 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    //this.radiantMediaPlayerSettings.licenseKey = (this.settings.debug == true) ? licenseKeys["poc.playtem.com"] : licenseKeys["static.playtem.com"];
     this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
@@ -1181,7 +1376,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
     var self = this;
 
     self.adFound = true;
-    
+
     playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
         self.settings.onAdAvailable();
     });
@@ -1228,9 +1423,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onScriptLoadingError = function() {
 playtemEmbedded.PlaytemVastPlayer.prototype.clean = function() {
     var self = this;
     
-    $("#" + self.settings.playerId).fadeOut(500, function() {
-        $(this).remove();
-    });
+    $("#" + self.settings.playerId).remove();
 }
 
 playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
@@ -1262,6 +1455,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         });
 
         videoPlayerElement.addEventListener('aderror', function() {
+            console.log(videoPlayer.getAdErrorCode());
             (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
         });
 
@@ -1296,7 +1490,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.init = function(callback) {
     });
 };
 
-playtemEmbedded.Actiplay = function(options) {
+playtemEmbedded.PlaytemVastActiplay = function(options) {
     var defaults = {
         debug: false,
         apiKey: undefined,
@@ -1321,28 +1515,159 @@ playtemEmbedded.Actiplay = function(options) {
     }
 };
 
-playtemEmbedded.Actiplay.prototype.execute = function() {
+playtemEmbedded.PlaytemVastActiplay.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "https://pubads.g.doubleclick.net/gampad/ads?"
-            + "sz=450x400"
-            + "&iu=" + "/1163333/EXT_Playtem_InGame_Preroll"
-            + "&impl=" + "s"
-            + "&gdfp_req=" + "1"
-            + "&env=" + "vp"
-            + "&output=" + "vast"
-            + "&unviewed_position_start=" + "1"
-            + "&url="
-            + "&description_url="
-            + "&correlator= " + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-actiplay.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
         debug: self.settings.debug,
         vastTag: buildTag(),
         apiKey: self.settings.apiKey,
-        providerName: "Actiplay",
+        providerName: "PlaytemVastActiplay",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onAdError: self.settings.onAdError
+    });
+
+    self.vastPlayer.execute();
+};
+
+playtemEmbedded.PlaytemVastVexigoInstream = function(options) {
+    var defaults = {
+        debug: false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onAdError: $.noop
+    };
+
+    this.settings = {
+
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.PlaytemVastVexigoInstream.prototype.execute = function() {
+    var self = this;
+
+    var buildTag = function() {
+        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-vexigo-instream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+    };
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
+        providerName: "PlaytemVastVexigoInstream",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onAdError: self.settings.onAdError
+    });
+
+    self.vastPlayer.execute();
+};
+
+playtemEmbedded.PlaytemVastVexigoOutstream = function(options) {
+    var defaults = {
+        debug: false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onAdError: $.noop
+    };
+
+    this.settings = {
+
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.PlaytemVastVexigoOutstream.prototype.execute = function() {
+    var self = this;
+
+    var buildTag = function() {
+        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-vexigo-outstream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+    };
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
+        providerName: "PlaytemVastVexigoOutstream",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onAdError: self.settings.onAdError
+    });
+
+    self.vastPlayer.execute();
+};
+
+playtemEmbedded.PlaytemVastYume = function(options) {
+    var defaults = {
+        debug: false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onAdError: $.noop
+    };
+
+    this.settings = {
+
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.PlaytemVastYume.prototype.execute = function() {
+    var self = this;
+
+    var buildTag = function() {
+        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-yume.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+    };
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
+        providerName: "PlaytemVastYume",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,

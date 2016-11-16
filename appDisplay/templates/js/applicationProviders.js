@@ -1,17 +1,21 @@
 var empty = [];
 
-var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay, playtemEmbedded.Affiz];
+var allProvidersInstream = [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
+var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
 
-// var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.Actiplay];
-var iscoolsInstream = [playtemEmbedded.Actiplay];
+var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
 
 var instreamTest = [playtemEmbedded.Affiz];
-var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
 
 var providers = {
     rewarded: {
+        //===== prod =====
+
         //ludokado
         "4a2b-8438v": allProvidersInstream,
+
+        //urbanRivals
+        "494f-8f1bv": allProvidersInstream,        
 
         //belote
         "4da9-acb2b": iscoolsInstream,
@@ -19,8 +23,7 @@ var providers = {
         //isCool
         "452c-8a80i": iscoolsInstream,
 
-        //urbanRivals
-        "494f-8f1bv": allProvidersInstream,
+        //===== ! prod =====
 
         //jotu
         "4c3f-be78j": allProvidersInstream,
@@ -35,11 +38,10 @@ var providers = {
     },
 
     outstream: {
+        //===== prod =====
+
         //jotu
         "1c27-4684v": allProvidersOutstream,
-
-        //ludokado
-        "9a19-43fav": [playtemEmbedded.Smartad],
 
         //mediastay
         "e048-4cdev": allProvidersOutstream,
@@ -49,12 +51,32 @@ var providers = {
 
         //ladypopular
         "92c6-497ff": allProvidersOutstream,
+
+        //Ma Bimbo
+        "1206-4ce9f": allProvidersOutstream,
+
+        //Voyage to Fantasy
+        "9a56-4422f": allProvidersOutstream,
+
+        //Equideow
+        "ff3d-4b8cf": allProvidersOutstream,
+        
+        //Prizee
+        "Fj68VbKzEe": allProvidersOutstream,
+
+        //FairyMix
+        "Hn78Uf8iRy": allProvidersOutstream,
+
+        //ludokado
+        "9a19-43fav": [playtemEmbedded.Smartad],
+
+        //===== ! prod =====
         
         //TLM
         "ad5d-4ef0f": allProvidersOutstream
     },
 
     test: {
-        "XXXX-xxxxx": [playtemEmbedded.PlaytemVastWrapper]
+        "XXXX-xxxxx": instreamTest
     }
 };
