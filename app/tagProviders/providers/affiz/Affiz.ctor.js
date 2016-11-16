@@ -18,7 +18,6 @@ playtemEmbedded.Affiz = function(options) {
         clientId: "12345", // TBD
         $targetContainerElement: $('.ad'),
         modal: true,
-        httpRequestTimeout: 30000,
         sendEvents: {
             messageCloseWindow : "closeAdWindow"
         }

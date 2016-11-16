@@ -6,11 +6,12 @@ playtemEmbedded.Affiz.prototype.execute = function() {
             AFFIZVIDEO.init({
                 site_id: self.settings.siteId,
                 clientid: self.settings.clientid,
+                modal: self.settings.modal,
+
                 load_callback: self.onAdAvailable,
                 noads_callback: self.onAdUnavailable,
                 complete_callback: self.onAdComplete,
-                close_callback: self.onClose,
-                modal: self.settings.modal
+                close_callback: self.onClose
             });
         }
 
