@@ -12,23 +12,39 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
         }
     };
 
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request");
-
-    self.init(function(error, result) {
-        if(error) {
-            self.onScriptLoadingError();
-            return;
-        }
-        
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
-
-        self.watchVideoPlayerCreation(function(adStartedStatus) {
-            if(adStartedStatus) {
-                self.onAdAvailable();
+    var initialize = function() {
+        self.init(function(error, result) {
+            if(error) {
+                self.onScriptLoadingError();
                 return;
             }
-            
-            self.onAdUnavailable();
+
+            var startWatch = function() {
+                self.watchVideoPlayerCreation(function(adStartedStatus) {
+                    if(adStartedStatus) {
+                        self.onAdAvailable();
+                        return;
+                    }
+                    
+                    self.onAdUnavailable();
+                });
+            };
+
+            playtemEmbedded.Core.track({
+                providerName: self.settings.providerName,
+                apiKey:  self.settings.apiKey,
+                eventType: "requestSuccess",
+                onDone: startWatch,
+                onFail: self.settings.onAdUnavailable
+            });
         });
+    };
+
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "request",
+        onDone: initialize,
+        onFail: self.settings.onAdUnavailable
     });
 };

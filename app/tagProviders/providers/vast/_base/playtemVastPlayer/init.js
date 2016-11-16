@@ -10,9 +10,17 @@ playtemEmbedded.PlaytemVastPlayer.prototype.init = function(callback) {
 
     createTarget();
 
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request");
+    var injectScript = function() {
+        playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
+            callback(error);
+        });
+    };
 
-    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
-        callback(error);
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "request",
+        onDone: injectScript,
+        onFail: self.settings.onAdUnavailable
     });
 };

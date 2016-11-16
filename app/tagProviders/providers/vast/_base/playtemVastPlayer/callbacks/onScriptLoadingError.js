@@ -3,7 +3,11 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onScriptLoadingError = function() {
 
     self.clean();
     
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onScriptLoadingError", function() {
-        self.settings.onAdUnavailable();
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "onScriptLoadingError",
+        onDone: self.settings.onAdUnavailable,
+        onFail: self.settings.onError
     });
 };

@@ -30,8 +30,6 @@ playtemEmbedded.Smartad = function(options) {
         }
     };
 
-    this.adFound = false;
-
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);       
 };

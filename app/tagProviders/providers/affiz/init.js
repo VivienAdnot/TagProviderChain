@@ -35,17 +35,7 @@ playtemEmbedded.Affiz.prototype.init = function() {
     createFakePlayerImage();
     
     var injectScript = function() {
-        playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
-            if(error) {
-                self.onScriptLoadingError();
-            } else {
-                playtemEmbedded.Core.track({
-                    providerName: self.settings.providerName,
-                    apiKey:  self.settings.apiKey,
-                    eventType: "requestSuccess"
-                });
-            }
-        });
+        playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
     };
     
     playtemEmbedded.Core.track({
@@ -53,6 +43,6 @@ playtemEmbedded.Affiz.prototype.init = function() {
         apiKey:  self.settings.apiKey,
         eventType: "request",
         onDone: injectScript,
-        onFail: self.settings.onError
+        onFail: self.settings.onAdUnavailable
     });
 };

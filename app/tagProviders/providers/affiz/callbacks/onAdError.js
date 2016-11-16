@@ -6,5 +6,5 @@ playtemEmbedded.Affiz.prototype.onAdError = function() {
         apiKey:  self.settings.apiKey,
         eventType: "onAdError",
         onAlways: self.settings.onError
-    });    
+    });
 };

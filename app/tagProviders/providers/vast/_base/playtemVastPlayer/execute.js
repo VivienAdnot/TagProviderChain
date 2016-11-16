@@ -20,25 +20,33 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             return;
         }
 
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess");
+        var runPlayer = function() {
+            videoPlayerElement.addEventListener('adstarted', function() {
+                self.onAdAvailable();
+            });
 
-        videoPlayerElement.addEventListener('adstarted', function() {
-            self.onAdAvailable();
-        });
+            videoPlayerElement.addEventListener('aderror', function() {
+                console.log(videoPlayer.getAdErrorCode());
+                (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
+            });
 
-        videoPlayerElement.addEventListener('aderror', function() {
-            console.log(videoPlayer.getAdErrorCode());
-            (self.adFound == true) ? self.onAdError() : self.onAdUnavailable();
-        });
+            videoPlayerElement.addEventListener('adcomplete', function() {
+                self.onAdComplete();
+            });
 
-        videoPlayerElement.addEventListener('adcomplete', function() {
-            self.onAdComplete();
-        });
+            videoPlayerElement.addEventListener('adskipped', function() {
+                self.onAdComplete();
+            });
+            
+            videoPlayer.init(self.radiantMediaPlayerSettings);
+        };
 
-        videoPlayerElement.addEventListener('adskipped', function() {
-            self.onAdComplete();
+        playtemEmbedded.Core.track({
+            providerName: self.settings.providerName,
+            apiKey:  self.settings.apiKey,
+            eventType: "requestSuccess",
+            onDone: runPlayer,
+            onFail: self.settings.onAdUnavailable
         });
-        
-        videoPlayer.init(self.radiantMediaPlayerSettings);
     });
 };
