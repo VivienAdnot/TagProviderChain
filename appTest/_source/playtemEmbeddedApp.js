@@ -772,6 +772,16 @@ playtemEmbedded.RevContent.prototype.init = function(callback) {
         });
     };
 
+    createTarget();
+
+    self.injectScriptCustom(function(error, result) {
+        callback(error);
+    });
+};
+
+playtemEmbedded.RevContent.prototype.injectScriptCustom = function(callback) {
+    var self = this;
+
     var getReferrer = function() {
         var thisReferrer = "";
         try {
@@ -781,9 +791,7 @@ playtemEmbedded.RevContent.prototype.init = function(callback) {
         }
         thisReferrer = thisReferrer.substr(0, 700);
         return thisReferrer;
-    };
-
-    createTarget();    
+    };    
 
     var rcel = document.createElement("script");
     rcel.id = 'rc_' + Math.floor(Math.random() * 1000);
