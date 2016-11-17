@@ -100,6 +100,27 @@ playtemEmbedded.Core.Operations = {
     }
 };
 
+playtemEmbedded.Core.PinjectScript = function(url, callback) {
+    var deferred = $.Deferred();
+
+    if(!url) {
+        deferred.reject();
+        return deferred.promise();
+    }
+
+    $.getScript(url, function(error, data) {
+        if(error) {
+            deferred.reject();
+        } else {
+            deferred.resolve();
+        }
+    });
+
+    window.setTimeout(deferred.reject, 2000);
+
+    return deferred.promise();
+};
+
 playtemEmbedded.Core.PostMessage = function() {
     this.listenerPool = {};
 };
@@ -884,92 +905,80 @@ playtemEmbedded.Smartad = function(options) {
 
 playtemEmbedded.Smartad.prototype.onAdAvailable = function() {
     var self = this;
-
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "onAdAvailable",
-        onDone: self.settings.onAdAvailable,
-        onFail: self.settings.onError
-    });    
+    
+    playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
+    .done(self.settings.onAdAvailable)
+    .fail(self.settings.onError);    
 };
 
 playtemEmbedded.Smartad.prototype.onAdUnavailable = function() {
     var self = this;
 
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "onAdUnavailable",
-        onDone: self.settings.onAdUnavailable,
-        onFail: self.settings.onError
+    playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
+    .done(self.settings.onAdUnavailable)
+    .fail(self.settings.onError);     
+};
+
+playtemEmbedded.Smartad.prototype.execute = function() {
+    var self = this;
+
+    self.init()
+    .fail(self.settings.onAdUnavailable)
+    .done(function() {
+        sas.setup({
+            domain: self.settings.domain,
+            async: true,
+            renderMode: 0
+        });
+
+        sas.call("onecall",
+            {
+                siteId: self.settings.siteId,
+                pageName: self.settings.pageName,
+                formatId: self.settings.formatId
+            },
+            {
+                onLoad: function(result) {
+                    if (result && result.hasAd === true) {
+                        self.onAdAvailable();
+                    }
+                    
+                    else {
+                        self.onAdUnavailable();
+                    }
+                }
+            }
+        );
+
+        self.render();
     });
 };
 
-playtemEmbedded.Smartad.prototype.execute = function(callback) {
+playtemEmbedded.Smartad.prototype.init = function() {
     var self = this;
+    var deferred = $.Deferred();
 
-    var onLoadHandler = function(result) {
-        if (result && result.hasAd === true) {
-            self.onAdAvailable();
-        }
-        
-        else {
-            self.onAdUnavailable();
-        }
-    };
-
-    var initialize = function() {
-        self.init(function(error) {
-            if(error) {
-                self.settings.onAdUnavailable();
-                return;
-            }
-            
-            var execute = function() {
-                sas.setup({
-                    domain: self.settings.domain,
-                    async: true,
-                    renderMode: 0
-                });
-
-                sas.call("onecall",
-                    {
-                        siteId: self.settings.siteId,
-                        pageName: self.settings.pageName,
-                        formatId: self.settings.formatId
-                    },
-                    {
-                        onLoad: function(result) {
-                            onLoadHandler(result);
-                        }
-                    }
-                );
-
-                self.render();
-            };
-
-            playtemEmbedded.Core.track({
-                providerName: self.settings.providerName,
-                apiKey:  self.settings.apiKey,
-                eventType: "requestSuccess",
-                onDone: execute,
-                onFail: self.settings.onAdUnavailable
+    self.createElements()
+    .then(function() {
+        playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "request")
+        .fail(deferred.reject)
+        .done(function() {
+            playtemEmbedded.Core.PinjectScript(self.settings.scriptUrl)
+            .fail(deferred.reject)
+            .done(function() {
+                playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "requestSuccess")
+                .done(deferred.resolve)
+                .fail(deferred.reject);
             });
         });
-    };
-
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "request",
-        onDone: initialize,
-        onFail: self.settings.onAdUnavailable
     });
+
+    return deferred.promise();
 };
 
-playtemEmbedded.Smartad.prototype.init = function(callback) {
+playtemEmbedded.Smartad.prototype.createElements = function() {
     var self = this;
+    var deferred = $.Deferred();
 
     var createTarget = function() {
         var node = "<div class='" + self.settings.targetClass + "'></div>";
@@ -978,11 +987,9 @@ playtemEmbedded.Smartad.prototype.init = function(callback) {
         $("." + self.settings.targetClass).css(self.settings.cssProperties);
     };
 
-    createTarget();
-    
-    playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
-        callback(error);
-    });
+    deferred.resolve(createTarget());
+
+    return deferred.promise();
 };
 
 playtemEmbedded.Smartad.prototype.render = function() {
