@@ -1057,25 +1057,17 @@ playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
 
     self.adFound = true;
 
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "onAdAvailable",
-        onDone: self.settings.onAdAvailable,
-        onFail: self.settings.onError
-    });
+    playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
+    .done(self.settings.onAdAvailable)
+    .fail(self.settings.onError);    
 };
 
 playtemEmbedded.SpotxInternal.prototype.onAdComplete = function() {
     var self = this;
 
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "onAdComplete",
-        onDone: self.settings.onAdComplete,
-        onFail: self.settings.onError
-    });
+    playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "onAdComplete")
+    .done(self.settings.onAdComplete)
+    .fail(self.settings.onError);    
 };
 
 playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
@@ -1086,25 +1078,17 @@ playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
     }
     
     else {
-        playtemEmbedded.Core.track({
-            providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
-            eventType: "onAdUnavailable",
-            onDone: self.settings.onAdUnavailable,
-            onFail: self.settings.onError
-        });
+        playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
+        .done(self.settings.onAdUnavailable)
+        .fail(self.settings.onError);
     }
 };
 
 playtemEmbedded.SpotxInternal.prototype.onError = function() {
     var self = this;
-    
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "onAdError",
-        onAlways: self.settings.onError
-    });
+
+    playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "onAdError")
+    .then(self.settings.onError);    
 };
 
 playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
@@ -1136,25 +1120,16 @@ playtemEmbedded.SpotxInternal.prototype.init = function() {
 
     self.createElements()
     .then(function() {
-        playtemEmbedded.Core.track({
-            providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
-            eventType: "request",
-            onFail: deferred.reject,
-            onDone: function() {
-                self.injectScriptCustom()
-                .fail(deferred.reject)
-                .done(function() {
-
-                    playtemEmbedded.Core.track({
-                        providerName: self.settings.providerName,
-                        apiKey:  self.settings.apiKey,
-                        eventType: "requestSuccess",
-                        onFail: deferred.reject,
-                        onDone: deferred.resolve
-                    });
-                });
-            }
+        playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "request")
+        .fail(deferred.reject)
+        .done(function() {
+            self.injectScriptCustom()
+            .fail(deferred.reject)
+            .done(function() {
+                playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "requestSuccess")
+                .done(deferred.resolve)
+                .fail(deferred.reject);
+            });
         });
     });
 

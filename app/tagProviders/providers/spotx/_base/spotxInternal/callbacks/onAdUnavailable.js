@@ -6,12 +6,8 @@ playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
     }
     
     else {
-        playtemEmbedded.Core.track({
-            providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
-            eventType: "onAdUnavailable",
-            onDone: self.settings.onAdUnavailable,
-            onFail: self.settings.onError
-        });
+        playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
+        .done(self.settings.onAdUnavailable)
+        .fail(self.settings.onError);
     }
 };

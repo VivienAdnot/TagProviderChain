@@ -4,25 +4,16 @@ playtemEmbedded.SpotxInternal.prototype.init = function() {
 
     self.createElements()
     .then(function() {
-        playtemEmbedded.Core.track({
-            providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
-            eventType: "request",
-            onFail: deferred.reject,
-            onDone: function() {
-                self.injectScriptCustom()
-                .fail(deferred.reject)
-                .done(function() {
-
-                    playtemEmbedded.Core.track({
-                        providerName: self.settings.providerName,
-                        apiKey:  self.settings.apiKey,
-                        eventType: "requestSuccess",
-                        onFail: deferred.reject,
-                        onDone: deferred.resolve
-                    });
-                });
-            }
+        playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "request")
+        .fail(deferred.reject)
+        .done(function() {
+            self.injectScriptCustom()
+            .fail(deferred.reject)
+            .done(function() {
+                playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "requestSuccess")
+                .done(deferred.resolve)
+                .fail(deferred.reject);
+            });
         });
     });
 

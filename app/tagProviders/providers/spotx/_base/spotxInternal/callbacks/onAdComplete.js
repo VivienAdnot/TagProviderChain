@@ -1,11 +1,7 @@
 playtemEmbedded.SpotxInternal.prototype.onAdComplete = function() {
     var self = this;
 
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "onAdComplete",
-        onDone: self.settings.onAdComplete,
-        onFail: self.settings.onError
-    });
+    playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "onAdComplete")
+    .done(self.settings.onAdComplete)
+    .fail(self.settings.onError);    
 };
