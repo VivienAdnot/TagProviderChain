@@ -1,5 +1,5 @@
 playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.spotxInternalContext;
 
     self.adFound = true;
 

@@ -1,5 +1,5 @@
 playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.spotxInternalContext;
     
     if(self.adFound === true) {
         self.onError();

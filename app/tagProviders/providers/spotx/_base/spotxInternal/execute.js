@@ -1,18 +1,44 @@
 playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
     var self = this;
 
-    window.spotXCallback = function(videoStatus) {
-        window.clearInterval(self.poll);
-        window.clearTimeout(self.timeouts.videoAvailability.instance);
+    var callbackFlag = false;
 
-        (videoStatus === true) ? self.onAdComplete() : self.onAdUnavailable();
+    window.spotXCallback = function(videoStatus) {
+        if(videoStatus === true) {
+            self.onAdComplete();
+        }
+        
+        else {
+            if(callbackFlag === false) {
+                callbackFlag = true;
+                self.onAdUnavailable();
+            }
+        }
     };
 
     self.init()
     .fail(self.settings.onAdUnavailable)
     .done(function() {
-        self.watchVideoPlayerCreation()
-        .done(self.onAdAvailable)
-        .fail(self.onAdUnavailable);
+        var condition = function() {
+            var $videoPlayerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
+            var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
+            var isVideoPlayerVisible = $videoPlayerContainer.height() == self.settings.scriptOptions["spotx_content_height"];
+
+            return isVideoPlayerDefined && isVideoPlayerVisible;
+        };
+
+        playtemEmbedded.Core.watch(condition)
+        .done(function() {
+            if(callbackFlag === false) {
+                callbackFlag = true;
+                self.onAdAvailable();
+            }
+        })
+        .fail(function() {
+            if(callbackFlag === false) {
+                callbackFlag = true;
+                self.onAdUnavailable();
+            }
+        });
     });
 };

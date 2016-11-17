@@ -1,5 +1,5 @@
 playtemEmbedded.SpotxInternal.prototype.onAdComplete = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.spotxInternalContext;
 
     playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
     .done(self.settings.onAdComplete)

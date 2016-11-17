@@ -2,6 +2,8 @@ playtemEmbedded.Smartad.prototype.init = function() {
     var self = this;
     var deferred = $.Deferred();
 
+    playtemEmbedded.Core.globals.smartadContext = self;
+
     self.createElements()
     .then(function() {
         playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request")

@@ -170,6 +170,32 @@ playtemEmbedded.Core.Identifiers = {
     }
 };
 
+playtemEmbedded.Core.watch = function(condition, interval, timeout) {
+    var deferred = $.Deferred();
+
+    if(typeof condition !== "function") {
+        deferred.reject();
+        return deferred.promise();
+    }
+
+    interval = interval || 250;
+    timeout = timeout || 3000;
+
+    var poll = window.setInterval(function() {
+        if(condition()) {
+            deferred.resolve();
+            window.clearInterval(poll);
+        }
+    }, timeout);
+
+    window.setTimeout(function () {
+        deferred.reject();
+        window.clearInterval(poll);
+    }, timeout);
+
+    return deferred.promise();
+};
+
 playtemEmbedded.CrossManager = function(options) {
     var defaults = {
 
@@ -697,7 +723,16 @@ playtemEmbedded.RevContent.prototype.execute = function() {
     self.init()
     .fail(self.settings.onAdUnavailable)
     .done(function() {
-        self.watchAdCreation()
+
+        var condition = function() {
+            var $videoPlayerContainer = $("#revcontent");
+            var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
+            var isVideoPlayerVisible = $videoPlayerContainer.height() > 10; // 10 is near random, real test should be height > 0
+
+            return isVideoPlayerDefined && isVideoPlayerVisible;           
+        };
+
+        playtemEmbedded.Core.watch(condition)
         .done(self.onAdAvailable)
         .fail(self.onAdUnavailable);
     });
@@ -799,7 +834,7 @@ playtemEmbedded.RevContent.prototype.injectScriptCustom = function() {
     return injectScriptDeferred.promise();
 };
 
-playtemEmbedded.RevContent.prototype.watchAdCreation = function(callback) {
+playtemEmbedded.RevContent.prototype.watchAdCreation = function() {
     var self = this;
     var timeoutTimer = null;
 
@@ -862,7 +897,7 @@ playtemEmbedded.Smartad = function(options) {
 };
 
 playtemEmbedded.Smartad.prototype.onAdAvailable = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.smartadContext;
     
     playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
     .done(self.settings.onAdAvailable)
@@ -870,7 +905,7 @@ playtemEmbedded.Smartad.prototype.onAdAvailable = function() {
 };
 
 playtemEmbedded.Smartad.prototype.onAdUnavailable = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.smartadContext;
 
     playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
     .done(self.settings.onAdUnavailable)
@@ -915,6 +950,8 @@ playtemEmbedded.Smartad.prototype.execute = function() {
 playtemEmbedded.Smartad.prototype.init = function() {
     var self = this;
     var deferred = $.Deferred();
+
+    playtemEmbedded.Core.globals.smartadContext = self;
 
     self.createElements()
     .then(function() {
@@ -1018,7 +1055,7 @@ playtemEmbedded.SpotxInternal = function(options) {
 };
 
 playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.spotxInternalContext;
 
     self.adFound = true;
 
@@ -1028,7 +1065,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
 };
 
 playtemEmbedded.SpotxInternal.prototype.onAdComplete = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.spotxInternalContext;
 
     playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
     .done(self.settings.onAdComplete)
@@ -1036,7 +1073,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdComplete = function() {
 };
 
 playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.spotxInternalContext;
     
     if(self.adFound === true) {
         self.onError();
@@ -1050,7 +1087,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
 };
 
 playtemEmbedded.SpotxInternal.prototype.onError = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.spotxInternalContext;
 
     playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError")
     .then(self.settings.onError);    
@@ -1059,25 +1096,53 @@ playtemEmbedded.SpotxInternal.prototype.onError = function() {
 playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
     var self = this;
 
-    window.spotXCallback = function(videoStatus) {
-        window.clearInterval(self.poll);
-        window.clearTimeout(self.timeouts.videoAvailability.instance);
+    var callbackFlag = false;
 
-        (videoStatus === true) ? self.onAdComplete() : self.onAdUnavailable();
+    window.spotXCallback = function(videoStatus) {
+        if(videoStatus === true) {
+            self.onAdComplete();
+        }
+        
+        else {
+            if(callbackFlag === false) {
+                callbackFlag = true;
+                self.onAdUnavailable();
+            }
+        }
     };
 
     self.init()
     .fail(self.settings.onAdUnavailable)
     .done(function() {
-        self.watchVideoPlayerCreation()
-        .done(self.onAdAvailable)
-        .fail(self.onAdUnavailable);
+        var condition = function() {
+            var $videoPlayerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
+            var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
+            var isVideoPlayerVisible = $videoPlayerContainer.height() == self.settings.scriptOptions["spotx_content_height"];
+
+            return isVideoPlayerDefined && isVideoPlayerVisible;
+        };
+
+        playtemEmbedded.Core.watch(condition)
+        .done(function() {
+            if(callbackFlag === false) {
+                callbackFlag = true;
+                self.onAdAvailable();
+            }
+        })
+        .fail(function() {
+            if(callbackFlag === false) {
+                callbackFlag = true;
+                self.onAdUnavailable();
+            }
+        });
     });
 };
 
 playtemEmbedded.SpotxInternal.prototype.init = function() {
     var self = this;
     var deferred = $.Deferred();
+
+    playtemEmbedded.Core.globals.spotxInternalContext = self;
 
     self.createElements()
     .then(function() {

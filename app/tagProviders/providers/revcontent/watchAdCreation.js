@@ -1,4 +1,4 @@
-playtemEmbedded.RevContent.prototype.watchAdCreation = function(callback) {
+playtemEmbedded.RevContent.prototype.watchAdCreation = function() {
     var self = this;
     var timeoutTimer = null;
 
