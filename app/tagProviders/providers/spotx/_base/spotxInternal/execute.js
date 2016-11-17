@@ -9,14 +9,10 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
     };
 
     self.init()
-        .fail(self.settings.onAdUnavailable)
-        .done(function() {
-            self.watchVideoPlayerCreation()
-                .done(function() {
-                    self.onAdAvailable();
-                })
-                .fail(function() {
-                    self.onAdUnavailable();
-                });
-        });
+    .fail(self.settings.onAdUnavailable)
+    .done(function() {
+        self.watchVideoPlayerCreation()
+        .done(self.onAdAvailable)
+        .fail(self.onAdUnavailable);
+    });
 };

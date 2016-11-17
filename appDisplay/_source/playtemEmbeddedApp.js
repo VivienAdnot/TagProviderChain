@@ -676,79 +676,62 @@ playtemEmbedded.RevContent = function(options) {
 };
 
 playtemEmbedded.RevContent.prototype.onAdAvailable = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.revContentContext;
 
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "onAdAvailable",
-        onDone: self.settings.onAdAvailable,
-        onFail: self.settings.onError
-    });
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
+    .done(self.settings.onAdAvailable)
+    .fail(self.settings.onError);
 };
 
 playtemEmbedded.RevContent.prototype.onAdUnavailable = function() {
-    var self = this;
+    var self = playtemEmbedded.Core.globals.revContentContext;
 
-    if(self.adFound === true) {
-        self.onAdError();
-    }
-    
-    else {
-        playtemEmbedded.Core.track({
-            providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
-            eventType: "onAdUnavailable",
-            onDone: self.settings.onAdUnavailable,
-            onFail: self.settings.onError
-        });
-    }
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
+    .done(self.settings.onAdUnavailable)
+    .fail(self.settings.onError);
 };
 
 playtemEmbedded.RevContent.prototype.execute = function() {
     var self = this;
 
-    var initialize = function() {
-        self.init(function(status) {
-            if(status === false) {
-                self.settings.onAdUnavailable();
-                return;
-            }
-
-            var startWatch = function() {
-                self.watchAdCreation(function(adStartedStatus) {
-                    if(adStartedStatus === true) {
-                        self.onAdAvailable();
-                        return;
-                    }
-                    
-                    self.onAdUnavailable();
-                });
-            };
-
-            playtemEmbedded.Core.track({
-                providerName: self.settings.providerName,
-                apiKey:  self.settings.apiKey,
-                eventType: "requestSuccess",
-                onDone: startWatch,
-                onFail: self.settings.onAdUnavailable
-            });
-        });
-    };
-
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "request",
-        onDone: initialize,
-        onFail: self.settings.onAdUnavailable
+    self.init()
+    .fail(self.settings.onAdUnavailable)
+    .done(function() {
+        self.watchAdCreation()
+        .done(self.onAdAvailable)
+        .fail(self.onAdUnavailable);
     });
 };
 
-playtemEmbedded.RevContent.prototype.init = function(callback) {
+playtemEmbedded.RevContent.prototype.init = function() {
     var self = this;
+    var deferred = $.Deferred();
 
-    var createTarget = function(callback) {
+    playtemEmbedded.Core.globals.revContentContext = self;
+
+    self.createElements()
+    .then(function() {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request")
+        .fail(deferred.reject)
+        .done(function() {
+            self.injectScriptCustom()
+            .fail(deferred.reject)
+            .done(function() {
+                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess")
+                .done(deferred.resolve)
+                .fail(deferred.reject);
+            });
+        });
+    });
+
+    return deferred.promise();
+};
+
+playtemEmbedded.RevContent.prototype.createElements = function() {
+    var self = this;
+    var deferred = $.Deferred();
+
+    var createTarget = function() {
         self.settings.$targetContainerElement.append("<div id='revcontent'></div>");
         $("#revcontent").css({
             position: "absolute",
@@ -761,15 +744,15 @@ playtemEmbedded.RevContent.prototype.init = function(callback) {
         });
     };
 
-    createTarget();
+    deferred.resolve(createTarget());
 
-    self.injectScriptCustom(function(error, result) {
-        callback(error);
-    });
+    return deferred.promise();
 };
 
-playtemEmbedded.RevContent.prototype.injectScriptCustom = function(callback) {
+playtemEmbedded.RevContent.prototype.injectScriptCustom = function() {
     var self = this;
+
+    var injectScriptDeferred = $.Deferred();
 
     var getReferrer = function() {
         var thisReferrer = "";
@@ -796,7 +779,7 @@ playtemEmbedded.RevContent.prototype.injectScriptCustom = function(callback) {
     scriptElement.async = true;
 
     scriptElement.onload = function () {
-        callback(true);
+        injectScriptDeferred.resolve();
     };
 
     // onload equivalent for IE
@@ -807,37 +790,40 @@ playtemEmbedded.RevContent.prototype.injectScriptCustom = function(callback) {
     };
 
     scriptElement.onerror = function () {
-        callback(false);
+        injectScriptDeferred.reject();
     };
 
     var revcontentElement = document.getElementById("revcontent");
     revcontentElement.appendChild(scriptElement);
+
+    return injectScriptDeferred.promise();
 };
 
 playtemEmbedded.RevContent.prototype.watchAdCreation = function(callback) {
     var self = this;
     var timeoutTimer = null;
 
+    var deferred = $.Deferred();
+
     var poll = window.setInterval(function() {
-        // refresh every round
         var $videoPlayerContainer = $("#revcontent");
         var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
         var isVideoPlayerVisible = $videoPlayerContainer.height() > 10; // 10 is near random, real test should be height > 0
 
         if(isVideoPlayerDefined && isVideoPlayerVisible) {
+            deferred.resolve();
+
             window.clearTimeout(timeoutTimer);
-
-            window.clearInterval(poll);
-
-            callback(true);
+            window.clearInterval(poll);            
         }
     }, 250);
 
     timeoutTimer = window.setTimeout(function () {
+        deferred.reject();
         window.clearInterval(poll);
+    }, 5000);
 
-        callback(false);
-    }, self.settings.httpRequestTimeout);
+    return deferred.promise();
 };
 
 playtemEmbedded.Smartad = function(options) {
@@ -1081,16 +1067,12 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
     };
 
     self.init()
-        .fail(self.settings.onAdUnavailable)
-        .done(function() {
-            self.watchVideoPlayerCreation()
-                .done(function() {
-                    self.onAdAvailable();
-                })
-                .fail(function() {
-                    self.onAdUnavailable();
-                });
-        });
+    .fail(self.settings.onAdUnavailable)
+    .done(function() {
+        self.watchVideoPlayerCreation()
+        .done(self.onAdAvailable)
+        .fail(self.onAdUnavailable);
+    });
 };
 
 playtemEmbedded.SpotxInternal.prototype.init = function() {
@@ -1179,7 +1161,6 @@ playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function() {
     var deferred = $.Deferred();
 
     self.poll = window.setInterval(function() {
-        // refresh every round
         var $videoPlayerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
         var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
         var isVideoPlayerVisible = $videoPlayerContainer.height() == self.settings.scriptOptions["spotx_content_height"];

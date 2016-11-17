@@ -1,5 +1,7 @@
-playtemEmbedded.RevContent.prototype.injectScriptCustom = function(callback) {
+playtemEmbedded.RevContent.prototype.injectScriptCustom = function() {
     var self = this;
+
+    var injectScriptDeferred = $.Deferred();
 
     var getReferrer = function() {
         var thisReferrer = "";
@@ -26,7 +28,7 @@ playtemEmbedded.RevContent.prototype.injectScriptCustom = function(callback) {
     scriptElement.async = true;
 
     scriptElement.onload = function () {
-        callback(true);
+        injectScriptDeferred.resolve();
     };
 
     // onload equivalent for IE
@@ -37,9 +39,11 @@ playtemEmbedded.RevContent.prototype.injectScriptCustom = function(callback) {
     };
 
     scriptElement.onerror = function () {
-        callback(false);
+        injectScriptDeferred.reject();
     };
 
     var revcontentElement = document.getElementById("revcontent");
     revcontentElement.appendChild(scriptElement);
+
+    return injectScriptDeferred.promise();
 };

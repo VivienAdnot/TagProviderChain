@@ -1,7 +1,32 @@
-playtemEmbedded.RevContent.prototype.init = function(callback) {
+playtemEmbedded.RevContent.prototype.init = function() {
     var self = this;
+    var deferred = $.Deferred();
 
-    var createTarget = function(callback) {
+    playtemEmbedded.Core.globals.revContentContext = self;
+
+    self.createElements()
+    .then(function() {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request")
+        .fail(deferred.reject)
+        .done(function() {
+            self.injectScriptCustom()
+            .fail(deferred.reject)
+            .done(function() {
+                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess")
+                .done(deferred.resolve)
+                .fail(deferred.reject);
+            });
+        });
+    });
+
+    return deferred.promise();
+};
+
+playtemEmbedded.RevContent.prototype.createElements = function() {
+    var self = this;
+    var deferred = $.Deferred();
+
+    var createTarget = function() {
         self.settings.$targetContainerElement.append("<div id='revcontent'></div>");
         $("#revcontent").css({
             position: "absolute",
@@ -14,9 +39,7 @@ playtemEmbedded.RevContent.prototype.init = function(callback) {
         });
     };
 
-    createTarget();
+    deferred.resolve(createTarget());
 
-    self.injectScriptCustom(function(error, result) {
-        callback(error);
-    });
+    return deferred.promise();
 };
