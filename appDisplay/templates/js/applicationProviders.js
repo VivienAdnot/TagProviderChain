@@ -73,7 +73,7 @@ providers.outstream = {
     "Hn78Uf8iRy": allProvidersOutstream,
 
     //TLM
-    "ad5d-4ef0f": allProvidersOutstream    
+    "ad5d-4ef0f": allProvidersOutstream,
 
     // ==== providers exceptions =====
 
