@@ -3,10 +3,7 @@ playtemEmbedded.Core.track = function(options) {
     var defaults = {
         providerName: undefined,
         apiKey: undefined,
-        eventType: undefined,
-        onDone: $.noop,
-        onFail: $.noop,
-        onAlways: $.noop
+        eventType: undefined
     };
 
     var settings = $.extend({}, defaults, options);
@@ -22,15 +19,5 @@ playtemEmbedded.Core.track = function(options) {
         + "&k=" + settings.apiKey
         + "&t=" + playtemEmbedded.Core.Date.getCurrentTimestamp();
 
-    $.get(url)
-        .done(function() {
-            settings.onDone();
-        })
-        .fail(function() {
-            playtemEmbedded.Core.log("playtemEmbedded", "pixel tracking fail.");
-            settings.onFail();
-        })
-        .always(function() {
-            settings.onAlways();
-        });
+    return $.get(url);
 };

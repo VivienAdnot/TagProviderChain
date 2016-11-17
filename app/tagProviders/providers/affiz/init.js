@@ -6,29 +6,19 @@ playtemEmbedded.Affiz.prototype.init = function() {
 
     self.createElements()
     .then(function() {
-        playtemEmbedded.Core.track({
-            providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
-            eventType: "request",
-            onFail: deferred.reject,
-            onDone: function() {
-                playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
+        playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "request")
+        .fail(deferred.reject)
+        .done(function() {
+            playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
 
-                window.avAsyncInit = function() {
+            //affiz async init callback
+            window.avAsyncInit = function() {
+                playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "requestSuccess")
+                .fail(deferred.reject)
+                .done(deferred.resolve);
 
-                    playtemEmbedded.Core.track({
-                        providerName: self.settings.providerName,
-                        apiKey:  self.settings.apiKey,
-                        eventType: "requestSuccess",
-                        onFail: deferred.reject,
-                        onDone: function() {
-                            deferred.resolve();
-                        }
-                    });
-
-                    window.setTimeout(deferred.reject, 5000);
-                };
-            }
+                window.setTimeout(deferred.reject, 3000);
+            };
         });
     });
 

@@ -1,4 +1,4 @@
-var instreamTest = [playtemEmbedded.RevContent];
+var instreamTest = [playtemEmbedded.PlaytemVastActiplay];
 
 var providers = {};
 
