@@ -60,12 +60,6 @@ providers.outstream = {
     //actiplayNoReward
     "4f63-b20df": allProvidersOutstream,
 
-    //ladypopular
-    "92c6-497ff": allProvidersOutstream,
-
-    //Ma Bimbo
-    "1206-4ce9f": allProvidersOutstream,
-
     //Voyage to Fantasy
     "9a56-4422f": allProvidersOutstream,
 
@@ -78,11 +72,17 @@ providers.outstream = {
     //FairyMix
     "Hn78Uf8iRy": allProvidersOutstream,
 
+    //TLM
+    "ad5d-4ef0f": allProvidersOutstream    
+
+    // ==== providers exceptions =====
+
+    //ladypopular
+    "92c6-497ff": [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream],
+
+    //Ma Bimbo
+    "1206-4ce9f": [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream],    
+
     //ludokado
     "9a19-43fav": [playtemEmbedded.SmartadMixedContent],
-
-    //===== ! prod =====
-    
-    //TLM
-    "ad5d-4ef0f": allProvidersOutstream
 };
