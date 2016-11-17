@@ -1,5 +1,6 @@
-playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(deferred) {
+playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function() {
     var self = this;
+    var injectScriptDeferred = $.Deferred();
 
     var script = document.createElement("script");
     script.async = true;
@@ -12,7 +13,7 @@ playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(deferred) 
     }
 
     script.onload = function () {
-        deferred.resolve();
+        injectScriptDeferred.resolve();
     };
 
     // onload equivalent for IE
@@ -23,12 +24,14 @@ playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(deferred) 
     };
 
     script.onerror = function () {
-        deferred.reject();
+        injectScriptDeferred.reject();
     };
 
     try {
         document.getElementsByTagName("body")[0].appendChild(script);
     } catch(e) {
-        deferred.reject();
+        injectScriptDeferred.reject();
     }
+
+    return injectScriptDeferred.promise();
 };

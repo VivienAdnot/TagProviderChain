@@ -1126,36 +1126,17 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
         (videoStatus === true) ? self.onAdComplete() : self.onAdUnavailable();
     };
 
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "request",
-        onFail: self.settings.onAdUnavailable,
-        onDone: function() {
-
-            self.init()
-                .fail(self.settings.onAdUnavailable)
+    self.init()
+        .fail(self.settings.onAdUnavailable)
+        .done(function() {
+            self.watchVideoPlayerCreation()
                 .done(function() {
-
-                    playtemEmbedded.Core.track({
-                        providerName: self.settings.providerName,
-                        apiKey:  self.settings.apiKey,
-                        eventType: "requestSuccess",
-                        onFail: self.settings.onAdUnavailable,
-                        onDone: function() {
-
-                            self.watchVideoPlayerCreation()
-                                .done(function() {
-                                    self.onAdAvailable();
-                                })
-                                .fail(function() {
-                                    self.onAdUnavailable();
-                                });
-                        }
-                    });
+                    self.onAdAvailable();
+                })
+                .fail(function() {
+                    self.onAdUnavailable();
                 });
-        }
-    });
+        });
 };
 
 playtemEmbedded.SpotxInternal.prototype.init = function() {
@@ -1175,13 +1156,33 @@ playtemEmbedded.SpotxInternal.prototype.init = function() {
 
     createTarget();
 
-    self.injectScriptCustom(deferred);
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "request",
+        onFail: deferred.reject,
+        onDone: function() {
+            self.injectScriptCustom()
+                .fail(deferred.reject)
+                .done(function() {
+
+                    playtemEmbedded.Core.track({
+                        providerName: self.settings.providerName,
+                        apiKey:  self.settings.apiKey,
+                        eventType: "requestSuccess",
+                        onFail: deferred.reject,
+                        onDone: deferred.resolve
+                    });
+                });
+        }
+    });
 
     return deferred.promise();
 };
 
-playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(deferred) {
+playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function() {
     var self = this;
+    var injectScriptDeferred = $.Deferred();
 
     var script = document.createElement("script");
     script.async = true;
@@ -1194,7 +1195,7 @@ playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(deferred) 
     }
 
     script.onload = function () {
-        deferred.resolve();
+        injectScriptDeferred.resolve();
     };
 
     // onload equivalent for IE
@@ -1205,14 +1206,16 @@ playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(deferred) 
     };
 
     script.onerror = function () {
-        deferred.reject();
+        injectScriptDeferred.reject();
     };
 
     try {
         document.getElementsByTagName("body")[0].appendChild(script);
     } catch(e) {
-        deferred.reject();
+        injectScriptDeferred.reject();
     }
+
+    return injectScriptDeferred.promise();
 };
 
 playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function() {
