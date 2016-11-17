@@ -4,6 +4,41 @@ playtemEmbedded.Affiz.prototype.init = function() {
 
     playtemEmbedded.Core.globals.affizContext = self;
 
+    self.createElements()
+    .then(function() {
+        playtemEmbedded.Core.track({
+            providerName: self.settings.providerName,
+            apiKey:  self.settings.apiKey,
+            eventType: "request",
+            onFail: deferred.reject,
+            onDone: function() {
+                playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
+
+                window.avAsyncInit = function() {
+
+                    playtemEmbedded.Core.track({
+                        providerName: self.settings.providerName,
+                        apiKey:  self.settings.apiKey,
+                        eventType: "requestSuccess",
+                        onFail: deferred.reject,
+                        onDone: function() {
+                            deferred.resolve();
+                        }
+                    });
+
+                    window.setTimeout(deferred.reject, 5000);
+                };
+            }
+        });
+    });
+
+    return deferred.promise();
+};
+
+playtemEmbedded.Affiz.prototype.createElements = function() {
+    var self = this;
+    var deferred = $.Deferred();
+
     var createFakePlayerImage = function() {
         var node = "<img id='playerImg' src='//static.playtem.com/tag/tagProviders/templates/img/player.png' />";
 
@@ -33,32 +68,7 @@ playtemEmbedded.Affiz.prototype.init = function() {
         });
     };
 
-    createFakePlayerImage();
-    
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "request",
-        onFail: deferred.reject,
-        onDone: function() {
-            playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
-
-            window.avAsyncInit = function() {
-
-                playtemEmbedded.Core.track({
-                    providerName: self.settings.providerName,
-                    apiKey:  self.settings.apiKey,
-                    eventType: "requestSuccess",
-                    onFail: deferred.reject,
-                    onDone: function() {
-                        deferred.resolve();
-                    }
-                });
-
-                window.setTimeout(deferred.reject, 5000);
-            };
-        }
-    });
+    deferred.resolve(createFakePlayerImage());
 
     return deferred.promise();
 };

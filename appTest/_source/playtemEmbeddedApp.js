@@ -611,6 +611,41 @@ playtemEmbedded.Affiz.prototype.init = function() {
 
     playtemEmbedded.Core.globals.affizContext = self;
 
+    self.createElements()
+    .then(function() {
+        playtemEmbedded.Core.track({
+            providerName: self.settings.providerName,
+            apiKey:  self.settings.apiKey,
+            eventType: "request",
+            onFail: deferred.reject,
+            onDone: function() {
+                playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
+
+                window.avAsyncInit = function() {
+
+                    playtemEmbedded.Core.track({
+                        providerName: self.settings.providerName,
+                        apiKey:  self.settings.apiKey,
+                        eventType: "requestSuccess",
+                        onFail: deferred.reject,
+                        onDone: function() {
+                            deferred.resolve();
+                        }
+                    });
+
+                    window.setTimeout(deferred.reject, 5000);
+                };
+            }
+        });
+    });
+
+    return deferred.promise();
+};
+
+playtemEmbedded.Affiz.prototype.createElements = function() {
+    var self = this;
+    var deferred = $.Deferred();
+
     var createFakePlayerImage = function() {
         var node = "<img id='playerImg' src='//static.playtem.com/tag/tagProviders/templates/img/player.png' />";
 
@@ -640,32 +675,7 @@ playtemEmbedded.Affiz.prototype.init = function() {
         });
     };
 
-    createFakePlayerImage();
-    
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "request",
-        onFail: deferred.reject,
-        onDone: function() {
-            playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
-
-            window.avAsyncInit = function() {
-
-                playtemEmbedded.Core.track({
-                    providerName: self.settings.providerName,
-                    apiKey:  self.settings.apiKey,
-                    eventType: "requestSuccess",
-                    onFail: deferred.reject,
-                    onDone: function() {
-                        deferred.resolve();
-                    }
-                });
-
-                window.setTimeout(deferred.reject, 5000);
-            };
-        }
-    });
+    deferred.resolve(createFakePlayerImage());
 
     return deferred.promise();
 };
@@ -1143,26 +1153,15 @@ playtemEmbedded.SpotxInternal.prototype.init = function() {
     var self = this;
     var deferred = $.Deferred();
 
-    var createTarget = function() {
-        var node =
-            "<div class='playerWrapper'>" +
-                "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>" +
-            "</div>";
-
-        self.settings.$targetContainerElement.append(node);
-
-        $(".playerWrapper").css(self.settings.cssProperties);
-    };
-
-    createTarget();
-
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "request",
-        onFail: deferred.reject,
-        onDone: function() {
-            self.injectScriptCustom()
+    self.createElements()
+    .then(function() {
+        playtemEmbedded.Core.track({
+            providerName: self.settings.providerName,
+            apiKey:  self.settings.apiKey,
+            eventType: "request",
+            onFail: deferred.reject,
+            onDone: function() {
+                self.injectScriptCustom()
                 .fail(deferred.reject)
                 .done(function() {
 
@@ -1174,8 +1173,29 @@ playtemEmbedded.SpotxInternal.prototype.init = function() {
                         onDone: deferred.resolve
                     });
                 });
-        }
+            }
+        });
     });
+
+    return deferred.promise();
+};
+
+playtemEmbedded.SpotxInternal.prototype.createElements = function() {
+    var self = this;
+    var deferred = $.Deferred();
+
+    var createTarget = function() {
+        var node =
+            "<div class='playerWrapper'>" +
+                "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>" +
+            "</div>";
+
+        self.settings.$targetContainerElement.append(node);
+
+        $(".playerWrapper").css(self.settings.cssProperties);
+    };
+
+    deferred.resolve(createTarget());
 
     return deferred.promise();
 };
