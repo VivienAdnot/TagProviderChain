@@ -47,6 +47,7 @@ providers.rewarded = {
 //===========================
 
 var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
+var providersOutstreamExceptRevContent = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
 
 providers.outstream = {
     //===== prod =====
@@ -61,10 +62,10 @@ providers.outstream = {
     "4f63-b20df": allProvidersOutstream,
 
     //ladypopular
-    "92c6-497ff": allProvidersOutstream,
+    "92c6-497ff": providersOutstreamExceptRevContent,
 
     //Ma Bimbo
-    "1206-4ce9f": allProvidersOutstream,
+    "1206-4ce9f": providersOutstreamExceptRevContent,
 
     //Voyage to Fantasy
     "9a56-4422f": allProvidersOutstream,
