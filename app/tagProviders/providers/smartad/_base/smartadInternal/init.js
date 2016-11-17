@@ -1,4 +1,4 @@
-playtemEmbedded.Smartad.prototype.init = function(callback) {
+playtemEmbedded.SmartadInternal.prototype.init = function(callback) {
     var self = this;
 
     var createTarget = function() {

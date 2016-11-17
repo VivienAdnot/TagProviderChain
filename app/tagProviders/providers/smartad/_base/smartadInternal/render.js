@@ -1,4 +1,4 @@
-playtemEmbedded.Smartad.prototype.render = function() {
+playtemEmbedded.SmartadInternal.prototype.render = function() {
     var self = this;
 
     var divId = "sas_" + self.settings.formatId;

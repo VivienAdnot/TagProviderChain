@@ -851,23 +851,21 @@ playtemEmbedded.RevContent.prototype.watchAdCreation = function(callback) {
     }, self.settings.httpRequestTimeout);
 };
 
-playtemEmbedded.Smartad = function(options) {
+playtemEmbedded.SmartadInternal = function(options) {
     var defaults = {
-        debug: false,
         apiKey: undefined,
+        providerName: undefined,
+        formatId : undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop
     };
 
     this.settings = {
-        providerName: "Smartad",
         scriptUrl: '//www8.smartadserver.com/config.js?nwid=1901',
         siteId : 100394,
         pageName : "home",
-        formatId : 42149,
         domain: '//www8.smartadserver.com',
-
         targetClass: 'smartad',
         $targetContainerElement: $('.ad'),
         httpRequestTimeout: 5000,
@@ -886,7 +884,7 @@ playtemEmbedded.Smartad = function(options) {
     this.settings = $.extend(this.settings, defaults);       
 };
 
-playtemEmbedded.Smartad.prototype.onAdAvailable = function() {
+playtemEmbedded.SmartadInternal.prototype.onAdAvailable = function() {
     var self = this;
 
     playtemEmbedded.Core.track({
@@ -898,7 +896,7 @@ playtemEmbedded.Smartad.prototype.onAdAvailable = function() {
     });    
 };
 
-playtemEmbedded.Smartad.prototype.onAdUnavailable = function() {
+playtemEmbedded.SmartadInternal.prototype.onAdUnavailable = function() {
     var self = this;
 
     playtemEmbedded.Core.track({
@@ -910,7 +908,7 @@ playtemEmbedded.Smartad.prototype.onAdUnavailable = function() {
     });
 };
 
-playtemEmbedded.Smartad.prototype.execute = function(callback) {
+playtemEmbedded.SmartadInternal.prototype.execute = function(callback) {
     var self = this;
 
     var onLoadHandler = function(result) {
@@ -972,7 +970,7 @@ playtemEmbedded.Smartad.prototype.execute = function(callback) {
     });
 };
 
-playtemEmbedded.Smartad.prototype.init = function(callback) {
+playtemEmbedded.SmartadInternal.prototype.init = function(callback) {
     var self = this;
 
     var createTarget = function() {
@@ -989,7 +987,7 @@ playtemEmbedded.Smartad.prototype.init = function(callback) {
     });
 };
 
-playtemEmbedded.Smartad.prototype.render = function() {
+playtemEmbedded.SmartadInternal.prototype.render = function() {
     var self = this;
 
     var divId = "sas_" + self.settings.formatId;
@@ -998,6 +996,72 @@ playtemEmbedded.Smartad.prototype.render = function() {
     sas.render(self.settings.formatId);
 };
 
+
+playtemEmbedded.SmartadMixedContent = function(options) {
+    var defaults = {
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop
+    };
+
+    this.settings = {
+        formatId : 42149
+    };
+
+    this.smartadInternal = null;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+};
+
+playtemEmbedded.SmartadMixedContent.prototype.execute = function() {
+    var self = this;
+
+    self.smartadInternal = new playtemEmbedded.SmartadInternal({
+        apiKey: self.settings.apiKey,
+        formatId: self.settings.formatId,
+        providerName: "SmartadMixedContent",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable
+    });
+
+    self.smartadInternal.execute();
+};
+
+playtemEmbedded.SmartadVideo = function(options) {
+    var defaults = {
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop
+    };
+
+    this.settings = {
+        formatId : 41349
+    };
+
+    this.smartadInternal = null;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+};
+
+playtemEmbedded.SmartadVideo.prototype.execute = function() {
+    var self = this;
+
+    self.smartadInternal = new playtemEmbedded.SmartadInternal({
+        apiKey: self.settings.apiKey,
+        formatId: self.settings.formatId,
+        providerName: "SmartadVideo",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable
+    });
+
+    self.smartadInternal.execute();
+};
 
 playtemEmbedded.SpotxInternal = function(options) {
     var defaults = {

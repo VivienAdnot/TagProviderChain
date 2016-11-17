@@ -1,4 +1,4 @@
-playtemEmbedded.Smartad.prototype.onAdUnavailable = function() {
+playtemEmbedded.SmartadInternal.prototype.onAdUnavailable = function() {
     var self = this;
 
     playtemEmbedded.Core.track({

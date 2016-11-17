@@ -3,7 +3,7 @@ var instreamTest = [playtemEmbedded.RevContent];
 var providers = {};
 
 providers.test = {
-    "XXXX-xxxxx": instreamTest
+    "XXXX-xxxxx": [playtemEmbedded.SmartadVideo]
 };
 
 //===========================
@@ -46,7 +46,7 @@ providers.rewarded = {
 // OUTSTREAM
 //===========================
 
-var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
+var allProvidersOutstream = [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
 
 providers.outstream = {
     //===== prod =====
@@ -79,7 +79,7 @@ providers.outstream = {
     "Hn78Uf8iRy": allProvidersOutstream,
 
     //ludokado
-    "9a19-43fav": [playtemEmbedded.Smartad],
+    "9a19-43fav": [playtemEmbedded.SmartadMixedContent],
 
     //===== ! prod =====
     
