@@ -1030,7 +1030,7 @@ playtemEmbedded.SmartadMixedContent.prototype.execute = function() {
     self.smartadInternal.execute();
 };
 
-playtemEmbedded.SmartadVideo = function(options) {
+playtemEmbedded.SmartadVideoInstream = function(options) {
     var defaults = {
         apiKey: undefined,
 
@@ -1048,13 +1048,13 @@ playtemEmbedded.SmartadVideo = function(options) {
     this.settings = $.extend(this.settings, defaults);
 };
 
-playtemEmbedded.SmartadVideo.prototype.execute = function() {
+playtemEmbedded.SmartadVideoInstream.prototype.execute = function() {
     var self = this;
 
     self.smartadInternal = new playtemEmbedded.SmartadInternal({
         apiKey: self.settings.apiKey,
         formatId: self.settings.formatId,
-        providerName: "SmartadVideo",
+        providerName: "SmartadVideoInstream",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable

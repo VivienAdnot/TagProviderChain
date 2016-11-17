@@ -3,15 +3,15 @@ var instreamTest = [playtemEmbedded.RevContent];
 var providers = {};
 
 providers.test = {
-    "XXXX-xxxxx": [playtemEmbedded.SmartadVideo]
+    "XXXX-xxxxx": [playtemEmbedded.SmartadVideoInstream]
 };
 
 //===========================
 // INSTREAM
 //===========================
 
-var allProvidersInstream = [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
-var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
+var allProvidersInstream = [playtemEmbedded.SmartadVideoInstream, playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
+var iscoolsInstream = [playtemEmbedded.SmartadVideoInstream, playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
 
 providers.rewarded = {
     //===== prod =====
