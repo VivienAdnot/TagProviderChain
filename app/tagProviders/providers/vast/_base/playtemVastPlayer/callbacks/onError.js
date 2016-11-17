@@ -3,10 +3,6 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onError = function() {
 
     self.clean();
     
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "onAdError",
-        onAlways: self.settings.onError
-    });
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError")
+    .then(self.settings.onError);
 };

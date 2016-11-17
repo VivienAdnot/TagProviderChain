@@ -3,7 +3,7 @@ var instreamTest = [playtemEmbedded.PlaytemVastActiplay];
 var providers = {};
 
 providers.test = {
-    "XXXX-xxxxx": [playtemEmbedded.SpotxInstream]
+    "XXXX-xxxxx": [playtemEmbedded.PlaytemVastActiplay]
 };
 
 //===========================

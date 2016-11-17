@@ -1,23 +1,19 @@
-playtemEmbedded.Core.track = function(options) {
+playtemEmbedded.Core.track = function(providerName, apiKey, eventType) {
+    var deferred = $.Deferred();
 
-    var defaults = {
-        providerName: undefined,
-        apiKey: undefined,
-        eventType: undefined
-    };
-
-    var settings = $.extend({}, defaults, options);
-
-    if(!settings.providerName || !settings.apiKey || !settings.eventType) {
-        settings.onFail();
-        settings.onAlways();
-        return;
+    if(!providerName || !apiKey || !eventType) {
+        deferred.reject();
+        return deferred.promise();
     }
 
-    var url = "//api.playtem.com/tracker.gif?a=" + settings.eventType
-        + "&c=&p=" + settings.providerName
-        + "&k=" + settings.apiKey
+    var url = "//api.playtem.com/tracker.gif?a=" + eventType
+        + "&c=&p=" + providerName
+        + "&k=" + apiKey
         + "&t=" + playtemEmbedded.Core.Date.getCurrentTimestamp();
 
-    return $.get(url);
+    $.get(url)
+    .done(deferred.resolve)
+    .fail(deferred.reject);
+
+    return deferred.promise();
 };

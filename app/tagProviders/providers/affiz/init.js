@@ -6,14 +6,14 @@ playtemEmbedded.Affiz.prototype.init = function() {
 
     self.createElements()
     .then(function() {
-        playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "request")
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "request")
         .fail(deferred.reject)
         .done(function() {
             playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
 
             //affiz async init callback
             window.avAsyncInit = function() {
-                playtemEmbedded.Core.Ptrack(self.settings.providerName, self.settings.apiKey, "requestSuccess")
+                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "requestSuccess")
                 .fail(deferred.reject)
                 .done(deferred.resolve);
 

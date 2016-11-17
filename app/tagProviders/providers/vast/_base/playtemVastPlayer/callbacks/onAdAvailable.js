@@ -3,11 +3,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
 
     self.adFound = true;
 
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
-        eventType: "onAdAvailable",
-        onDone: self.settings.onAdAvailable,
-        onFail: self.settings.onError
-    });
+    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
+    .done(self.settings.onAdAvailable)
+    .fail(self.settings.onError);     
 };
