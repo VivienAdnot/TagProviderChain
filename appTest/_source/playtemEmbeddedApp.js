@@ -1118,54 +1118,46 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
         window.clearInterval(self.poll);
         window.clearTimeout(self.timeouts.videoAvailability.instance);
 
-        if(videoStatus === true) {
-            self.onAdComplete();
-        } else {
-            self.onAdUnavailable();
-        }
-    };
-
-    var initialize = function() {
-        self.init(function(error, result) {
-            if(error) {
-                self.settings.onAdUnavailable();
-                return;
-            }
-
-            var startWatch = function() {
-                self.watchVideoPlayerCreation(function(adStartedStatus) {
-                    if(adStartedStatus) {
-                        self.onAdAvailable();
-                        return;
-                    }
-                    
-                    self.onAdUnavailable();
-                });
-            };
-
-            playtemEmbedded.Core.track({
-                providerName: self.settings.providerName,
-                apiKey:  self.settings.apiKey,
-                eventType: "requestSuccess",
-                onDone: startWatch,
-                onFail: self.settings.onAdUnavailable
-            });
-        });
+        (videoStatus === true) ? self.onAdComplete() : self.onAdUnavailable();
     };
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
         apiKey:  self.settings.apiKey,
         eventType: "request",
-        onDone: initialize,
-        onFail: self.settings.onAdUnavailable
+        onFail: self.settings.onAdUnavailable,
+        onDone: function() {
+
+            self.init()
+                .fail(self.settings.onAdUnavailable)
+                .done(function() {
+
+                    playtemEmbedded.Core.track({
+                        providerName: self.settings.providerName,
+                        apiKey:  self.settings.apiKey,
+                        eventType: "requestSuccess",
+                        onFail: self.settings.onAdUnavailable,
+                        onDone: function() {
+
+                            self.watchVideoPlayerCreation()
+                                .done(function() {
+                                    self.onAdAvailable();
+                                })
+                                .fail(function() {
+                                    self.onAdUnavailable();
+                                });
+                        }
+                    });
+                });
+        }
     });
 };
 
-playtemEmbedded.SpotxInternal.prototype.init = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.init = function() {
     var self = this;
+    var deferred = $.Deferred();
 
-    var createTarget = function(callback) {
+    var createTarget = function() {
         var node =
             "<div class='playerWrapper'>" +
                 "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>" +
@@ -1178,12 +1170,12 @@ playtemEmbedded.SpotxInternal.prototype.init = function(callback) {
 
     createTarget();
 
-    self.injectScriptCustom(function(error, result) {
-        callback(error);
-    });
+    self.injectScriptCustom(deferred);
+
+    return deferred.promise();
 };
 
-playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(deferred) {
     var self = this;
 
     var script = document.createElement("script");
@@ -1197,7 +1189,7 @@ playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(callback) 
     }
 
     script.onload = function () {
-        callback(null, "success");
+        deferred.resolve();
     };
 
     // onload equivalent for IE
@@ -1208,18 +1200,20 @@ playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(callback) 
     };
 
     script.onerror = function () {
-        callback("error while loading script", null);
+        deferred.reject();
     };
 
     try {
         document.getElementsByTagName("body")[0].appendChild(script);
     } catch(e) {
-        callback("body.appendChild exception: " + e, null);
+        deferred.reject();
     }
 };
 
-playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function() {
     var self = this;
+
+    var deferred = $.Deferred();
 
     self.poll = window.setInterval(function() {
         // refresh every round
@@ -1229,18 +1223,18 @@ playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function(call
 
         if(isVideoPlayerDefined && isVideoPlayerVisible) {
             window.clearTimeout(self.timeouts.videoAvailability.instance);
-
             window.clearInterval(self.poll);
 
-            callback(true);
+            deferred.resolve();
         }
     }, 250);
 
     self.timeouts.videoAvailability.instance = window.setTimeout(function () {
         window.clearInterval(self.poll);
-
-        callback(false);
+        deferred.reject();
     }, self.timeouts.videoAvailability.duration);
+
+    return deferred.promise();
 };
 
 playtemEmbedded.SpotxInstream = function(options) {

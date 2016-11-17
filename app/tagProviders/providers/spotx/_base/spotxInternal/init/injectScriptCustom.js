@@ -1,4 +1,4 @@
-playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(deferred) {
     var self = this;
 
     var script = document.createElement("script");
@@ -12,7 +12,7 @@ playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(callback) 
     }
 
     script.onload = function () {
-        callback(null, "success");
+        deferred.resolve();
     };
 
     // onload equivalent for IE
@@ -23,12 +23,12 @@ playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function(callback) 
     };
 
     script.onerror = function () {
-        callback("error while loading script", null);
+        deferred.reject();
     };
 
     try {
         document.getElementsByTagName("body")[0].appendChild(script);
     } catch(e) {
-        callback("body.appendChild exception: " + e, null);
+        deferred.reject();
     }
 };

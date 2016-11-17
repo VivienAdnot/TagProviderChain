@@ -1,7 +1,8 @@
-playtemEmbedded.SpotxInternal.prototype.init = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.init = function() {
     var self = this;
+    var deferred = $.Deferred();
 
-    var createTarget = function(callback) {
+    var createTarget = function() {
         var node =
             "<div class='playerWrapper'>" +
                 "<div id='" + self.settings.scriptOptions["spotx_content_container_id"] + "'></div>" +
@@ -14,7 +15,7 @@ playtemEmbedded.SpotxInternal.prototype.init = function(callback) {
 
     createTarget();
 
-    self.injectScriptCustom(function(error, result) {
-        callback(error);
-    });
+    self.injectScriptCustom(deferred);
+
+    return deferred.promise();
 };

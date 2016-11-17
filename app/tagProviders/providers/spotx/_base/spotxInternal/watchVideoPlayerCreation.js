@@ -1,5 +1,7 @@
-playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function() {
     var self = this;
+
+    var deferred = $.Deferred();
 
     self.poll = window.setInterval(function() {
         // refresh every round
@@ -9,16 +11,16 @@ playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function(call
 
         if(isVideoPlayerDefined && isVideoPlayerVisible) {
             window.clearTimeout(self.timeouts.videoAvailability.instance);
-
             window.clearInterval(self.poll);
 
-            callback(true);
+            deferred.resolve();
         }
     }, 250);
 
     self.timeouts.videoAvailability.instance = window.setTimeout(function () {
         window.clearInterval(self.poll);
-
-        callback(false);
+        deferred.reject();
     }, self.timeouts.videoAvailability.duration);
+
+    return deferred.promise();
 };
