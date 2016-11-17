@@ -1,5 +1,6 @@
 playtemEmbedded.Affiz.prototype.init = function() {
     var self = this;
+    var deferred = $.Deferred();
 
     playtemEmbedded.Core.globals.affizContext = self;
 
@@ -34,15 +35,30 @@ playtemEmbedded.Affiz.prototype.init = function() {
 
     createFakePlayerImage();
     
-    var injectScript = function() {
-        playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
-    };
-    
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
         apiKey:  self.settings.apiKey,
         eventType: "request",
-        onDone: injectScript,
-        onFail: self.settings.onAdUnavailable
+        onFail: deferred.reject,
+        onDone: function() {
+            playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
+
+            window.avAsyncInit = function() {
+
+                playtemEmbedded.Core.track({
+                    providerName: self.settings.providerName,
+                    apiKey:  self.settings.apiKey,
+                    eventType: "requestSuccess",
+                    onFail: deferred.reject,
+                    onDone: function() {
+                        deferred.resolve();
+                    }
+                });
+
+                window.setTimeout(deferred.reject, 5000);
+            };
+        }
     });
+
+    return deferred.promise();
 };

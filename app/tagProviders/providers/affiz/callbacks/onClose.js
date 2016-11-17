@@ -10,7 +10,6 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
         apiKey:  self.settings.apiKey,
         eventType: "onAdClosed",
         onDone: closeWindow,
-        onFail: self.settings.onError,
-        onAlways: $.noop
+        onFail: self.settings.onError
     });
 };

@@ -582,16 +582,16 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
         apiKey:  self.settings.apiKey,
         eventType: "onAdClosed",
         onDone: closeWindow,
-        onFail: self.settings.onError,
-        onAlways: $.noop
+        onFail: self.settings.onError
     });
 };
 
 playtemEmbedded.Affiz.prototype.execute = function() {
     var self = this;
 
-    window.avAsyncInit = function() {
-        var initAffiz = function() {
+    self.init()
+        .fail(self.settings.onAdUnavailable)
+        .done(function() {
             AFFIZVIDEO.init({
                 site_id: self.settings.siteId,
                 clientid: self.settings.clientid,
@@ -602,22 +602,12 @@ playtemEmbedded.Affiz.prototype.execute = function() {
                 complete_callback: self.onAdComplete,
                 close_callback: self.onClose
             });
-        }
-
-        playtemEmbedded.Core.track({
-            providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
-            eventType: "requestSuccess",
-            onDone: initAffiz,
-            onFail: self.settings.onAdUnavailable
         });
-    };
-
-    self.init();
 };
 
 playtemEmbedded.Affiz.prototype.init = function() {
     var self = this;
+    var deferred = $.Deferred();
 
     playtemEmbedded.Core.globals.affizContext = self;
 
@@ -652,17 +642,32 @@ playtemEmbedded.Affiz.prototype.init = function() {
 
     createFakePlayerImage();
     
-    var injectScript = function() {
-        playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
-    };
-    
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
         apiKey:  self.settings.apiKey,
         eventType: "request",
-        onDone: injectScript,
-        onFail: self.settings.onAdUnavailable
+        onFail: deferred.reject,
+        onDone: function() {
+            playtemEmbedded.Core.injectScript(self.settings.scriptUrl, $.noop);
+
+            window.avAsyncInit = function() {
+
+                playtemEmbedded.Core.track({
+                    providerName: self.settings.providerName,
+                    apiKey:  self.settings.apiKey,
+                    eventType: "requestSuccess",
+                    onFail: deferred.reject,
+                    onDone: function() {
+                        deferred.resolve();
+                    }
+                });
+
+                window.setTimeout(deferred.reject, 5000);
+            };
+        }
     });
+
+    return deferred.promise();
 };
 
 playtemEmbedded.RevContent = function(options) {

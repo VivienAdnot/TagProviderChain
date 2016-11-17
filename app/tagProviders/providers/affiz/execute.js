@@ -1,8 +1,9 @@
 playtemEmbedded.Affiz.prototype.execute = function() {
     var self = this;
 
-    window.avAsyncInit = function() {
-        var initAffiz = function() {
+    self.init()
+        .fail(self.settings.onAdUnavailable)
+        .done(function() {
             AFFIZVIDEO.init({
                 site_id: self.settings.siteId,
                 clientid: self.settings.clientid,
@@ -13,16 +14,5 @@ playtemEmbedded.Affiz.prototype.execute = function() {
                 complete_callback: self.onAdComplete,
                 close_callback: self.onClose
             });
-        }
-
-        playtemEmbedded.Core.track({
-            providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
-            eventType: "requestSuccess",
-            onDone: initAffiz,
-            onFail: self.settings.onAdUnavailable
         });
-    };
-
-    self.init();
 };
