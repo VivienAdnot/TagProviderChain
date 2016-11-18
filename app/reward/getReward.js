@@ -1,20 +1,16 @@
-playtemEmbedded.Reward.prototype.getReward = function(callback) {
+playtemEmbedded.Reward.prototype.getReward = function(playtemUserId) {
     var self = this;
+    var deferred = $.Deferred();
 
-    var onParseSuccess = function(rewardName, rewardImageUri) {
-        //reward img uri
-        $("#rewardImageUri").attr("src", rewardImageUri);
-        $("#rewardImageUri").css("visibility", "visible");
-        //reward img name
-        $("#rewardName").text(rewardName);
-        $("#rewardName").css("visibility", "visible");
-        //our partner
-        $(".ad__reward__offerMessage__brandName").text("Our partner");
-        //offers you
-        $("#js-rewardOfferingMessage").text("offers you");
-    };
-
-    var parseResponse = function(data) {
+    $.get(self.settings.scriptUrl, {
+        apiKey : self.settings.apiKey,
+        userId : playtemUserId,
+        timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
+    })
+    .fail(function() {
+        deferred.reject("playtem ajax call failed");
+    })
+    .done(function(data) {
         try {
             if(data.StatusCode !== 0) {
                 throw "no gift available: " + data.StatusCode + ", " + data.StatusMessage;
@@ -37,28 +33,16 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
                 throw "no reward Name";
             }
 
-            onParseSuccess(rewardName, rewardImageUri);
-
-            callback(null, "success");
+            deferred.resolve(function() {
+                return {
+                    name: rewardName,
+                    imageUri: rewardImageUri
+                };
+            }());
         } catch(e) {
-            var errorMessage = "reward parse response error: " + e;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
-            callback(errorMessage, null);
-        }
-    };
-
-    $.ajax({
-        url: self.settings.scriptUrl,
-        data: {
-            apiKey : self.settings.apiKey,
-            userId : self.userId,
-            timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
-        },
-        success: parseResponse,
-        error: function(jqXHR, textStatus, errorThrown) {
-            var errorMessage = "reward ajax error: " + errorThrown;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
-            callback(errorMessage, null);
+            deferred.reject("reward parse response error: " + e);
         }
     });
+
+    return deferred.promise();
 };

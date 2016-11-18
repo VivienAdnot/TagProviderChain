@@ -234,49 +234,54 @@ playtemEmbedded.Reward = function(options) {
         }
     };
 
-    this.userId = null;
-    this.executeCallback = null;
-
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);       
 };
 
-playtemEmbedded.Reward.prototype.execute = function(callback) {
+playtemEmbedded.Reward.prototype.execute = function() {
     var self = this;
+    var deferred = $.Deferred();
 
-    self.init(callback, function(error, data) {
-        if(error != null) {
-            return;
-        }
+    if(!self.settings.apiKey) {
+        deferred.reject();
+    }
 
-        // listen
-        window.addEventListener("message", self.userIdMessageHandler, false);
+    else {
+        self.UIHideElements()
+        .then(function() {
+            self.requestUserId()
+            .fail(function() {
+                deferred.reject("request user id failed");
+            })
+            .done(function(playtemUserId) {
+                self.getReward(playtemUserId)
+                .fail(function(errorMessage) {
+                    deferred.reject(errorMessage);
+                })
+                .done(function(result) {
+                    self.UIShowElements(result.name, result.imageUri)
+                    .then(deferred.resolve);
+                })
+            });
+        })
+    }
 
-        // send
-        window.parent.postMessage(self.settings.sendEvents.userId, "*");
-
-        // we don't set up a timeout because this module is not critical for the app if it fails.
-        // create a default reward in the html template in case of error
-    });
+    return deferred.promise();
 };
 
-playtemEmbedded.Reward.prototype.getReward = function(callback) {
+playtemEmbedded.Reward.prototype.getReward = function(playtemUserId) {
     var self = this;
+    var deferred = $.Deferred();
 
-    var onParseSuccess = function(rewardName, rewardImageUri) {
-        //reward img uri
-        $("#rewardImageUri").attr("src", rewardImageUri);
-        $("#rewardImageUri").css("visibility", "visible");
-        //reward img name
-        $("#rewardName").text(rewardName);
-        $("#rewardName").css("visibility", "visible");
-        //our partner
-        $(".ad__reward__offerMessage__brandName").text("Our partner");
-        //offers you
-        $("#js-rewardOfferingMessage").text("offers you");
-    };
-
-    var parseResponse = function(data) {
+    $.get(self.settings.scriptUrl, {
+        apiKey : self.settings.apiKey,
+        userId : playtemUserId,
+        timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
+    })
+    .fail(function() {
+        deferred.reject("playtem ajax call failed");
+    })
+    .done(function(data) {
         try {
             if(data.StatusCode !== 0) {
                 throw "no gift available: " + data.StatusCode + ", " + data.StatusMessage;
@@ -299,34 +304,59 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
                 throw "no reward Name";
             }
 
-            onParseSuccess(rewardName, rewardImageUri);
-
-            callback(null, "success");
+            deferred.resolve(function() {
+                return {
+                    name: rewardName,
+                    imageUri: rewardImageUri
+                };
+            }());
         } catch(e) {
-            var errorMessage = "reward parse response error: " + e;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
-            callback(errorMessage, null);
-        }
-    };
-
-    $.ajax({
-        url: self.settings.scriptUrl,
-        data: {
-            apiKey : self.settings.apiKey,
-            userId : self.userId,
-            timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
-        },
-        success: parseResponse,
-        error: function(jqXHR, textStatus, errorThrown) {
-            var errorMessage = "reward ajax error: " + errorThrown;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
-            callback(errorMessage, null);
+            deferred.reject("reward parse response error: " + e);
         }
     });
+
+    return deferred.promise();
 };
 
-playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) {
+playtemEmbedded.Reward.prototype.requestUserId = function() {
     var self = this;
+    var deferred = $.Deferred();
+
+    var extractUserId = function(postMessage) {
+        var playtemIdentifier = "playtem:js:";
+
+        //drop this message and wait for the next one
+        if(!postMessage || !postMessage.data) {
+            return;
+        }
+
+        var userIdMessage = postMessage.data;
+
+        //drop this message and wait for the next one
+        if(userIdMessage.indexOf(playtemIdentifier) != 0) {
+            return;
+        }
+
+        var extractUserId = function() {
+            return userIdMessage.substring(playtemIdentifier.length);
+        };
+
+        deferred.resolve(extractUserId());
+    };
+
+    // listen
+    window.addEventListener("message", extractUserId, false);
+
+    // send
+    window.parent.postMessage(self.settings.sendEvents.userId, "*");
+
+    window.setTimeout(deferred.reject, 2000);
+
+    return deferred.promise();
+};
+
+playtemEmbedded.Reward.prototype.UIHideElements = function() {
+    var deferred = $.Deferred();
 
     var hideElements = function() {
         //reward img uri
@@ -338,40 +368,30 @@ playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) 
         $("#js-rewardOfferingMessage").css("visibility", "hidden");
     };
 
-    if(!self.settings.apiKey) {
-        initCallback("window.apiKey undefined", null);
-        return;
-    }
+    deferred.resolve(hideElements());
 
-    self.executeCallback = executeCallback;
-
-    //hideElements();
-    playtemEmbedded.Core.globals.playtemRewardContext = self;
-
-    initCallback(null, "success");
+    return deferred.promise();
 };
 
-playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
-    var self = playtemEmbedded.Core.globals.playtemRewardContext;
-    var playtemIdentifier = "playtem:js:";
+playtemEmbedded.Reward.prototype.UIShowElements = function() {
+    var deferred = $.Deferred();
 
-    if(!postMessage || !postMessage.data) {
-        return;
-    }
-
-    var userIdMessage = postMessage.data;
-
-    if(userIdMessage.indexOf(playtemIdentifier) != 0) {
-        return;
-    }
-
-    var extractUserId = function() {
-        return userIdMessage.substring(playtemIdentifier.length);
+    var showElements = function() {
+        //reward img uri
+        $("#rewardImageUri").attr("src", rewardImageUri);
+        $("#rewardImageUri").css("visibility", "visible");
+        //reward img name
+        $("#rewardName").text(rewardName);
+        $("#rewardName").css("visibility", "visible");
+        //our partner
+        $(".ad__reward__offerMessage__brandName").text("Our partner");
+        //offers you
+        $("#js-rewardOfferingMessage").text("offers you");
     };
 
-    self.userId = extractUserId();
+    deferred.resolve(showElements());
 
-    self.getReward(self.executeCallback);
+    return deferred.promise();
 };
 
 playtemEmbedded.TagProviders = function (options) {
@@ -467,8 +487,9 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
                     apiKey: self.settings.apiKey
                 });
 
-                rewarder.execute(function(error, success) {
-                    // nothing to do
+                rewarder.execute()
+                .fail(function(error) {
+                    playtemEmbedded.Core.log("reward", error);
                 });
             }
         },
@@ -490,20 +511,20 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
     var self = this;
 
     var adCompleteOrError = function() {
-        var always = function() {
-            self.windowBlocker.clearBlocker();
-        };
-
         if(self.settings.hasReward == true) {
             var rewarder = new playtemEmbedded.Reward({
                 apiKey: self.settings.apiKey
             });
 
-            rewarder.execute(function(error, success) {
-                always();
+            rewarder.execute()
+            .fail(function(error) {
+                playtemEmbedded.Core.log("reward", error);
+            })
+            .always(function() {
+                self.windowBlocker.clearBlocker();
             });
         } else {
-            always();
+            self.windowBlocker.clearBlocker();
         }
     };
 
@@ -560,42 +581,6 @@ playtemEmbedded.Affiz = function(options) {
     }
 };
 
-playtemEmbedded.Affiz.prototype.onAdAvailable = function() {
-    var self = playtemEmbedded.Core.globals.affizContext;
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
-    .done(self.settings.onAdAvailable)
-    .fail(self.settings.onError);
-};
-
-playtemEmbedded.Affiz.prototype.onAdComplete = function() {
-    var self = playtemEmbedded.Core.globals.affizContext;
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
-    .done(self.settings.onAdComplete)
-    .fail(self.settings.onError);
-};
-
-playtemEmbedded.Affiz.prototype.onAdUnavailable = function() {
-    var self = playtemEmbedded.Core.globals.affizContext;
-    
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
-    .done(self.settings.onAdUnavailable)
-    .fail(self.settings.onError);    
-};
-
-playtemEmbedded.Affiz.prototype.onClose = function() {
-    var self = playtemEmbedded.Core.globals.affizContext;
-
-    var closeWindow = function() {
-        window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
-    };
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdClosed")
-    .done(closeWindow)
-    .fail(self.settings.onError);
-};
-
 playtemEmbedded.Affiz.prototype.execute = function() {
     var self = this;
 
@@ -618,7 +603,6 @@ playtemEmbedded.Affiz.prototype.execute = function() {
 
             watcherPromises.onAdComplete
             .then(function() {
-                self.clean();
                 playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
                 .done(self.settings.onAdComplete)
                 .fail(self.settings.onError);

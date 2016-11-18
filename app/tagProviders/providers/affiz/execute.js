@@ -20,7 +20,6 @@ playtemEmbedded.Affiz.prototype.execute = function() {
 
             watcherPromises.onAdComplete
             .then(function() {
-                self.clean();
                 playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
                 .done(self.settings.onAdComplete)
                 .fail(self.settings.onError);

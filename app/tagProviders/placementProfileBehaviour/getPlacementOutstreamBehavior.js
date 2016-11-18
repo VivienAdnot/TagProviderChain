@@ -10,8 +10,9 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
                     apiKey: self.settings.apiKey
                 });
 
-                rewarder.execute(function(error, success) {
-                    // nothing to do
+                rewarder.execute()
+                .fail(function(error) {
+                    playtemEmbedded.Core.log("reward", error);
                 });
             }
         },

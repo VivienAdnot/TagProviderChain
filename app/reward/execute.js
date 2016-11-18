@@ -1,18 +1,30 @@
-playtemEmbedded.Reward.prototype.execute = function(callback) {
+playtemEmbedded.Reward.prototype.execute = function() {
     var self = this;
+    var deferred = $.Deferred();
 
-    self.init(callback, function(error, data) {
-        if(error != null) {
-            return;
-        }
+    if(!self.settings.apiKey) {
+        deferred.reject();
+    }
 
-        // listen
-        window.addEventListener("message", self.userIdMessageHandler, false);
+    else {
+        self.UIHideElements()
+        .then(function() {
+            self.requestUserId()
+            .fail(function() {
+                deferred.reject("request user id failed");
+            })
+            .done(function(playtemUserId) {
+                self.getReward(playtemUserId)
+                .fail(function(errorMessage) {
+                    deferred.reject(errorMessage);
+                })
+                .done(function(result) {
+                    self.UIShowElements(result.name, result.imageUri)
+                    .then(deferred.resolve);
+                })
+            });
+        })
+    }
 
-        // send
-        window.parent.postMessage(self.settings.sendEvents.userId, "*");
-
-        // we don't set up a timeout because this module is not critical for the app if it fails.
-        // create a default reward in the html template in case of error
-    });
+    return deferred.promise();
 };
