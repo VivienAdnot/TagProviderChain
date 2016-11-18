@@ -1093,47 +1093,41 @@ playtemEmbedded.SpotxInternal.prototype.onError = function() {
     .then(self.settings.onError);    
 };
 
-playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.execute = function() {
     var self = this;
-
-    var callbackFlag = false;
-
-    window.spotXCallback = function(videoStatus) {
-        if(videoStatus === true) {
-            self.onAdComplete();
-        }
-        
-        else {
-            if(callbackFlag === false) {
-                callbackFlag = true;
-                self.onAdUnavailable();
-            }
-        }
-    };
 
     self.init()
     .fail(self.settings.onAdUnavailable)
     .done(function() {
-        var condition = function() {
-            var $videoPlayerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
-            var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
-            var isVideoPlayerVisible = $videoPlayerContainer.height() == self.settings.scriptOptions["spotx_content_height"];
+        var watcherPromises = self.watcher();
 
-            return isVideoPlayerDefined && isVideoPlayerVisible;
-        };
-
-        playtemEmbedded.Core.watch(condition)
+        watcherPromises.isAdAvailable
         .done(function() {
-            if(callbackFlag === false) {
-                callbackFlag = true;
-                self.onAdAvailable();
-            }
+            var self = playtemEmbedded.Core.globals.spotxInternalContext;
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
+            .done(self.settings.onAdAvailable)
+            .fail(self.settings.onError);
         })
         .fail(function() {
-            if(callbackFlag === false) {
-                callbackFlag = true;
-                self.onAdUnavailable();
-            }
+            var self = playtemEmbedded.Core.globals.spotxInternalContext;
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
+            .done(self.settings.onAdUnavailable)
+            .fail(self.settings.onError);
+        });
+
+        watcherPromises.onAdComplete
+        .then(function() {
+            var self = playtemEmbedded.Core.globals.spotxInternalContext;
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
+            .done(self.settings.onAdComplete)
+            .fail(self.settings.onError);
+        });
+
+        watcherPromises.onAdError
+        .then(function() {
+            var self = playtemEmbedded.Core.globals.spotxInternalContext;
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError")
+            .then(self.settings.onError);
         });
     });
 };
@@ -1220,30 +1214,50 @@ playtemEmbedded.SpotxInternal.prototype.injectScriptCustom = function() {
     return injectScriptDeferred.promise();
 };
 
-playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function() {
+playtemEmbedded.SpotxInternal.prototype.watcher = function() {
     var self = this;
 
-    var deferred = $.Deferred();
+    var isAdAvailableDeferred = $.Deferred();
+    var adCompleteDeferred = $.Deferred();
+    var adErrorDeferred = $.Deferred();
 
-    self.poll = window.setInterval(function() {
+    window.spotXCallback = function(videoStatus) {
+        if(videoStatus === true) {
+            adCompleteDeferred.resolve();
+        }
+        
+        else {
+            if(adAvailableDeferred.state() == "pending") {
+                isAdAvailableDeferred.reject();
+            }
+            // if I detect a player with my watcher and then I receive this, it's a video error
+            else {
+                adErrorDeferred.resolve();
+            }
+        }
+    };
+
+    var condition = function() {
         var $videoPlayerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
         var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
         var isVideoPlayerVisible = $videoPlayerContainer.height() == self.settings.scriptOptions["spotx_content_height"];
 
-        if(isVideoPlayerDefined && isVideoPlayerVisible) {
-            window.clearTimeout(self.timeouts.videoAvailability.instance);
-            window.clearInterval(self.poll);
+        return isVideoPlayerDefined && isVideoPlayerVisible;
+    }
 
-            deferred.resolve();
-        }
-    }, 250);
+    playtemEmbedded.Core.watch(condition)
+    .done(function() {
+        isAdAvailableDeferred.resolve();
+    })
+    .fail(function() {
+        isAdAvailableDeferred.reject();
+    });
 
-    self.timeouts.videoAvailability.instance = window.setTimeout(function () {
-        window.clearInterval(self.poll);
-        deferred.reject();
-    }, self.timeouts.videoAvailability.duration);
-
-    return deferred.promise();
+    return {
+        isAdAvailable: isAdAvailableDeferred.promise(),
+        onAdComplete: adCompleteDeferred.promise(),
+        onAdError: adErrorDeferred.promise()
+    };
 };
 
 playtemEmbedded.SpotxInstream = function(options) {

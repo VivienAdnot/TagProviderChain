@@ -1,44 +1,38 @@
-playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
+playtemEmbedded.SpotxInternal.prototype.execute = function() {
     var self = this;
-
-    var callbackFlag = false;
-
-    window.spotXCallback = function(videoStatus) {
-        if(videoStatus === true) {
-            self.onAdComplete();
-        }
-        
-        else {
-            if(callbackFlag === false) {
-                callbackFlag = true;
-                self.onAdUnavailable();
-            }
-        }
-    };
 
     self.init()
     .fail(self.settings.onAdUnavailable)
     .done(function() {
-        var condition = function() {
-            var $videoPlayerContainer = $("#" + self.settings.scriptOptions["spotx_content_container_id"]);
-            var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
-            var isVideoPlayerVisible = $videoPlayerContainer.height() == self.settings.scriptOptions["spotx_content_height"];
+        var watcherPromises = self.watcher();
 
-            return isVideoPlayerDefined && isVideoPlayerVisible;
-        };
-
-        playtemEmbedded.Core.watch(condition)
+        watcherPromises.isAdAvailable
         .done(function() {
-            if(callbackFlag === false) {
-                callbackFlag = true;
-                self.onAdAvailable();
-            }
+            var self = playtemEmbedded.Core.globals.spotxInternalContext;
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
+            .done(self.settings.onAdAvailable)
+            .fail(self.settings.onError);
         })
         .fail(function() {
-            if(callbackFlag === false) {
-                callbackFlag = true;
-                self.onAdUnavailable();
-            }
+            var self = playtemEmbedded.Core.globals.spotxInternalContext;
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
+            .done(self.settings.onAdUnavailable)
+            .fail(self.settings.onError);
+        });
+
+        watcherPromises.onAdComplete
+        .then(function() {
+            var self = playtemEmbedded.Core.globals.spotxInternalContext;
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
+            .done(self.settings.onAdComplete)
+            .fail(self.settings.onError);
+        });
+
+        watcherPromises.onAdError
+        .then(function() {
+            var self = playtemEmbedded.Core.globals.spotxInternalContext;
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError")
+            .then(self.settings.onError);
         });
     });
 };
