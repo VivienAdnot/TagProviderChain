@@ -4,16 +4,7 @@ playtemEmbedded.RevContent.prototype.execute = function() {
     self.init()
     .fail(self.settings.onAdUnavailable)
     .done(function() {
-
-        var condition = function() {
-            var $videoPlayerContainer = $("#revcontent");
-            var isVideoPlayerDefined = $videoPlayerContainer.length == 1;
-            var isVideoPlayerVisible = $videoPlayerContainer.height() > 10; // 10 is near random, real test should be height > 0
-
-            return isVideoPlayerDefined && isVideoPlayerVisible;           
-        };
-
-        playtemEmbedded.Core.watch(condition)
+        self.watcher()
         .done(function() {
             playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
             .done(self.settings.onAdAvailable)
