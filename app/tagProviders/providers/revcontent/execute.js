@@ -1,19 +1,19 @@
 playtemEmbedded.RevContent.prototype.execute = function() {
     var self = this;
 
+    var isAdAvailableDeferred = $.Deferred();
+    var internalErrorDeferred = $.Deferred();
+
     self.init()
-    .fail(self.settings.onAdUnavailable)
+    .fail(internalErrorDeferred.resolve)
     .done(function() {
         self.watcher()
-        .done(function() {
-            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
-            .done(self.settings.onAdAvailable)
-            .fail(self.settings.onError);
-        })
-        .fail(function() {
-            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
-            .done(self.settings.onAdUnavailable)
-            .fail(self.settings.onError);
-        });
+        .done(isAdAvailableDeferred.resolve)
+        .fail(isAdAvailableDeferred.reject);
     });
+
+    return {
+        isAdAvailable: isAdAvailableDeferred.promise(),
+        internalError: internalErrorDeferred.promise()
+    };    
 };

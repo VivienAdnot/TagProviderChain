@@ -4,11 +4,7 @@ playtemEmbedded.Affiz = function(options) {
 
     var defaults = {
         debug : false,
-        apiKey: undefined,
-
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onAdComplete: $.noop
+        apiKey: undefined
     };
 
     this.settings = {
@@ -22,8 +18,6 @@ playtemEmbedded.Affiz = function(options) {
             messageCloseWindow : "closeAdWindow"
         }
     };
-
-    playtemEmbedded.Core.globals.affizContext = undefined;
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
 

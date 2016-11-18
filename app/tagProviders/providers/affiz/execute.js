@@ -1,39 +1,45 @@
 playtemEmbedded.Affiz.prototype.execute = function() {
     var self = this;
 
-    self.init()
-        .fail(self.settings.onAdUnavailable)
-        .done(function() {
-            var watcherPromises = self.watcher();
+    var isAdAvailableDeferred = $.Deferred();
+    var videoCompleteDeferred = $.Deferred();
 
-            watcherPromises.isAdAvailable
-            .done(function() {
-                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
-                .done(self.settings.onAdAvailable)
-                .fail(self.settings.onError);
-            })
-            .fail(function() {
-                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
-                .done(self.settings.onAdUnavailable)
-                .fail(self.settings.onError);
-            });
+    var executeModulePromises = self.executeModule();
 
-            watcherPromises.onAdComplete
-            .then(function() {
-                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
-                .done(self.settings.onAdComplete)
-                .fail(self.settings.onError);
-            });
+    executeModulePromises.isAdAvailable
+    .done(function() {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
+        //continue event if it fails
+        .then(isAdAvailableDeferred.resolve);
+    })
+    .fail(function() {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
+        //continue event if it fails
+        .then(isAdAvailableDeferred.reject);
+    });
 
-            watcherPromises.onAdClose
-            .then(function() {
-                var closeWindow = function() {
-                    window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
-                };
+    moduleExecutionPromises.videoComplete
+    .done(function() {
+        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
+        .then(videoCompleteDeferred.resolve);
+    })
+    .fail(function(errorType) {
+        switch(errorType) {
+            "videoError":
+                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError")
+                .then($.noop);
+            default:
+                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onInternalError")
+                .then($.noop);
+        }
 
-                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdClosed")
-                .done(closeWindow)
-                .fail(self.settings.onError);
-            });
-        });
+        videoCompleteDeferred.reject();
+    });
+
+    moduleExecutionPromises.videoClose
+    .then(function() {
+
+    });
+
+    return moduleExecutionPromises;
 };

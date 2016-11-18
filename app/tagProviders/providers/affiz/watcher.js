@@ -1,9 +1,11 @@
 playtemEmbedded.Affiz.prototype.watcher = function() {
     var self = this;
 
-    var isAdAvailableDeferred = $.Deferred();
-    var adCompleteDeferred = $.Deferred();
-    var adCloseDeferred = $.Deferred();
+    var watcherPromises = {
+        isAdAvailable: $.Deferred,
+        videoComplete: $.Deferred,
+        videoClose: $.Deferred
+    };
 
     AFFIZVIDEO.init({
         site_id: self.settings.siteId,
@@ -11,22 +13,18 @@ playtemEmbedded.Affiz.prototype.watcher = function() {
         modal: self.settings.modal,
 
         load_callback: function() {
-            isAdAvailableDeferred.resolve();
+            watcherPromises.isAdAvailable.resolve();
         },
         noads_callback: function() {
-            isAdAvailableDeferred.reject();
+            watcherPromises.isAdAvailable.reject();
         },
         complete_callback: function() {
-            adCompleteDeferred.resolve();
+            watcherPromises.videoComplete.resolve();
         },
         close_callback: function() {
-            adCloseDeferred.resolve();
+            watcherPromises.videoClose.resolve();
         }
     });
 
-    return {
-        isAdAvailable: isAdAvailableDeferred.promise(),
-        onAdComplete: adCompleteDeferred.promise(),
-        onAdClose: adCloseDeferred.promise()
-    };
+    return watcherPromises;
 };
