@@ -701,22 +701,6 @@ playtemEmbedded.RevContent = function(options) {
     this.settings = $.extend(this.settings, defaults);
 };
 
-playtemEmbedded.RevContent.prototype.onAdAvailable = function() {
-    var self = playtemEmbedded.Core.globals.revContentContext;
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
-    .done(self.settings.onAdAvailable)
-    .fail(self.settings.onError);
-};
-
-playtemEmbedded.RevContent.prototype.onAdUnavailable = function() {
-    var self = playtemEmbedded.Core.globals.revContentContext;
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
-    .done(self.settings.onAdUnavailable)
-    .fail(self.settings.onError);
-};
-
 playtemEmbedded.RevContent.prototype.execute = function() {
     var self = this;
 
@@ -733,8 +717,20 @@ playtemEmbedded.RevContent.prototype.execute = function() {
         };
 
         playtemEmbedded.Core.watch(condition)
-        .done(self.onAdAvailable)
-        .fail(self.onAdUnavailable);
+        .done(function() {
+            //var self = playtemEmbedded.Core.globals.revContentContext;
+
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
+            .done(self.settings.onAdAvailable)
+            .fail(self.settings.onError);
+        })
+        .fail(function() {
+            //var self = playtemEmbedded.Core.globals.revContentContext;
+
+            playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
+            .done(self.settings.onAdUnavailable)
+            .fail(self.settings.onError);
+        });
     });
 };
 
@@ -1054,45 +1050,6 @@ playtemEmbedded.SpotxInternal = function(options) {
     this.settings = $.extend(this.settings, defaults);
 };
 
-playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
-    var self = playtemEmbedded.Core.globals.spotxInternalContext;
-
-    self.adFound = true;
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
-    .done(self.settings.onAdAvailable)
-    .fail(self.settings.onError);    
-};
-
-playtemEmbedded.SpotxInternal.prototype.onAdComplete = function() {
-    var self = playtemEmbedded.Core.globals.spotxInternalContext;
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
-    .done(self.settings.onAdComplete)
-    .fail(self.settings.onError);
-};
-
-playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
-    var self = playtemEmbedded.Core.globals.spotxInternalContext;
-    
-    if(self.adFound === true) {
-        self.onError();
-    }
-    
-    else {
-        playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
-        .done(self.settings.onAdUnavailable)
-        .fail(self.settings.onError);
-    }
-};
-
-playtemEmbedded.SpotxInternal.prototype.onError = function() {
-    var self = playtemEmbedded.Core.globals.spotxInternalContext;
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdError")
-    .then(self.settings.onError);    
-};
-
 playtemEmbedded.SpotxInternal.prototype.execute = function() {
     var self = this;
 
@@ -1243,7 +1200,7 @@ playtemEmbedded.SpotxInternal.prototype.watcher = function() {
         var isVideoPlayerVisible = $videoPlayerContainer.height() == self.settings.scriptOptions["spotx_content_height"];
 
         return isVideoPlayerDefined && isVideoPlayerVisible;
-    }
+    };
 
     playtemEmbedded.Core.watch(condition)
     .done(function() {
