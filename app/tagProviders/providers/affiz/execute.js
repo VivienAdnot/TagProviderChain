@@ -4,15 +4,37 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     self.init()
         .fail(self.settings.onAdUnavailable)
         .done(function() {
-            AFFIZVIDEO.init({
-                site_id: self.settings.siteId,
-                clientid: self.settings.clientid,
-                modal: self.settings.modal,
+            var watcherPromises = self.watcher();
 
-                load_callback: self.onAdAvailable,
-                noads_callback: self.onAdUnavailable,
-                complete_callback: self.onAdComplete,
-                close_callback: self.onClose
+            watcherPromises.isAdAvailable
+            .done(function() {
+                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable")
+                .done(self.settings.onAdAvailable)
+                .fail(self.settings.onError);
+            })
+            .fail(function() {
+                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdUnavailable")
+                .done(self.settings.onAdUnavailable)
+                .fail(self.settings.onError);
+            });
+
+            watcherPromises.onAdComplete
+            .then(function() {
+                self.clean();
+                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete")
+                .done(self.settings.onAdComplete)
+                .fail(self.settings.onError);
+            });
+
+            watcherPromises.onAdClose
+            .then(function() {
+                var closeWindow = function() {
+                    window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+                };
+
+                playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdClosed")
+                .done(closeWindow)
+                .fail(self.settings.onError);
             });
         });
 };
