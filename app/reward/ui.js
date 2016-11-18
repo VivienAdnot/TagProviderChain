@@ -16,20 +16,22 @@ playtemEmbedded.Reward.prototype.UIHideElements = function() {
     return deferred.promise();
 };
 
-playtemEmbedded.Reward.prototype.UIShowElements = function() {
+playtemEmbedded.Reward.prototype.UIShowElements = function(name, imageUri) {
     var deferred = $.Deferred();
 
     var showElements = function() {
         //reward img uri
-        $("#rewardImageUri").attr("src", rewardImageUri);
+        $("#rewardImageUri").attr("src", imageUri);
         $("#rewardImageUri").css("visibility", "visible");
         //reward img name
-        $("#rewardName").text(rewardName);
+        $("#rewardName").text(name);
         $("#rewardName").css("visibility", "visible");
         //our partner
         $(".ad__reward__offerMessage__brandName").text("Our partner");
+        $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
         //offers you
         $("#js-rewardOfferingMessage").text("offers you");
+        $("#js-rewardOfferingMessage").css("visibility", "visible");
     };
 
     deferred.resolve(showElements());

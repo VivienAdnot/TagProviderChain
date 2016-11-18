@@ -33,12 +33,10 @@ playtemEmbedded.Reward.prototype.getReward = function(playtemUserId) {
                 throw "no reward Name";
             }
 
-            deferred.resolve(function() {
-                return {
-                    name: rewardName,
-                    imageUri: rewardImageUri
-                };
-            }());
+            deferred.resolve({
+                name: rewardName,
+                imageUri: rewardImageUri
+            });
         } catch(e) {
             deferred.reject("reward parse response error: " + e);
         }
