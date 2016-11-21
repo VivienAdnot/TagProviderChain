@@ -1,6 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VAST version="2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
+	<Ad id="Adreels">
+		<Wrapper>
+			<AdSystem>Adreels</AdSystem>
+			<VASTAdTagURI>
+				<![CDATA[https://vid.springserve.com/vast/39549?w=530&h=350&url=&cb=&desc=&ic=&dur=&ap=&vid=]]>
+			</VASTAdTagURI>
+			<Error>
+				<![CDATA[https://api.playtem.com/tracker.gif?t=VastAdreels&a=error]]>
+			</Error>
+			<Impression>
+				<![CDATA[https://api.playtem.com/tracker.gif?t=VastAdreels&a=impression]]>
+			</Impression>
+			<Creatives>
+				<Creative id="5" sequence="1">
+					<Linear>
+						<TrackingEvents>
+							<Tracking event="start">
+								<![CDATA[https://api.playtem.com/tracker.gif?t=VastAdreels&a=start]]>
+							</Tracking>
+							<Tracking event="complete">
+								<![CDATA[https://api.playtem.com/tracker.gif?t=VastAdreels&a=complete]]>
+							</Tracking>
+						</TrackingEvents>
+					</Linear>
+				</Creative>
+			</Creatives>
+			<Extensions>
+				<Extension type="waterfall" fallback_index="0" />
+			</Extensions>
+		</Wrapper>
+	</Ad>	
 	<Ad id="SmartAd">
 		<Wrapper>
 			<AdSystem>SmartAd</AdSystem>
@@ -28,7 +59,7 @@
 				</Creative>
 			</Creatives>
 			<Extensions>
-				<Extension type="waterfall" fallback_index="0" />
+				<Extension type="waterfall" fallback_index="1" />
 			</Extensions>
 		</Wrapper>
 	</Ad>
@@ -59,7 +90,7 @@
 				</Creative>
 			</Creatives>
 			<Extensions>
-				<Extension type="waterfall" fallback_index="1" />
+				<Extension type="waterfall" fallback_index="2" />
 			</Extensions>
 		</Wrapper>
 	</Ad>
@@ -90,7 +121,7 @@
 				</Creative>
 			</Creatives>
 			<Extensions>
-				<Extension type="waterfall" fallback_index="2" />
+				<Extension type="waterfall" fallback_index="3" />
 			</Extensions>
 		</Wrapper>
 	</Ad>	

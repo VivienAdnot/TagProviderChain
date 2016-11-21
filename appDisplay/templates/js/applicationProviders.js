@@ -46,7 +46,7 @@ providers.rewarded = {
 // OUTSTREAM
 //===========================
 
-var allProvidersOutstream = [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
+var allProvidersOutstream = [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream];
 
 providers.outstream = {
     //===== prod =====
@@ -58,7 +58,7 @@ providers.outstream = {
     "e048-4cdev": allProvidersOutstream,
 
     //actiplayNoReward
-    "4f63-b20df": [playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent],
+    "4f63-b20df": [playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream],
 
     //Voyage to Fantasy
     "9a56-4422f": allProvidersOutstream,
@@ -75,13 +75,13 @@ providers.outstream = {
     //TLM
     "ad5d-4ef0f": allProvidersOutstream,
 
-    // ==== providers exceptions =====
-
     //ladypopular
-    "92c6-497ff": [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream],
+    "92c6-497ff": allProvidersOutstream,
 
     //Ma Bimbo
-    "1206-4ce9f": [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream],    
+    "1206-4ce9f": allProvidersOutstream,
+
+    // ==== providers exceptions =====
 
     //ludokado
     "9a19-43fav": [playtemEmbedded.SmartadMixedContent],
