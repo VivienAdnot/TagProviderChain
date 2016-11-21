@@ -1605,6 +1605,53 @@ playtemEmbedded.PlaytemVastPlayer.prototype.init = function(callback) {
     });
 };
 
+playtemEmbedded.PlaytemVastInstream = function(options) {
+    var defaults = {
+        debug: false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onAdError: $.noop
+    };
+
+    this.settings = {
+
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.PlaytemVastInstream.prototype.execute = function() {
+    var self = this;
+
+    var buildTag = function() {
+        return "//static.playtem.com/tag/tagProviders/vast/rewarded/playtem-vast-wrapper-instream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+    };
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
+        providerName: "PlaytemVastInstream",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onAdError: self.settings.onAdError
+    });
+
+    self.vastPlayer.execute();
+};
+
 playtemEmbedded.PlaytemVastActiplay = function(options) {
     var defaults = {
         debug: false,
@@ -1634,7 +1681,7 @@ playtemEmbedded.PlaytemVastActiplay.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-actiplay.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "//static.playtem.com/tag/tagProviders/vast/rewarded/playtem-vast-wrapper-actiplay.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
@@ -1681,7 +1728,7 @@ playtemEmbedded.PlaytemVastSpotx.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-spotx.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "//static.playtem.com/tag/tagProviders/vast/rewarded/playtem-vast-wrapper-spotx.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
@@ -1728,7 +1775,7 @@ playtemEmbedded.PlaytemVastVexigoInstream.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-vexigo-instream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "//static.playtem.com/tag/tagProviders/vast/rewarded/playtem-vast-wrapper-vexigo-instream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
@@ -1736,6 +1783,53 @@ playtemEmbedded.PlaytemVastVexigoInstream.prototype.execute = function() {
         vastTag: buildTag(),
         apiKey: self.settings.apiKey,
         providerName: "PlaytemVastVexigoInstream",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onAdError: self.settings.onAdError
+    });
+
+    self.vastPlayer.execute();
+};
+
+playtemEmbedded.PlaytemVastOutstream = function(options) {
+    var defaults = {
+        debug: false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onAdError: $.noop
+    };
+
+    this.settings = {
+
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.PlaytemVastOutstream.prototype.execute = function() {
+    var self = this;
+
+    var buildTag = function() {
+        return "//static.playtem.com/tag/tagProviders/vast/outstream/playtem-vast-wrapper-outstream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+    };
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
+        providerName: "PlaytemVastOutstream",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
@@ -1775,7 +1869,7 @@ playtemEmbedded.PlaytemVastVexigoOutstream.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-vexigo-outstream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "//static.playtem.com/tag/tagProviders/vast/outstream/playtem-vast-wrapper-vexigo-outstream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
@@ -1822,7 +1916,7 @@ playtemEmbedded.PlaytemVastYume.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        return "//static.playtem.com/tag/tagProviders/vast/playtem-vast-wrapper-yume.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "//static.playtem.com/tag/tagProviders/vast/outstream/playtem-vast-wrapper-yume.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({

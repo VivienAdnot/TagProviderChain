@@ -3,15 +3,15 @@ var instreamTest = [playtemEmbedded.RevContent];
 var providers = {};
 
 providers.test = {
-    "XXXX-xxxxx": [playtemEmbedded.PlaytemVastSpotx]
+    "XXXX-xxxxx": [playtemEmbedded.PlaytemVastOutstream]
 };
 
 //===========================
 // INSTREAM
 //===========================
 
-var allProvidersInstream = [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
-var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
+var allProvidersInstream = [playtemEmbedded.PlaytemVastInstream, playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream];
+var iscoolsInstream = [playtemEmbedded.PlaytemVastInstream, playtemEmbedded.SpotxInstream];
 
 providers.rewarded = {
     //===== prod =====
@@ -58,7 +58,7 @@ providers.outstream = {
     "e048-4cdev": allProvidersOutstream,
 
     //actiplayNoReward
-    "4f63-b20df": allProvidersOutstream,
+    "4f63-b20df": [playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent],
 
     //Voyage to Fantasy
     "9a56-4422f": allProvidersOutstream,
