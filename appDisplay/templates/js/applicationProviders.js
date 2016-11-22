@@ -46,7 +46,7 @@ providers.rewarded = {
 // OUTSTREAM
 //===========================
 
-var allProvidersOutstream = [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream];
+var allProvidersOutstream = [playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream];
 
 providers.outstream = {
     //===== prod =====
@@ -58,7 +58,7 @@ providers.outstream = {
     "e048-4cdev": allProvidersOutstream,
 
     //actiplayNoReward
-    "4f63-b20df": [playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream],
+    "4f63-b20df": allProvidersOutstream,
 
     //Voyage to Fantasy
     "9a56-4422f": allProvidersOutstream,
@@ -84,5 +84,5 @@ providers.outstream = {
     // ==== providers exceptions =====
 
     //ludokado
-    "9a19-43fav": [playtemEmbedded.SmartadMixedContent],
+    "9a19-43fav": [playtemEmbedded.SmartadMixedContent]
 };
