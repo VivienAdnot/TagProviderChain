@@ -17,9 +17,6 @@
 							<Tracking event="start">
 								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=SmartadVastRewarded&k=]]>
 							</Tracking>
-							<Tracking event="complete">
-								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdComplete&c=&p=SmartadVastRewarded&k=]]>
-							</Tracking>
 						</TrackingEvents>
 					</Linear>
 				</Creative>
@@ -44,9 +41,6 @@
 						<TrackingEvents>
 							<Tracking event="start">
 								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Actiplay&k=]]>
-							</Tracking>
-							<Tracking event="complete">
-								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdComplete&c=&p=Actiplay&k=]]>
 							</Tracking>
 						</TrackingEvents>
 					</Linear>
