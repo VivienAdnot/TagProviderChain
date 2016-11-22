@@ -8,20 +8,17 @@
 				<![CDATA[https://www8.smartadserver.com/ac?siteid=100394&pgid=649937&fmtid=41349&ab=1&tgt=&oc=1&out=vast&ps=1&pb=0&visit=S&vcn=s&tmstp=[timestamp]]]>
 			</VASTAdTagURI>
 			<Error>
-				<![CDATA[https://api.playtem.com/tracker.gif?t=VastSmartad&a=error]]>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=SmartadVastRewarded&k=]]>
 			</Error>
-			<Impression>
-				<![CDATA[https://api.playtem.com/tracker.gif?t=VastSmartad&a=impression]]>
-			</Impression>
 			<Creatives>
 				<Creative id="1" sequence="1">
 					<Linear>
 						<TrackingEvents>
 							<Tracking event="start">
-								<![CDATA[https://api.playtem.com/tracker.gif?t=VastSmartad&a=start]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=SmartadVastRewarded&k=]]>
 							</Tracking>
 							<Tracking event="complete">
-								<![CDATA[https://api.playtem.com/tracker.gif?t=VastSmartad&a=complete]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdComplete&c=&p=SmartadVastRewarded&k=]]>
 							</Tracking>
 						</TrackingEvents>
 					</Linear>
@@ -39,20 +36,17 @@
 				<![CDATA[https://pubads.g.doubleclick.net/gampad/ads?sz=450x400&iu=/1163333/EXT_Playtem_InGame_Preroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=1234]]>
 			</VASTAdTagURI>
 			<Error>
-				<![CDATA[https://api.playtem.com/tracker.gif?t=VastActiplay&a=error]]>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Actiplay&k=]]>
 			</Error>
-			<Impression>
-				<![CDATA[https://api.playtem.com/tracker.gif?t=VastActiplay&a=impression]]>
-			</Impression>
 			<Creatives>
 				<Creative id="3" sequence="1">
 					<Linear>
 						<TrackingEvents>
 							<Tracking event="start">
-								<![CDATA[https://api.playtem.com/tracker.gif?t=VastActiplay&a=start]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Actiplay&k=]]>
 							</Tracking>
 							<Tracking event="complete">
-								<![CDATA[https://api.playtem.com/tracker.gif?t=VastActiplay&a=complete]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdComplete&c=&p=Actiplay&k=]]>
 							</Tracking>
 						</TrackingEvents>
 					</Linear>

@@ -8,20 +8,17 @@
 				<![CDATA[https://plg2.yumenetworks.com/dynamic_preroll_playlist.vast2xml?domain=2657XVtAroEI&delivery_point=PC&domain_app_type=Web&height=300&width=500&source_url=&rand=1234&ad_length=30&dnt=0&dnt=0]]>
 			</VASTAdTagURI>
 			<Error>
-				<![CDATA[https://api.playtem.com/tracker.gif?t=VastYume&a=error]]>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Yume&k=]]>
 			</Error>
-			<Impression>
-				<![CDATA[https://api.playtem.com/tracker.gif?t=VastYume&a=impression]]>
-			</Impression>
 			<Creatives>
 				<Creative id="1" sequence="1">
 					<Linear>
 						<TrackingEvents>
 							<Tracking event="start">
-								<![CDATA[https://api.playtem.com/tracker.gif?t=VastYume&a=start]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Yume&k=]]>
 							</Tracking>
 							<Tracking event="complete">
-								<![CDATA[https://api.playtem.com/tracker.gif?t=VastYume&a=complete]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdComplete&c=&p=Yume&k=]]>
 							</Tracking>
 						</TrackingEvents>
 					</Linear>
@@ -39,20 +36,17 @@
 				<![CDATA[https://search.spotxchange.com/vast/2.00/168138?VPAID=1&content_page_url=playtem.com&cb=1234&player_width=500&player_height=300&vid_duration=30&vid_url=&vid_id=&vid_title=&vid_description=]]>
 			</VASTAdTagURI>
 			<Error>
-				<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoOutstream&a=error]]>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=VexigoOutstream&k=]]>
 			</Error>
-			<Impression>
-				<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoOutstream&a=impression]]>
-			</Impression>
 			<Creatives>
 				<Creative id="2" sequence="1">
 					<Linear>
 						<TrackingEvents>
 							<Tracking event="start">
-								<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoOutstream&a=start]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=VexigoOutstream&k=]]>
 							</Tracking>
 							<Tracking event="complete">
-								<![CDATA[https://api.playtem.com/tracker.gif?t=VastVexigoOutstream&a=complete]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdComplete&c=&p=VexigoOutstream&k=]]>
 							</Tracking>
 						</TrackingEvents>
 					</Linear>
