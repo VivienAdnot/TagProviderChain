@@ -3,15 +3,15 @@ var instreamTest = [playtemEmbedded.RevContent];
 var providers = {};
 
 providers.test = {
-    "XXXX-xxxxx": instreamTest
+    "XXXX-xxxxx": [playtemEmbedded.PlaytemVastOutstream]
 };
 
 //===========================
 // INSTREAM
 //===========================
 
-var allProvidersInstream = [playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
-var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastActiplay];
+var allProvidersInstream = [playtemEmbedded.PlaytemVastInstream, playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream];
+var iscoolsInstream = [playtemEmbedded.PlaytemVastInstream, playtemEmbedded.SpotxInstream];
 
 providers.rewarded = {
     //===== prod =====
@@ -46,8 +46,7 @@ providers.rewarded = {
 // OUTSTREAM
 //===========================
 
-var allProvidersOutstream = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream, playtemEmbedded.RevContent];
-var providersOutstreamExceptRevContent = [playtemEmbedded.Smartad, playtemEmbedded.SpotxOutstream];
+var allProvidersOutstream = [playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream];
 
 providers.outstream = {
     //===== prod =====
@@ -61,12 +60,6 @@ providers.outstream = {
     //actiplayNoReward
     "4f63-b20df": allProvidersOutstream,
 
-    //ladypopular
-    "92c6-497ff": providersOutstreamExceptRevContent,
-
-    //Ma Bimbo
-    "1206-4ce9f": providersOutstreamExceptRevContent,
-
     //Voyage to Fantasy
     "9a56-4422f": allProvidersOutstream,
 
@@ -79,11 +72,17 @@ providers.outstream = {
     //FairyMix
     "Hn78Uf8iRy": allProvidersOutstream,
 
-    //ludokado
-    "9a19-43fav": [playtemEmbedded.Smartad],
-
-    //===== ! prod =====
-    
     //TLM
-    "ad5d-4ef0f": allProvidersOutstream
+    "ad5d-4ef0f": allProvidersOutstream,
+
+    //ladypopular
+    "92c6-497ff": allProvidersOutstream,
+
+    //Ma Bimbo
+    "1206-4ce9f": allProvidersOutstream,
+
+    // ==== providers exceptions =====
+
+    //ludokado
+    "9a19-43fav": [playtemEmbedded.SmartadMixedContent]
 };

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
+	<Ad id="SmartAd">
+		<Wrapper>
+			<AdSystem>SmartAd</AdSystem>
+			<VASTAdTagURI>
+				<![CDATA[https://www8.smartadserver.com/ac?siteid=100394&pgid=649937&fmtid=41349&ab=1&tgt=&oc=1&out=vast&ps=1&pb=0&visit=S&vcn=s&tmstp=[timestamp]]]>
+			</VASTAdTagURI>
+			<Error>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=SmartadVastRewarded&k=]]>
+			</Error>
+			<Creatives>
+				<Creative id="1" sequence="1">
+					<Linear>
+						<TrackingEvents>
+							<Tracking event="start">
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=SmartadVastRewarded&k=]]>
+							</Tracking>
+						</TrackingEvents>
+					</Linear>
+				</Creative>
+			</Creatives>
+			<Extensions>
+				<Extension type="waterfall" fallback_index="0" />
+			</Extensions>
+		</Wrapper>
+	</Ad>
+	<Ad id="Actiplay">
+		<Wrapper>
+			<AdSystem>Actiplay</AdSystem>
+			<VASTAdTagURI>
+				<![CDATA[https://pubads.g.doubleclick.net/gampad/ads?sz=450x400&iu=/1163333/EXT_Playtem_InGame_Preroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=1234]]>
+			</VASTAdTagURI>
+			<Error>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Actiplay&k=]]>
+			</Error>
+			<Creatives>
+				<Creative id="3" sequence="1">
+					<Linear>
+						<TrackingEvents>
+							<Tracking event="start">
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Actiplay&k=]]>
+							</Tracking>
+						</TrackingEvents>
+					</Linear>
+				</Creative>
+			</Creatives>
+			<Extensions>
+				<Extension type="waterfall" fallback_index="1" />
+			</Extensions>
+		</Wrapper>
+	</Ad>
+</VAST>

@@ -1,20 +1,18 @@
-playtemEmbedded.Smartad = function(options) {
+playtemEmbedded.SmartadInternal = function(options) {
     var defaults = {
-        debug: false,
         apiKey: undefined,
+        providerName: undefined,
+        formatId : undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop
     };
 
     this.settings = {
-        providerName: "Smartad",
         scriptUrl: '//www8.smartadserver.com/config.js?nwid=1901',
         siteId : 100394,
         pageName : "home",
-        formatId : 42149,
         domain: '//www8.smartadserver.com',
-
         targetClass: 'smartad',
         $targetContainerElement: $('.ad'),
         httpRequestTimeout: 5000,

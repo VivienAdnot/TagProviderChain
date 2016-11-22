@@ -43,6 +43,23 @@ function globalStats() {
 	cat $1/AdBlocker.log | wc -l >> $OUT
 }
 
+# $providerName
+function vastStats() {
+	echo " " >> $OUT
+	echo "vastStats $1" >> $OUT
+
+	mkdir vast/$1
+	grep -i "t=$1&a=error" $EXTRACT > vast/$1/no.log
+	grep -i "t=$1&a=impression" $EXTRACT > vast/$1/impression.log
+	grep -i "t=$1&a=start" $EXTRACT > vast/$1/start.log
+	grep -i "t=$1&a=complete" $EXTRACT > vast/$1/complete.log
+
+	cat vast/$1/no.log | wc -l >> $OUT
+	cat vast/$1/impression.log | wc -l >> $OUT
+	cat vast/$1/start.log | wc -l >> $OUT
+	cat vast/$1/complete.log | wc -l >> $OUT
+}
+
 #statsPerprovider $providerName $gameName
 function statsPerprovider() {
 	echo " " >> $OUT
@@ -104,8 +121,8 @@ function game() {
 	done
 }
 
-providersInstreamAll=("affiz" "SpotxInstream" "PlaytemVastActiplay")
-providersOutstreamAll=("Smartad" "SpotxOutstream" "revContent")
+#providersInstreamAll=("affiz" "SpotxInstream" "PlaytemVastActiplay")
+#providersOutstreamAll=("Smartad" "SpotxOutstream" "revContent")
 
 #rewarded
 #game "ludokadoRewarded" "4a2b-8438v" "${providersInstreamAll[@]}"
@@ -114,15 +131,22 @@ providersOutstreamAll=("Smartad" "SpotxOutstream" "revContent")
 #game "urbanRivalsRewarded" "494f-8f1bv" "${providersInstreamAll[@]}"
 
 #outstream
-game "jotuOutstream" "1c27-4684v" "${providersOutstreamAll[@]}"
-game "mediastayOutstream" "e048-4cdev" "${providersOutstreamAll[@]}"
-game "actiplayNoRewardOutstream" "4f63-b20df" "${providersOutstreamAll[@]}"
-game "ladyPopularOutstream" "92c6-497ff" "${providersOutstreamAll[@]}"
+#game "jotuOutstream" "1c27-4684v" "${providersOutstreamAll[@]}"
+#game "mediastayOutstream" "e048-4cdev" "${providersOutstreamAll[@]}"
+#game "actiplayNoRewardOutstream" "4f63-b20df" "${providersOutstreamAll[@]}"
+#game "ladyPopularOutstream" "92c6-497ff" "${providersOutstreamAll[@]}"
 
-game "mabimbo" "1206-4ce9f" "${providersOutstreamAll[@]}"
-game "VoyageToFantasy" "9a56-4422f" "${providersOutstreamAll[@]}"
-game "Equideow" "ff3d-4b8cf" "${providersOutstreamAll[@]}"
-game "Prizee" "Fj68VbKzEe" "${providersOutstreamAll[@]}"
-game "FairyMix" "Hn78Uf8iRy" "${providersOutstreamAll[@]}"
+#game "mabimbo" "1206-4ce9f" "${providersOutstreamAll[@]}"
+#game "VoyageToFantasy" "9a56-4422f" "${providersOutstreamAll[@]}"
+#game "Equideow" "ff3d-4b8cf" "${providersOutstreamAll[@]}"
+#game "Prizee" "Fj68VbKzEe" "${providersOutstreamAll[@]}"
+#game "FairyMix" "Hn78Uf8iRy" "${providersOutstreamAll[@]}"
 
-game "ludokadoOutstream" "9a19-43fav" "${providersOutstreamAll[@]}"
+#game "ludokadoOutstream" "9a19-43fav" "${providersOutstreamAll[@]}"
+
+rm -rf vast
+mkdir vast
+vastStats "VastYume"
+vastStats "VastVexigoOutstream"
+vastStats "VastSmartad"
+vastStats "VastActiplay"

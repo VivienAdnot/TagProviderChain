@@ -1,4 +1,4 @@
-playtemEmbedded.Smartad.prototype.execute = function(callback) {
+playtemEmbedded.SmartadInternal.prototype.execute = function(callback) {
     var self = this;
 
     var onLoadHandler = function(result) {
