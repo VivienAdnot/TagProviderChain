@@ -505,7 +505,6 @@ playtemEmbedded.Affiz = function(options) {
         debug : false,
         apiKey: undefined,
 
-        useSiteIdTest : false,
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop
@@ -1592,6 +1591,10 @@ playtemEmbedded.PlaytemVastInstream.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
+        
+
+
+        //return "//static.playtem.com/tag/tagProviders/vast/rewarded/playtem-vast-wrapper-instream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
         return "//static.playtem.com/tag/tagProviders/vast/rewarded/playtem-vast-wrapper-instream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 

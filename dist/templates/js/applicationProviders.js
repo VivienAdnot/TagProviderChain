@@ -3,7 +3,8 @@ var instreamTest = [playtemEmbedded.RevContent];
 var providers = {};
 
 providers.test = {
-    "XXXX-xxxxx": [playtemEmbedded.PlaytemVastOutstream]
+    "XXXX-xxxxx": [playtemEmbedded.PlaytemVastOutstream],
+    "smartad": [playtemEmbedded.SmartadMixedContent]
 };
 
 //===========================
