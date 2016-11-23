@@ -1595,7 +1595,7 @@ playtemEmbedded.PlaytemVastInstream.prototype.execute = function() {
 
 
         //return "//static.playtem.com/tag/tagProviders/vast/rewarded/playtem-vast-wrapper-instream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
-        return "../vast/rewarded/playtem-vast-wrapper-instream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "//static.playtem.com/tag/tagProviders/vast/rewarded/playtem-vast-wrapper-instream.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
