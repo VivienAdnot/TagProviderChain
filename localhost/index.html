@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <meta charset="utf-8" />
+        <title></title>
+
+        <link rel="stylesheet" href="css_site/bootstrap.css"/>
+        <link rel="stylesheet" href="css_site/select2.min.css">
+        <link rel="stylesheet" href="css_site/style.css">
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-md-3 col-md-offset-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div>
+                            <div class="form-group text-center">
+                                <select id="apiKey" class="form-control"></select>
+                            </div>
+                        
+                            <button class="center-block btn btn-success" onclick="display()">Display</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p id="adUnavailable"></p>
+        <p id="adAvailable"></p>
+        <p id="adClicked"></p>
+        <p id="adClosed"></p>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="js_site/vendors/select2.min.js"></script>
+
+        <script src="js_site/applications.js"></script>
+        <script src="js_site/pm.js"></script>
+        <script src="js_site/script.js"></script>
+    </body>
+</html>
