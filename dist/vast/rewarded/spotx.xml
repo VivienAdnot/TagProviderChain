@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
+	<Ad id="Spotx">
+		<Wrapper>
+			<AdSystem>Spotx</AdSystem>
+			<VASTAdTagURI>
+				<![CDATA[PlaytemVastInstreamSpotx]]>
+			</VASTAdTagURI>
+			<Error>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Spotx&k=]]>
+			</Error>
+			<Creatives>
+				<Creative id="1" sequence="1">
+					<Linear>
+						<TrackingEvents>
+							<Tracking event="start">
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Spotx&k=]]>
+							</Tracking>
+						</TrackingEvents>
+					</Linear>
+				</Creative>
+			</Creatives>
+			<Extensions>
+				<Extension type="waterfall" fallback_index="0" />
+			</Extensions>
+		</Wrapper>
+	</Ad>
+</VAST>
