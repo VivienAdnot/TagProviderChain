@@ -1,31 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VAST version="2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
-	<Ad id="Yume">
-		<Wrapper>
-			<AdSystem>Yume</AdSystem>
-			<VASTAdTagURI>
-				<![CDATA[https://plg2.yumenetworks.com/dynamic_preroll_playlist.vast2xml?domain=2657XVtAroEI&delivery_point=PC&domain_app_type=Web&height=300&width=500&source_url=&rand=1234&ad_length=30&dnt=0&dnt=0]]>
-			</VASTAdTagURI>
-			<Error>
-				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Yume&k=]]>
-			</Error>
-			<Creatives>
-				<Creative id="1" sequence="1">
-					<Linear>
-						<TrackingEvents>
-							<Tracking event="start">
-								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Yume&k=]]>
-							</Tracking>
-						</TrackingEvents>
-					</Linear>
-				</Creative>
-			</Creatives>
-			<Extensions>
-				<Extension type="waterfall" fallback_index="0" />
-			</Extensions>
-		</Wrapper>
-	</Ad>
 	<Ad id="VexigoOutstream">
 		<Wrapper>
 			<AdSystem>VexigoOutstream</AdSystem>
@@ -47,8 +22,33 @@
 				</Creative>
 			</Creatives>			
 		  <Extensions>
-			<Extension type="waterfall" fallback_index="1" />
+			<Extension type="waterfall" fallback_index="0" />
 		  </Extensions>			
 		</Wrapper>
-	</Ad>	
+	</Ad>
+	<Ad id="GoogleDFP1">
+		<Wrapper>
+			<AdSystem>GoogleDFP1</AdSystem>
+			<VASTAdTagURI>
+				<![CDATA[https://pubads.g.doubleclick.net/gampad/ads?sz=400x300&iu=/107432886/VidPreroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=1234]]]>
+			</VASTAdTagURI>
+			<Error>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=GoogleDFP1&k=]]>
+			</Error>
+			<Creatives>
+				<Creative id="1" sequence="1">
+					<Linear>
+						<TrackingEvents>
+							<Tracking event="start">
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=GoogleDFP1&k=]]>
+							</Tracking>
+						</TrackingEvents>
+					</Linear>
+				</Creative>
+			</Creatives>
+			<Extensions>
+				<Extension type="waterfall" fallback_index="1" />
+			</Extensions>
+		</Wrapper>
+	</Ad>
 </VAST>
