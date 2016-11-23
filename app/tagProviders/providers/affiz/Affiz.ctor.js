@@ -3,7 +3,6 @@ playtemEmbedded.Affiz = function(options) {
         debug : false,
         apiKey: undefined,
 
-        useSiteIdTest : false,
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop
