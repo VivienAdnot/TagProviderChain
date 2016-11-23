@@ -33,4 +33,6 @@ playtemEmbedded.App.prototype.execute = function() {
 
     var closeBtnWatcher = new playtemEmbedded.CrossManager();
     closeBtnWatcher.watchClose();
+
+    playtemEmbedded.Core.globals.debug = self.settings.debug;
 };

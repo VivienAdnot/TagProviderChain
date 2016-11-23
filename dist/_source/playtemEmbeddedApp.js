@@ -35,6 +35,8 @@ playtemEmbedded.App.prototype.execute = function() {
 
     var closeBtnWatcher = new playtemEmbedded.CrossManager();
     closeBtnWatcher.watchClose();
+
+    playtemEmbedded.Core.globals.debug = self.settings.debug;
 };
 
 playtemEmbedded.AppSettings = {
@@ -125,7 +127,6 @@ playtemEmbedded.Core.PostMessage.prototype.destroyListener = function(listenerId
 };
 
 playtemEmbedded.Core.track = function(options) {
-
     var defaults = {
         providerName: undefined,
         apiKey: undefined,
@@ -143,7 +144,9 @@ playtemEmbedded.Core.track = function(options) {
         return;
     }
 
-    var url = "//api.playtem.com/tracker.gif?a=" + settings.eventType
+    var trackerUriBase = (playtemEmbedded.Core.globals.debug === true) ? "//poc.playtem.com/tracker.gif" : "//api.playtem.com/tracker.gif";
+
+    var url = trackerUriBase + "?a=" + settings.eventType
         + "&c=&p=" + settings.providerName
         + "&k=" + settings.apiKey
         + "&t=" + playtemEmbedded.Core.Date.getCurrentTimestamp();
@@ -498,13 +501,11 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
 };
 
 playtemEmbedded.Affiz = function(options) {
-    var siteIdProduction = '315f315f32333439_8d31ea22dd';
-    var siteIdTest = '315f315f32333530_68dafd7974';
-
     var defaults = {
         debug : false,
         apiKey: undefined,
 
+        useSiteIdTest : false,
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop
@@ -513,7 +514,7 @@ playtemEmbedded.Affiz = function(options) {
     this.settings = {
         providerName: 'affiz',
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
-        siteId : siteIdProduction,
+        siteId : '315f315f32333439_8d31ea22dd',
         clientId: "12345", // TBD
         $targetContainerElement: $('.ad'),
         modal: true,
@@ -528,10 +529,6 @@ playtemEmbedded.Affiz = function(options) {
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);
-
-    if(this.settings.debug === true) {
-        this.settings.siteId = siteIdTest;
-    }
 };
 
 playtemEmbedded.Affiz.prototype.onAdAvailable = function() {
@@ -1275,10 +1272,7 @@ playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function(call
 };
 
 playtemEmbedded.SpotxInstream = function(options) {
-    var siteIdTest = "85394";
-    var siteIdProductionInstream = "147520";
-
-    this.siteId = (options.debug === true) ? siteIdTest : siteIdProductionInstream;
+    this.siteId = "147520";
 
     var defaults = {
         debug: false,
@@ -1315,10 +1309,7 @@ playtemEmbedded.SpotxInstream.prototype.execute = function() {
 };
 
 playtemEmbedded.SpotxOutstream = function(options) {
-    var siteIdTest = "85394";
-    var siteIdProductionOutstream = "146222";
-
-    this.siteId = (options.debug === true) ? siteIdTest : siteIdProductionOutstream;
+    this.siteId = "146222";
 
     var defaults = {
         debug: false,

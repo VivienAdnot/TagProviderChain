@@ -1,11 +1,9 @@
 playtemEmbedded.Affiz = function(options) {
-    var siteIdProduction = '315f315f32333439_8d31ea22dd';
-    var siteIdTest = '315f315f32333530_68dafd7974';
-
     var defaults = {
         debug : false,
         apiKey: undefined,
 
+        useSiteIdTest : false,
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop
@@ -14,7 +12,7 @@ playtemEmbedded.Affiz = function(options) {
     this.settings = {
         providerName: 'affiz',
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
-        siteId : siteIdProduction,
+        siteId : '315f315f32333439_8d31ea22dd',
         clientId: "12345", // TBD
         $targetContainerElement: $('.ad'),
         modal: true,
@@ -29,8 +27,4 @@ playtemEmbedded.Affiz = function(options) {
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);
-
-    if(this.settings.debug === true) {
-        this.settings.siteId = siteIdTest;
-    }
 };

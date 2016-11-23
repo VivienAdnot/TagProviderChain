@@ -1,5 +1,4 @@
 playtemEmbedded.Core.track = function(options) {
-
     var defaults = {
         providerName: undefined,
         apiKey: undefined,
@@ -17,7 +16,9 @@ playtemEmbedded.Core.track = function(options) {
         return;
     }
 
-    var url = "//api.playtem.com/tracker.gif?a=" + settings.eventType
+    var trackerUriBase = (playtemEmbedded.Core.globals.debug === true) ? "//poc.playtem.com/tracker.gif" : "//api.playtem.com/tracker.gif";
+
+    var url = trackerUriBase + "?a=" + settings.eventType
         + "&c=&p=" + settings.providerName
         + "&k=" + settings.apiKey
         + "&t=" + playtemEmbedded.Core.Date.getCurrentTimestamp();
