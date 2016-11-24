@@ -26,29 +26,4 @@
 		  </Extensions>			
 		</Wrapper>
 	</Ad>
-	<Ad id="GoogleDFP1">
-		<Wrapper>
-			<AdSystem>GoogleDFP1</AdSystem>
-			<VASTAdTagURI>
-				<![CDATA[https://pubads.g.doubleclick.net/gampad/ads?sz=400x300&iu=/107432886/VidPreroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=1234]]]>
-			</VASTAdTagURI>
-			<Error>
-				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=GoogleDFP1&k=]]>
-			</Error>
-			<Creatives>
-				<Creative id="1" sequence="1">
-					<Linear>
-						<TrackingEvents>
-							<Tracking event="start">
-								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=GoogleDFP1&k=]]>
-							</Tracking>
-						</TrackingEvents>
-					</Linear>
-				</Creative>
-			</Creatives>
-			<Extensions>
-				<Extension type="waterfall" fallback_index="1" />
-			</Extensions>
-		</Wrapper>
-	</Ad>
 </VAST>
