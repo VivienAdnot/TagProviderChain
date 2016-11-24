@@ -27,14 +27,7 @@ playtemEmbedded.PlaytemVastInstreamSpotx.prototype.execute = function() {
     var self = this;
 
     var buildTag = function() {
-        var path = document.location.href;
-
-        var elements = path.split("/");
-        elements.splice(-2, 2);
-        var str = elements.join("/");
-        str += "/vast/";
-
-        return path + "rewarded/spotx.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+        return "https://poc.playtem.com/apps/pagetestspotx/iframe/vast/rewarded/spotx.xml";
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({

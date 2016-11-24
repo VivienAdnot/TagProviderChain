@@ -5,7 +5,7 @@
 		<Wrapper>
 			<AdSystem>Spotx</AdSystem>
 			<VASTAdTagURI>
-				<![CDATA[PlaytemVastInstreamSpotx]]>
+				<![CDATA[https://search.spotxchange.com/vast/2.0/85394?VPAID=js&content_page_url=&cb=1234&player_width=500&player_height=300]]>
 			</VASTAdTagURI>
 			<Error>
 				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Spotx&k=]]>
