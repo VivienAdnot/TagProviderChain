@@ -66,7 +66,8 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    //this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["poc.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;

@@ -1409,7 +1409,8 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    //this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["poc.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;
@@ -1643,6 +1644,53 @@ playtemEmbedded.PlaytemVastOutstream.prototype.execute = function() {
         vastTag: buildTag(),
         apiKey: self.settings.apiKey,
         providerName: "PlaytemVastOutstream",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onAdError: self.settings.onAdError
+    });
+
+    self.vastPlayer.execute();
+};
+
+playtemEmbedded.PlaytemVPaid = function(options) {
+    var defaults = {
+        debug: false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onAdError: $.noop
+    };
+
+    this.settings = {
+
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.PlaytemVPaid.prototype.execute = function() {
+    var self = this;
+
+    var buildTag = function() {
+        return "https://poc.playtem.com/apps/pagetestradiant/vast/vpaid.xml";
+    };
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
+        providerName: "PlaytemVPaid",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
