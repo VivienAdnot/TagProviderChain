@@ -4,7 +4,7 @@ var providers = {};
 
 providers.test = {
     "XXXX-xxxxx": [playtemEmbedded.PlaytemVastOutstream],
-    "smartad": [playtemEmbedded.RevContent]
+    "smartad": [playtemEmbedded.SmartadMixedContent]
 };
 
 //===========================
