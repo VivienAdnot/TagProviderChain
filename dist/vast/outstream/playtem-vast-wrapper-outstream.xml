@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VAST version="2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
-	<Ad id="VexigoOutstream">
+	<Ad id="Citroen">
 		<Wrapper>
-			<AdSystem>VexigoOutstream</AdSystem>
+			<AdSystem>Citroen</AdSystem>
 			<VASTAdTagURI>
-				<![CDATA[https://search.spotxchange.com/vast/2.00/168138?VPAID=1&content_page_url=playtem.com&cb=1234&player_width=500&player_height=300&vid_duration=30&vid_url=&vid_id=&vid_title=&vid_description=]]>
+				<![CDATA[https://vid.springserve.com/vast/44114?w=500&h=300&url=&cb=1234]]>
 			</VASTAdTagURI>
 			<Error>
-				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=VexigoOutstream&k=]]>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Citroen&k=]]>
 			</Error>
 			<Creatives>
 				<Creative id="2" sequence="1">
 					<Linear>
 						<TrackingEvents>
 							<Tracking event="start">
-								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=VexigoOutstream&k=]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Citroen&k=]]>
 							</Tracking>
 						</TrackingEvents>
 					</Linear>
