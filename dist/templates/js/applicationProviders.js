@@ -46,7 +46,7 @@ providers.rewarded = {
 // OUTSTREAM
 //===========================
 
-var allProvidersOutstream = [playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream];
+var allProvidersOutstream = [playtemEmbedded.SmartadMixedContent, playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SpotxOutstream];
 
 providers.outstream = {
     //===== prod =====

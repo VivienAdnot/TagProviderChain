@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VAST version="2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
-	<Ad id="Citroen">
+	<Ad id="Actiplay">
 		<Wrapper>
-			<AdSystem>Citroen</AdSystem>
+			<AdSystem>Actiplay</AdSystem>
 			<VASTAdTagURI>
-				<![CDATA[https://vid.springserve.com/vast/44114?w=500&h=300&url=&cb=1234]]>
+				<![CDATA[https://pubads.g.doubleclick.net/gampad/ads?sz=450x400&iu=/1163333/EXT_Playtem_InGame_Preroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=1234]]>
 			</VASTAdTagURI>
 			<Error>
-				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Citroen&k=]]>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Actiplay&k=]]>
 			</Error>
 			<Creatives>
-				<Creative id="1" sequence="1">
+				<Creative id="3" sequence="1">
 					<Linear>
 						<TrackingEvents>
 							<Tracking event="start">
-								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Citroen&k=]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Actiplay&k=]]>
 							</Tracking>
 						</TrackingEvents>
 					</Linear>
 				</Creative>
-			</Creatives>			
-		  <Extensions>
-			<Extension type="waterfall" fallback_index="0" />
-		  </Extensions>			
+			</Creatives>
+			<Extensions>
+				<Extension type="waterfall" fallback_index="0" />
+			</Extensions>
 		</Wrapper>
 	</Ad>
+
 	<Ad id="SmartAd">
 		<Wrapper>
 			<AdSystem>SmartAd</AdSystem>
@@ -51,29 +52,30 @@
 			</Extensions>
 		</Wrapper>
 	</Ad>
-	<Ad id="Actiplay">
+
+	<Ad id="Citroen">
 		<Wrapper>
-			<AdSystem>Actiplay</AdSystem>
+			<AdSystem>Citroen</AdSystem>
 			<VASTAdTagURI>
-				<![CDATA[https://pubads.g.doubleclick.net/gampad/ads?sz=450x400&iu=/1163333/EXT_Playtem_InGame_Preroll&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=&description_url=&correlator=1234]]>
+				<![CDATA[https://vid.springserve.com/vast/44114?w=500&h=300&url=&cb=1234]]>
 			</VASTAdTagURI>
 			<Error>
-				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Actiplay&k=]]>
+				<![CDATA[https://api.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Citroen&k=]]>
 			</Error>
 			<Creatives>
-				<Creative id="3" sequence="1">
+				<Creative id="1" sequence="1">
 					<Linear>
 						<TrackingEvents>
 							<Tracking event="start">
-								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Actiplay&k=]]>
+								<![CDATA[https://api.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Citroen&k=]]>
 							</Tracking>
 						</TrackingEvents>
 					</Linear>
 				</Creative>
-			</Creatives>
-			<Extensions>
-				<Extension type="waterfall" fallback_index="2" />
-			</Extensions>
+			</Creatives>			
+		  <Extensions>
+			<Extension type="waterfall" fallback_index="2" />
+		  </Extensions>			
 		</Wrapper>
-	</Ad>
+	</Ad>	
 </VAST>
