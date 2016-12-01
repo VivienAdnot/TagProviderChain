@@ -81,6 +81,12 @@ providers.outstream = {
     //Ma Bimbo
     "1206-4ce9f": allProvidersOutstream,
 
+    //belote
+    "a50f-4ffea": allProvidersOutstream,
+
+    //iscool
+    "12df-48691": allProvidersOutstream,
+
     // ==== providers exceptions =====
 
     //ludokado

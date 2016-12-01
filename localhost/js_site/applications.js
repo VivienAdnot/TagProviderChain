@@ -9,6 +9,8 @@ var listApikey = {
     "Mediastay rewarded": "r4b75-8a76",
     "Mediastay rewarded test": "TSTr5-8a76",
     
+    "Belote outstream": "a50f-4ffea",
+    "IsCool Outstream": "12df-48691",
     "Jotu outstream": "1c27-4684v",
     "Ludokado outstream": "9a19-43fav",
     "LadyPopular outstream": "92c6-497ff",
@@ -19,5 +21,7 @@ var listApikey = {
     "Equideow outstream": "ff3d-4b8cf",
     "Prizee outstream": "Fj68VbKzEe",
     "FairyMix outstream": "Hn78Uf8iRy",
+    "UrbanRivals outstream" : "4864-aa38v",
+    "UrbanRivals outstream test" : "TST4-aa38v",
     "Test": "XXXX-xxxxx"
 };
