@@ -31,8 +31,8 @@ playtemEmbedded.App.prototype.execute = function() {
     
     tagProviders.execute();
 
-    var closeBtnWatcher = new playtemEmbedded.CrossManager();
-    closeBtnWatcher.watchClose();
+    var closeBtnWatcher = new playtemEmbedded.CloseImgWatcher();
+    closeBtnWatcher.watchClick();
 
     playtemEmbedded.Core.globals.debug = self.settings.debug;
 };

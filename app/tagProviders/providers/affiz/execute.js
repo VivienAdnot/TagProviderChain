@@ -25,4 +25,12 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     };
 
     self.init();
+
+    self.timeoutTimer = window.setTimeout(function () {
+        self.onAdAvailable = $.noop;
+        self.onAdUnavailable = $.noop;
+        self.onAdComplete = $.noop;
+
+        self.settings.onTimeout();
+    }, playtemEmbedded.AppSettings.providerTimeout);
 };

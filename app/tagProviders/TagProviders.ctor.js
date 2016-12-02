@@ -8,13 +8,7 @@ playtemEmbedded.TagProviders = function (options) {
         blockWindow: false
     };
 
-    this.settings = {
-        sendEvents: {
-            onAdAvailable: "playtem:tagApp:adAvailable",
-            onAdUnavailable: "playtem:tagApp:adUnavailable",
-            messageCloseWindow: "closeAdWindow"
-        }
-    };
+    this.settings = {};
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
     

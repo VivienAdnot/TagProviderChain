@@ -38,14 +38,21 @@ var eventHandler = function (postMessageEvent) {
     switch (postMessageEvent.data) {
         case "playtem:tagApp:adAvailable":
             iframe.style.visibility = "visible";
-            console.log("adAvailable");
+            console.log("pm received: adAvailable");
             break;
+
         case "playtem:tagApp:adUnavailable":
-            console.log("adUnavailable");
-            break;        
+            console.log("pm received: adUnavailable");
+            break;
+
+        case "playtem:tagApp:timeout":
+            console.log("pm received: timeout");
+            break;
+
         case "playtem:tagApp:userId":
             onUserId();
             break;
+
         case "closeAdWindow":
             iframe.style.visibility = "hidden";
             break;

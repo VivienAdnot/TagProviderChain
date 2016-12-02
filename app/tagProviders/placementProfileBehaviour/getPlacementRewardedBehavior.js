@@ -21,16 +21,20 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
 
     return {
         onAdAvailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
             self.windowBlocker.setBlocker();
         },
 
         onAllAdUnavailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
         },
+
+        // onTimeout: function() {
+        //     window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.defaultEnd, "*");
+        // },
 
         onAdComplete : adCompleteOrError,
 
-        onError: adCompleteOrError
+        onError: adCompleteOrError,        
     };
 };

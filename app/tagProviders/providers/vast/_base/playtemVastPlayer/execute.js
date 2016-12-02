@@ -22,10 +22,12 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
 
         var runPlayer = function() {
             videoPlayerElement.addEventListener('adstarted', function() {
+                console.log("adstarted detected");
                 self.onAdAvailable();
             });
 
             videoPlayerElement.addEventListener('aderror', function() {
+                console.log("aderror detected");
                 console.log(videoPlayer.getAdErrorCode());
                 (self.adFound == true) ? self.onError() : self.onAdUnavailable();
             });
@@ -39,6 +41,15 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             });
             
             videoPlayer.init(self.radiantMediaPlayerSettings);
+
+            self.timeoutTimer = window.setTimeout(function () {
+                self.onAdAvailable = $.noop;
+                self.onAdUnavailable = $.noop;
+                self.onAdComplete = $.noop;
+                self.onError = $.noop;
+
+                self.settings.onTimeout();
+            }, playtemEmbedded.AppSettings.providerTimeout);
         };
 
         playtemEmbedded.Core.track({

@@ -5,6 +5,8 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
         window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
     };
 
+    window.clearTimeout(self.timeoutTimer);
+
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
         apiKey:  self.settings.apiKey,

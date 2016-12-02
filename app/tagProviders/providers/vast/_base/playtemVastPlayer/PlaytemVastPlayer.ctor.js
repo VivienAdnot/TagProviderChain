@@ -9,6 +9,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
         onError: $.noop,
+        onTimeout: $.noop,
 
         playerPosition: {
             top: 179,
@@ -61,12 +62,15 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.adFound = false;
 
+    this.timeoutTimer = null;
+
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    //this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["poc.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;

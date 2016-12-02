@@ -1,6 +1,7 @@
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
     var self = this;
 
+    window.clearTimeout(self.timeoutTimer);
     self.adFound = true;
 
     playtemEmbedded.Core.track({

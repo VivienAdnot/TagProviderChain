@@ -3,7 +3,7 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
 
     return {
         onAdAvailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
 
             if(self.settings.hasReward == true) {
                 var rewarder = new playtemEmbedded.Reward({
@@ -17,14 +17,13 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
         },
 
         onAllAdUnavailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
         },
 
         onAdComplete : $.noop,
 
         onError: function() {
-            //request close window
-            window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.defaultEnd, "*");
         }
     };
 };

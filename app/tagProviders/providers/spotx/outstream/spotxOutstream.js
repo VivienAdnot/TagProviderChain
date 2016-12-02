@@ -8,7 +8,8 @@ playtemEmbedded.SpotxOutstream = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onError: $.noop
+        onError: $.noop,
+        onTimeout: $.noop
     };
 
     this.spotxInternal = null;
@@ -30,6 +31,8 @@ playtemEmbedded.SpotxOutstream.prototype.execute = function() {
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
         onError: self.settings.onError
+        // it makes no sense to implement it in spotx
+        //onTimeout: self.settings.onTimeout
     });
 
     self.spotxInternal.execute();

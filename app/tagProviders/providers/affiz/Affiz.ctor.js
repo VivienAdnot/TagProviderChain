@@ -5,7 +5,8 @@ playtemEmbedded.Affiz = function(options) {
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
-        onAdComplete: $.noop
+        onAdComplete: $.noop,
+        onTimeout: $.noop
     };
 
     this.settings = {
@@ -23,6 +24,8 @@ playtemEmbedded.Affiz = function(options) {
     playtemEmbedded.Core.globals.affizContext = undefined;
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
+
+    this.timeoutTimer = null;
 
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);

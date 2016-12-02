@@ -1,6 +1,7 @@
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdComplete = function() {
     var self = this;
 
+    window.clearTimeout(self.timeoutTimer);
     self.clean();
     
     playtemEmbedded.Core.track({

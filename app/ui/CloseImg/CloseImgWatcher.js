@@ -1,4 +1,4 @@
-playtemEmbedded.CrossManager = function(options) {
+playtemEmbedded.CloseImgWatcher = function(options) {
     var defaults = {
 
     };
@@ -6,7 +6,7 @@ playtemEmbedded.CrossManager = function(options) {
     this.settings = {
         $element : $(".js-closeAd"),
         sendEvents: {
-            messageCloseWindow : "closeAdWindow"
+            messageCloseWindow : "playtem:tagApp:stop"
         }
     };
     
@@ -14,8 +14,8 @@ playtemEmbedded.CrossManager = function(options) {
     this.settings = $.extend(this.settings, defaults);    
 };
 
-playtemEmbedded.CrossManager.prototype = {
-    watchClose : function() {
+playtemEmbedded.CloseImgWatcher.prototype = {
+    watchClick : function() {
         var self = this;
 
         self.settings.$element.click(function () {

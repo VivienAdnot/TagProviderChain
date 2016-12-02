@@ -33,8 +33,8 @@ playtemEmbedded.App.prototype.execute = function() {
     
     tagProviders.execute();
 
-    var closeBtnWatcher = new playtemEmbedded.CrossManager();
-    closeBtnWatcher.watchClose();
+    var closeBtnWatcher = new playtemEmbedded.CloseImgWatcher();
+    closeBtnWatcher.watchClick();
 
     playtemEmbedded.Core.globals.debug = self.settings.debug;
 };
@@ -43,7 +43,8 @@ playtemEmbedded.AppSettings = {
     placementTypes: {
         outstream: "outstream",
         rewarded: "rewarded"
-    }
+    },
+    providerTimeout: 10000
 };
 
 playtemEmbedded.Core = {};
@@ -173,7 +174,7 @@ playtemEmbedded.Core.Identifiers = {
     }
 };
 
-playtemEmbedded.CrossManager = function(options) {
+playtemEmbedded.CloseImgWatcher = function(options) {
     var defaults = {
 
     };
@@ -189,8 +190,8 @@ playtemEmbedded.CrossManager = function(options) {
     this.settings = $.extend(this.settings, defaults);    
 };
 
-playtemEmbedded.CrossManager.prototype = {
-    watchClose : function() {
+playtemEmbedded.CloseImgWatcher.prototype = {
+    watchClick : function() {
         var self = this;
 
         self.settings.$element.click(function () {
@@ -362,6 +363,7 @@ playtemEmbedded.TagProviders = function (options) {
         sendEvents: {
             onAdAvailable: "playtem:tagApp:adAvailable",
             onAdUnavailable: "playtem:tagApp:adUnavailable",
+            onTimeout: "playtem:tagApp:timeout",
             messageCloseWindow: "closeAdWindow"
         }
     };
@@ -396,6 +398,7 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile)
             onAdAvailable: placementProfile.onAdAvailable,
             onAdComplete: placementProfile.onAdComplete,
             onError: placementProfile.onError,
+            onTimeout: placementProfile.onTimeout,
 
             onAdUnavailable: function() {
                 moveNext();
@@ -434,7 +437,7 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
 
     return {
         onAdAvailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
 
             if(self.settings.hasReward == true) {
                 var rewarder = new playtemEmbedded.Reward({
@@ -448,13 +451,16 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
         },
 
         onAllAdUnavailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
+        },
+
+        onTimeout: function() {
+            window.parent.postMessage(self.settings.sendEvents.onTimeout, "*");
         },
 
         onAdComplete : $.noop,
 
         onError: function() {
-            //request close window
             window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
         }
     };
@@ -483,17 +489,21 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
 
     return {
         onAdAvailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
             self.windowBlocker.setBlocker();
         },
 
         onAllAdUnavailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
+        },
+
+        onTimeout: function() {
+            window.parent.postMessage(self.settings.sendEvents.onTimeout, "*");
         },
 
         onAdComplete : adCompleteOrError,
 
-        onError: adCompleteOrError
+        onError: adCompleteOrError,        
     };
 };
 
@@ -1352,6 +1362,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
         onError: $.noop,
+        onTimeout: $.noop,
 
         playerPosition: {
             top: 179,
@@ -1404,12 +1415,15 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.adFound = false;
 
+    this.timeoutTimer = null;
+
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    //this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["poc.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;
@@ -1423,6 +1437,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
     var self = this;
 
+    window.clearTimeout(self.timeoutTimer);
     self.adFound = true;
 
     playtemEmbedded.Core.track({
@@ -1437,6 +1452,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdComplete = function() {
     var self = this;
 
+    window.clearTimeout(self.timeoutTimer);
     self.clean();
     
     playtemEmbedded.Core.track({
@@ -1451,6 +1467,8 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdComplete = function() {
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdUnavailable = function() {
     var self = this;
 
+    window.clearTimeout(self.timeoutTimer);
+
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
         apiKey:  self.settings.apiKey,
@@ -1463,6 +1481,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdUnavailable = function() {
 playtemEmbedded.PlaytemVastPlayer.prototype.onError = function() {
     var self = this;
 
+    window.clearTimeout(self.timeoutTimer);
     self.clean();
     
     playtemEmbedded.Core.track({
@@ -1503,10 +1522,12 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
 
         var runPlayer = function() {
             videoPlayerElement.addEventListener('adstarted', function() {
+                console.log("adstarted detected");
                 self.onAdAvailable();
             });
 
             videoPlayerElement.addEventListener('aderror', function() {
+                console.log("aderror detected");
                 console.log(videoPlayer.getAdErrorCode());
                 (self.adFound == true) ? self.onError() : self.onAdUnavailable();
             });
@@ -1520,6 +1541,15 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             });
             
             videoPlayer.init(self.radiantMediaPlayerSettings);
+
+            self.timeoutTimer = window.setTimeout(function () {
+                self.onAdAvailable = $.noop;
+                self.onAdUnavailable = $.noop;
+                self.onAdComplete = $.noop;
+                self.onError = $.noop;
+
+                self.settings.onTimeout();
+            }, playtemEmbedded.AppSettings.providerTimeout);
         };
 
         playtemEmbedded.Core.track({
@@ -1567,7 +1597,8 @@ playtemEmbedded.PlaytemVastInstream = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop
+        onAdError: $.noop,
+        onTimeout: $.noop
     };
 
     this.settings = {
@@ -1600,7 +1631,8 @@ playtemEmbedded.PlaytemVastInstream.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError
+        onAdError: self.settings.onAdError,
+        onTimeout: self.settings.onTimeout
     });
 
     self.vastPlayer.execute();
@@ -1614,7 +1646,8 @@ playtemEmbedded.PlaytemVastOutstream = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop
+        onAdError: $.noop,
+        onTimeout: $.noop
     };
 
     this.settings = {
@@ -1647,7 +1680,8 @@ playtemEmbedded.PlaytemVastOutstream.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError
+        onAdError: self.settings.onAdError,
+        onTimeout: self.settings.onTimeout
     });
 
     self.vastPlayer.execute();

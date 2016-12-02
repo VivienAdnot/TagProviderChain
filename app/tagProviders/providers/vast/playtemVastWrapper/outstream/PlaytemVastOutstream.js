@@ -6,7 +6,8 @@ playtemEmbedded.PlaytemVastOutstream = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop
+        onAdError: $.noop,
+        onTimeout: $.noop
     };
 
     this.settings = {
@@ -39,7 +40,8 @@ playtemEmbedded.PlaytemVastOutstream.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError
+        onAdError: self.settings.onAdError,
+        onTimeout: self.settings.onTimeout
     });
 
     self.vastPlayer.execute();
