@@ -13,5 +13,6 @@ playtemEmbedded.AppSettings = {
         internal: "internalError",
         timeout: "timeout",
         inVideo: "onAdError"
-    }
+    },
+    $closeImgElement: $(".js-closeAd")
 };

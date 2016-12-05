@@ -33,8 +33,7 @@ playtemEmbedded.App.prototype.execute = function() {
     
     tagProviders.execute();
 
-    var closeBtnWatcher = new playtemEmbedded.CloseImgWatcher();
-    closeBtnWatcher.watchClick();
+    playtemEmbedded.Core.globals["closeImgWatcher"] = new playtemEmbedded.CloseImgWatcher();
 
     playtemEmbedded.Core.globals.debug = self.settings.debug;
 };
@@ -54,7 +53,8 @@ playtemEmbedded.AppSettings = {
         internal: "internalError",
         timeout: "timeout",
         inVideo: "onAdError"
-    }
+    },
+    $closeImgElement: $(".js-closeAd")
 };
 
 playtemEmbedded.Core = {};
@@ -257,7 +257,8 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
 
     var closeWindow = function() {
-        window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+        //window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+        playtemEmbedded.AppSettings.$closeImgElement.click();
     };
 
     window.clearTimeout(self.timeoutTimer);
@@ -1537,30 +1538,22 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
     };
 };
 
-playtemEmbedded.CloseImgWatcher = function(options) {
-    var defaults = {
-
-    };
+playtemEmbedded.CloseImgWatcher = function() {
+    var self = this;
 
     this.settings = {
-        $element : $(".js-closeAd"),
         sendEvents: {
             closeWindow : "closeAdWindow"
         }
     };
-    
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);    
-};
 
-playtemEmbedded.CloseImgWatcher.prototype = {
-    watchClick : function() {
-        var self = this;
-
-        self.settings.$element.click(function () {
+    this.watchClick = function() {
+        playtemEmbedded.AppSettings.$closeImgElement.click(function () {
             window.parent.postMessage(self.settings.sendEvents.closeWindow, "*");
         });
-    }
+    };
+
+    this.watchClick();
 };
 
 playtemEmbedded.Reward = function(options) {
