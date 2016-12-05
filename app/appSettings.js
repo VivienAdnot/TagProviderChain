@@ -8,5 +8,10 @@ playtemEmbedded.AppSettings = {
         onAdAvailable: "playtem:tagApp:adAvailable",
         onAdUnavailable: "playtem:tagApp:adUnavailable",
         defaultEnd: "playtem:tagApp:defaultEnd"
+    },
+    providerErrorTypes: {
+        internal: "internalError",
+        timeout: "timeout",
+        inVideo: "onAdError"
     }
 };

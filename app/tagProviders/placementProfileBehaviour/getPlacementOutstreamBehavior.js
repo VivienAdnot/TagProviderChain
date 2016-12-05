@@ -6,13 +6,8 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
             window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
 
             if(self.settings.hasReward == true) {
-                var rewarder = new playtemEmbedded.Reward({
-                    apiKey: self.settings.apiKey
-                });
-
-                rewarder.execute(function(error, success) {
-                    // nothing to do
-                });
+                var rewarder = new playtemEmbedded.Reward({ apiKey: self.settings.apiKey });
+                rewarder.execute($.noop);
             }
         },
 
@@ -20,9 +15,7 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
             window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
         },
 
-        onAdComplete : $.noop,
-
-        onError: function() {
+        onComplete: function() {
             window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.defaultEnd, "*");
         }
     };

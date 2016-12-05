@@ -6,7 +6,7 @@ playtemEmbedded.CloseImgWatcher = function(options) {
     this.settings = {
         $element : $(".js-closeAd"),
         sendEvents: {
-            messageCloseWindow : "playtem:tagApp:stop"
+            closeWindow : "closeAdWindow"
         }
     };
     
@@ -19,7 +19,7 @@ playtemEmbedded.CloseImgWatcher.prototype = {
         var self = this;
 
         self.settings.$element.click(function () {
-            window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+            window.parent.postMessage(self.settings.sendEvents.closeWindow, "*");
         });
     }
 };

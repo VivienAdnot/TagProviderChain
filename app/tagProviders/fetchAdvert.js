@@ -12,17 +12,29 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile)
             apiKey: self.settings.apiKey,
 
             onAdAvailable: placementProfile.onAdAvailable,
-            onAdComplete: placementProfile.onAdComplete,
-            onError: placementProfile.onError,
-            onTimeout: placementProfile.onTimeout,
-
-            onAdUnavailable: function() {
-                moveNext();
-            }
+            onAdComplete: placementProfile.onComplete,
+            onError: placementProfile.onComplete,
+            onAdUnavailable: moveNext
         });
 
         provider.execute();
     };
+
+    // var onError = function(errorType) {
+    //     switch(errorType) {
+    //         case "timeout":
+    //             placementProfile.onComplete();
+    //             break;
+    //         case "videoError":
+    //             placementProfile.onComplete();
+    //             break;
+    //         case "internalError":
+    //             moveNext();
+    //             break;                
+    //         default:
+    //             placementProfile.onComplete();
+    //     }
+    // };
 
     var moveNext = function () {
         index++;
