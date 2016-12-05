@@ -28,12 +28,12 @@ playtemEmbedded.App.prototype.execute = function() {
         apiKey: self.settings.apiKey,
         gameType: self.settings.gameType,
         debug: self.settings.debug,
-        blockWindow: self.settings.placementType === playtemEmbedded.AppSettings.placementTypes.rewarded
+        placementType: self.settings.placementType
     });
     
     tagProviders.execute();
 
-    playtemEmbedded.Core.globals["closeImgWatcher"] = new playtemEmbedded.CloseImgWatcher();
+    new playtemEmbedded.CloseImgWatcher();
 
     playtemEmbedded.Core.globals.debug = self.settings.debug;
 };
@@ -184,6 +184,158 @@ playtemEmbedded.Core.Identifiers = {
     }
 };
 
+playtemEmbedded.TagProviders = function (options) {
+    var defaults = {
+        providers : [],
+        apiKey: undefined,
+        gameType: undefined,
+        hasReward: false,
+        debug: false,
+        blockWindow: false
+    };
+
+    this.settings = {};
+
+    this.windowBlocker = new playtemEmbedded.WindowBlocker();
+    
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+};
+
+playtemEmbedded.TagProviders.prototype.execute = function () {
+    var self = this;
+
+    var placementProfile = null;
+
+    switch(self.settings.placementType) {
+        case playtemEmbedded.AppSettings.placementTypes.rewarded:
+            placementProfile = self.getPlacementRewardedBehavior();
+            break;
+
+        case playtemEmbedded.AppSettings.placementTypes.outstream:
+            placementProfile = self.getPlacementOutstreamBehavior();
+            break;
+
+        default:
+            throw new Error("placementType must be one of these values: " + Object.values(playtemEmbedded.AppSettings.placementTypes).join());
+    }
+
+    self.fetchAdvert(placementProfile);
+};
+
+playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile) {
+    var self = this;
+    var index = 0;
+
+    var isArray = function(target) {
+        return Object.prototype.toString.call(target) == "[object Array]";
+    };
+
+    var executeProvider = function (AdvertProvider) {
+        var provider = new AdvertProvider({
+            debug: self.settings.debug,
+            apiKey: self.settings.apiKey,
+
+            onAdAvailable: placementProfile.onAdAvailable,
+            onAdComplete: placementProfile.onComplete,
+            onError: placementProfile.onComplete,
+            onAdUnavailable: moveNext
+        });
+
+        provider.execute();
+    };
+
+    // var onError = function(errorType) {
+    //     switch(errorType) {
+    //         case "timeout":
+    //             placementProfile.onComplete();
+    //             break;
+    //         case "videoError":
+    //             placementProfile.onComplete();
+    //             break;
+    //         case "internalError":
+    //             moveNext();
+    //             break;                
+    //         default:
+    //             placementProfile.onComplete();
+    //     }
+    // };
+
+    var moveNext = function () {
+        index++;
+        run();
+    };
+
+    var run = function () {
+        if (index >= self.settings.providers.length) {
+            placementProfile.onAllAdUnavailable();
+            return;
+        }
+
+        var currentProviderReference = self.settings.providers[index];
+        executeProvider(currentProviderReference);
+    };
+
+    if(!isArray(self.settings.providers || self.settings.providers.length == 0)) {
+        playtemEmbedded.Core.log("TagProviders.fetchAdvert", "self.settings.providers is empty or not an array");
+        placementProfile.onAllAdUnavailable();
+        return;
+    }
+
+    run();
+};
+
+playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function () {
+    var self = this;
+
+    return {
+        onAdAvailable : function() {
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
+
+            if(self.settings.hasReward == true) {
+                var rewarder = new playtemEmbedded.Reward({ apiKey: self.settings.apiKey });
+                rewarder.execute($.noop);
+            }
+        },
+
+        onAllAdUnavailable : function() {
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
+        },
+
+        onComplete: function() {
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.defaultEnd, "*");
+        }
+    };
+};
+
+playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function () {
+    var self = this;
+
+    return {
+        onAdAvailable : function() {
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
+            self.windowBlocker.setBlocker();
+        },
+
+        onAllAdUnavailable : function() {
+            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
+        },
+
+        onComplete : function() {
+            if(self.settings.hasReward == true) {
+                var rewarder = new playtemEmbedded.Reward({
+                    apiKey: self.settings.apiKey
+                });
+
+                rewarder.execute($.noop);
+            }
+
+            // wait for the reward to appear on the window
+            window.setTimeout(self.windowBlocker.clearBlocker, 1000);
+        }
+    };
+};
+
 playtemEmbedded.Affiz = function(options) {
     var defaults = {
         debug : false,
@@ -256,8 +408,7 @@ playtemEmbedded.Affiz.prototype.onAdUnavailable = function() {
 playtemEmbedded.Affiz.prototype.onClose = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
 
-    var closeWindow = function() {
-        //window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+    var requestCloseWindow = function() {
         playtemEmbedded.AppSettings.$closeImgElement.click();
     };
 
@@ -267,7 +418,7 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
         providerName: self.settings.providerName,
         apiKey:  self.settings.apiKey,
         eventType: "onAdClosed",
-        onAlways: closeWindow
+        onAlways: requestCloseWindow
     });
 };
 
@@ -1397,145 +1548,6 @@ playtemEmbedded.PlaytemVastOutstream.prototype.execute = function() {
     });
 
     self.vastPlayer.execute();
-};
-
-playtemEmbedded.TagProviders = function (options) {
-    var defaults = {
-        providers : [],
-        apiKey: undefined,
-        gameType: undefined,
-        hasReward: false,
-        debug: false,
-        blockWindow: false
-    };
-
-    this.settings = {};
-
-    this.windowBlocker = new playtemEmbedded.WindowBlocker();
-    
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
-};
-
-playtemEmbedded.TagProviders.prototype.execute = function () {
-    var self = this;
-
-    var placementProfile = (self.settings.blockWindow == true) ? self.getPlacementRewardedBehavior() : self.getPlacementOutstreamBehavior();
-
-    self.fetchAdvert(placementProfile);
-};
-
-playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile) {
-    var self = this;
-    var index = 0;
-
-    var isArray = function(target) {
-        return Object.prototype.toString.call(target) == "[object Array]";
-    };
-
-    var executeProvider = function (AdvertProvider) {
-        var provider = new AdvertProvider({
-            debug: self.settings.debug,
-            apiKey: self.settings.apiKey,
-
-            onAdAvailable: placementProfile.onAdAvailable,
-            onAdComplete: placementProfile.onComplete,
-            onError: placementProfile.onComplete,
-            onAdUnavailable: moveNext
-        });
-
-        provider.execute();
-    };
-
-    // var onError = function(errorType) {
-    //     switch(errorType) {
-    //         case "timeout":
-    //             placementProfile.onComplete();
-    //             break;
-    //         case "videoError":
-    //             placementProfile.onComplete();
-    //             break;
-    //         case "internalError":
-    //             moveNext();
-    //             break;                
-    //         default:
-    //             placementProfile.onComplete();
-    //     }
-    // };
-
-    var moveNext = function () {
-        index++;
-        run();
-    };
-
-    var run = function () {
-        if (index >= self.settings.providers.length) {
-            placementProfile.onAllAdUnavailable();
-            return;
-        }
-
-        var currentProviderReference = self.settings.providers[index];
-        executeProvider(currentProviderReference);
-    };
-
-    if(!isArray(self.settings.providers || self.settings.providers.length == 0)) {
-        playtemEmbedded.Core.log("TagProviders.fetchAdvert", "self.settings.providers is empty or not an array");
-        placementProfile.onAllAdUnavailable();
-        return;
-    }
-
-    run();
-};
-
-playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function () {
-    var self = this;
-
-    return {
-        onAdAvailable : function() {
-            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
-
-            if(self.settings.hasReward == true) {
-                var rewarder = new playtemEmbedded.Reward({ apiKey: self.settings.apiKey });
-                rewarder.execute($.noop);
-            }
-        },
-
-        onAllAdUnavailable : function() {
-            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
-        },
-
-        onComplete: function() {
-            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.defaultEnd, "*");
-        }
-    };
-};
-
-playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function () {
-    var self = this;
-
-    return {
-        onAdAvailable : function() {
-            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
-            self.windowBlocker.setBlocker();
-        },
-
-        onAllAdUnavailable : function() {
-            window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
-        },
-
-        onComplete : function() {
-            if(self.settings.hasReward == true) {
-                var rewarder = new playtemEmbedded.Reward({
-                    apiKey: self.settings.apiKey
-                });
-
-                rewarder.execute($.noop);
-            }
-
-            // wait for the reward to appear on the window
-            window.setTimeout(self.windowBlocker.clearBlocker, 1000);
-        }
-    };
 };
 
 playtemEmbedded.CloseImgWatcher = function() {
