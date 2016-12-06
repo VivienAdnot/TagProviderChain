@@ -19,7 +19,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.settings = {
         playerId: 'radiantVideoPlayer',
-        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.8.3/js/rmp.min.js',
+        scriptUrl: '//cdn.radiantmediatechs.com/rmp/v3/latest/js/rmp.min.js',
 
         $targetContainerElement: $('.ad'),
     };

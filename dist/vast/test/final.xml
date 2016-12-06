@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
+	<Ad id="Testerfinal">
+		<Wrapper>
+			<AdSystem>final</AdSystem>
+			<VASTAdTagURI>
+				<![CDATA[https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator=]]>
+			</VASTAdTagURI>
+			<Error>
+				<![CDATA[https://poc.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Test&k=]]>
+			</Error>
+			<Creatives>
+				<Creative id="3" sequence="1">
+					<Linear>
+						<TrackingEvents>
+							<Tracking event="start">
+								<![CDATA[https://poc.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Test&k=]]>
+							</Tracking>
+						</TrackingEvents>
+					</Linear>
+				</Creative>
+			</Creatives>
+			<Extensions>
+				<Extension type="waterfall" fallback_index="0" />
+			</Extensions>
+		</Wrapper>
+	</Ad>
+</VAST>
