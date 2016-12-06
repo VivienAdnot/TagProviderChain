@@ -1,7 +1,9 @@
-playtemEmbedded.Affiz = function(options) {
+playtemEmbedded.AffizInternal = function(options) {
     var defaults = {
-        debug : false,
+        debug: false,
+        siteId: undefined,
         apiKey: undefined,
+        providerName: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -9,9 +11,7 @@ playtemEmbedded.Affiz = function(options) {
     };
 
     this.settings = {
-        providerName: 'affiz',
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
-        siteId : '315f315f32333439_8d31ea22dd',
         clientId: "12345", // TBD
         $targetContainerElement: $('.ad'),
         modal: true,
@@ -24,6 +24,6 @@ playtemEmbedded.Affiz = function(options) {
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };

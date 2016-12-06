@@ -15,8 +15,8 @@ playtemEmbedded.App = function(options) {
 
     };
     
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.App.prototype.execute = function() {
@@ -139,6 +139,7 @@ playtemEmbedded.Core.track = function(options) {
     var settings = $.extend({}, defaults, options);
 
     if(!settings.providerName || !settings.apiKey || !settings.eventType) {
+        playtemEmbedded.Core("playtemEmbedded", "playtemEmbedded.Core.track missing option");
         settings.onFail();
         settings.onAlways();
         return;
@@ -185,8 +186,8 @@ playtemEmbedded.CrossManager = function(options) {
         }
     };
     
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);    
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);    
 };
 
 playtemEmbedded.CrossManager.prototype = {
@@ -214,8 +215,8 @@ playtemEmbedded.Reward = function(options) {
     this.userId = null;
     this.executeCallback = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);       
 };
 
 playtemEmbedded.Reward.prototype.execute = function(callback) {
@@ -368,8 +369,8 @@ playtemEmbedded.TagProviders = function (options) {
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
     
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.TagProviders.prototype.execute = function () {
@@ -497,10 +498,12 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
     };
 };
 
-playtemEmbedded.Affiz = function(options) {
+playtemEmbedded.AffizInternal = function(options) {
     var defaults = {
-        debug : false,
+        debug: false,
+        siteId: undefined,
         apiKey: undefined,
+        providerName: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -508,9 +511,7 @@ playtemEmbedded.Affiz = function(options) {
     };
 
     this.settings = {
-        providerName: 'affiz',
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
-        siteId : '315f315f32333439_8d31ea22dd',
         clientId: "12345", // TBD
         $targetContainerElement: $('.ad'),
         modal: true,
@@ -523,11 +524,11 @@ playtemEmbedded.Affiz = function(options) {
 
     this.windowBlocker = new playtemEmbedded.WindowBlocker();
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
-playtemEmbedded.Affiz.prototype.onAdAvailable = function() {
+playtemEmbedded.AffizInternal.prototype.onAdAvailable = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
 
     playtemEmbedded.Core.track({
@@ -539,7 +540,7 @@ playtemEmbedded.Affiz.prototype.onAdAvailable = function() {
     });
 };
 
-playtemEmbedded.Affiz.prototype.onAdComplete = function() {
+playtemEmbedded.AffizInternal.prototype.onAdComplete = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
 
     playtemEmbedded.Core.track({
@@ -551,7 +552,7 @@ playtemEmbedded.Affiz.prototype.onAdComplete = function() {
     });
 };
 
-playtemEmbedded.Affiz.prototype.onAdUnavailable = function() {
+playtemEmbedded.AffizInternal.prototype.onAdUnavailable = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
     
     playtemEmbedded.Core.track({
@@ -563,7 +564,7 @@ playtemEmbedded.Affiz.prototype.onAdUnavailable = function() {
     });
 };
 
-playtemEmbedded.Affiz.prototype.onClose = function() {
+playtemEmbedded.AffizInternal.prototype.onClose = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
 
     var closeWindow = function() {
@@ -580,7 +581,7 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
     });
 };
 
-playtemEmbedded.Affiz.prototype.execute = function() {
+playtemEmbedded.AffizInternal.prototype.execute = function() {
     var self = this;
 
     window.avAsyncInit = function() {
@@ -609,7 +610,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     self.init();
 };
 
-playtemEmbedded.Affiz.prototype.init = function() {
+playtemEmbedded.AffizInternal.prototype.init = function() {
     var self = this;
 
     playtemEmbedded.Core.globals.affizContext = self;
@@ -658,6 +659,62 @@ playtemEmbedded.Affiz.prototype.init = function() {
     });
 };
 
+playtemEmbedded.Affiz = function(options) {
+    var defaults = {
+        debug : false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop
+    };
+
+    this.settings = {
+        providerName: 'affiz',
+        siteId : '315f315f32333439_8d31ea22dd'
+    };
+
+    this.affizInternal = null;
+
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
+};
+
+playtemEmbedded.Affiz.prototype.execute = function() {
+    var self = this;
+
+    self.affizInternal = new playtemEmbedded.AffizInternal(self.settings);
+    self.affizInternal.execute();
+};
+
+playtemEmbedded.AffizTest = function(options) {
+    var defaults = {
+        debug : false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop
+    };
+
+    this.settings = {
+        providerName: 'Test',
+        siteId : '315f315f32333530_68dafd7974'
+    };
+
+    this.affizInternal = null;
+
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
+};
+
+playtemEmbedded.AffizTest.prototype.execute = function() {
+    var self = this;
+
+    self.affizInternal = new playtemEmbedded.AffizInternal(self.settings);
+    self.affizInternal.execute();
+};
+
 playtemEmbedded.RevContent = function(options) {
     var defaults = {
         debug : false,
@@ -675,8 +732,8 @@ playtemEmbedded.RevContent = function(options) {
         httpRequestTimeout: 3000
     };
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.RevContent.prototype.onAdAvailable = function() {
@@ -873,8 +930,8 @@ playtemEmbedded.SmartadInternal = function(options) {
         }
     };
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);       
 };
 
 playtemEmbedded.SmartadInternal.prototype.onAdAvailable = function() {
@@ -1004,8 +1061,8 @@ playtemEmbedded.SmartadMixedContent = function(options) {
 
     this.smartadInternal = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.SmartadMixedContent.prototype.execute = function() {
@@ -1076,8 +1133,8 @@ playtemEmbedded.SpotxInternal = function(options) {
     this.poll = null;
     this.adFound = false;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
@@ -1282,8 +1339,8 @@ playtemEmbedded.SpotxInstream = function(options) {
 
     this.spotxInternal = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.SpotxInstream.prototype.execute = function() {
@@ -1319,8 +1376,8 @@ playtemEmbedded.SpotxOutstream = function(options) {
 
     this.spotxInternal = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.SpotxOutstream.prototype.execute = function() {
@@ -1399,8 +1456,8 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         hideCentralPlayButton: false
     };
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 
     this.adFound = false;
 
@@ -1409,7 +1466,8 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    // this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["poc.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;
@@ -1576,8 +1634,8 @@ playtemEmbedded.PlaytemVastInstream = function(options) {
 
     this.vastPlayer = undefined;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 
     if(this.settings.debug === true) {
         // nothing to do
@@ -1623,8 +1681,8 @@ playtemEmbedded.PlaytemVastOutstream = function(options) {
 
     this.vastPlayer = undefined;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 
     if(this.settings.debug === true) {
         // nothing to do
@@ -1663,8 +1721,8 @@ playtemEmbedded.WindowBlocker = function(options) {
         fadeInDuration: 500
     };
     
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);    
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);    
 };
 
 playtemEmbedded.WindowBlocker.prototype = {

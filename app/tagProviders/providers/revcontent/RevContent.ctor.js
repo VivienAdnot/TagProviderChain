@@ -15,6 +15,6 @@ playtemEmbedded.RevContent = function(options) {
         httpRequestTimeout: 3000
     };
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };

@@ -10,8 +10,8 @@ playtemEmbedded.CrossManager = function(options) {
         }
     };
     
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);    
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);    
 };
 
 playtemEmbedded.CrossManager.prototype = {

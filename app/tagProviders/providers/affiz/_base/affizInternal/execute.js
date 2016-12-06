@@ -1,4 +1,4 @@
-playtemEmbedded.Affiz.prototype.execute = function() {
+playtemEmbedded.AffizInternal.prototype.execute = function() {
     var self = this;
 
     window.avAsyncInit = function() {

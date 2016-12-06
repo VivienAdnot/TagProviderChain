@@ -56,8 +56,8 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         hideCentralPlayButton: false
     };
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 
     this.adFound = false;
 
@@ -66,7 +66,8 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    // this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["poc.playtem.com"];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;

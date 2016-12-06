@@ -13,8 +13,8 @@ playtemEmbedded.SpotxInstream = function(options) {
 
     this.spotxInternal = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.SpotxInstream.prototype.execute = function() {

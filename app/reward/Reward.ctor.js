@@ -13,6 +13,6 @@ playtemEmbedded.Reward = function(options) {
     this.userId = null;
     this.executeCallback = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);       
 };

@@ -8,8 +8,8 @@ playtemEmbedded.WindowBlocker = function(options) {
         fadeInDuration: 500
     };
     
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);    
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);    
 };
 
 playtemEmbedded.WindowBlocker.prototype = {

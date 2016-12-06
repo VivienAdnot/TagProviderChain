@@ -15,8 +15,8 @@ playtemEmbedded.PlaytemVastInstream = function(options) {
 
     this.vastPlayer = undefined;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 
     if(this.settings.debug === true) {
         // nothing to do
