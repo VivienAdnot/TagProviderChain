@@ -22,6 +22,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
 
         var runPlayer = function() {
             videoPlayerElement.addEventListener('adstarted', function() {
+                console.log(videoPlayer.getAdWrapperAdSystems());
                 self.onAdAvailable();
             });
 
