@@ -1,7 +1,5 @@
 playtemEmbedded.SmartadMixedContent = function(options) {
     var defaults = {
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onError: $.noop
@@ -21,7 +19,6 @@ playtemEmbedded.SmartadMixedContent.prototype.execute = function() {
     var self = this;
 
     self.smartadInternal = new playtemEmbedded.SmartadInternal({
-        apiKey: self.settings.apiKey,
         formatId: self.settings.formatId,
         providerName: "SmartadMixedContent",
 

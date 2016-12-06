@@ -1,8 +1,6 @@
 playtemEmbedded.SpotxInternal = function(options) {
     var defaults = {
-        debug: false,
         siteId: undefined,
-        apiKey: undefined,
         providerName: undefined,
 
         onAdAvailable: $.noop,

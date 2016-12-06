@@ -1,8 +1,6 @@
 playtemEmbedded.PlaytemVastPlayer = function(options) {
     var defaults = {
-        debug: false,
         vastTag: undefined,
-        apiKey: undefined,
         providerName: undefined,
 
         onAdAvailable: $.noop,

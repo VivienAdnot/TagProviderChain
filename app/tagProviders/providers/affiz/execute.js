@@ -21,7 +21,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     window.avAsyncInit = function() {
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
+            apiKey:  playtemEmbedded.AppSettings.apiKey,
             eventType: "requestSuccess",
             onAlways: initAffiz
         });

@@ -9,7 +9,7 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdClosed",
         onAlways: requestCloseWindow
     });

@@ -1,41 +1,142 @@
 var playtemEmbedded = {};
 
-playtemEmbedded.App = function(options) {
-    var defaults = {
-        apiKey: undefined,
-        hasReward: false,
-        providers: [],
-        gameType: undefined,
-        outputLanguage: undefined,
-        debug: false,
-        placementType: undefined
-    };
+// playtemEmbedded.App = function(options) {
+//     var defaults = {
+//         apiKey: undefined,
+//         hasReward: false,
+//         providers: [],
+//         gameType: undefined,
+//         outputLanguage: undefined,
+//         debug: false,
+//         placementType: undefined
+//     };
 
-    this.settings = {
+//     this.settings = {
 
-    };
+//     };
     
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+//     this.defaults = $.extend(defaults, options);
+//     this.settings = $.extend(this.settings, defaults);
+// };
+
+// playtemEmbedded.App.prototype.execute = function() {
+//     var self = this;
+
+//     var tagProviders = new playtemEmbedded.TagProviders({
+//         providers: playtemEmbedded.AppSettings.providers,
+//         hasReward: playtemEmbedded.AppSettings.hasReward,
+//         apiKey: playtemEmbedded.AppSettings.apiKey,
+//         gameType: self.settings.gameType,
+//         debug: self.settings.debug,
+//         placementType: self.settings.placementType
+//     });
+    
+//     tagProviders.execute();
+
+//     new playtemEmbedded.CloseImgWatcher();
+
+//     playtemEmbedded.Core.globals.debug = self.settings.debug;
+// };
+
+playtemEmbedded.AppInstream = function(options) {
+    
+    if (!options) throw "options must be defined";
+    if (typeof options.apiKey != "string") throw "apiKey must be a valid string";
+    if (!options.providers || typeof options.providers != "object" || options.providers.length == 0) throw "providers must be a not empty array";
+    if (typeof options.hasReward != "boolean") throw "hasReward must be a valid boolean";
+
+    playtemEmbedded.AppSettings = $.extend(playtemEmbedded.AppSettings, options);
 };
 
-playtemEmbedded.App.prototype.execute = function() {
-    var self = this;
-
-    var tagProviders = new playtemEmbedded.TagProviders({
-        providers: self.settings.providers,
-        hasReward: self.settings.hasReward,
-        apiKey: self.settings.apiKey,
-        gameType: self.settings.gameType,
-        debug: self.settings.debug,
-        placementType: self.settings.placementType
-    });
+playtemEmbedded.AppInstream.prototype = {
     
-    tagProviders.execute();
+    execute : function() {
+        var self = this;
 
-    new playtemEmbedded.CloseImgWatcher();
+        var tagProviders = new playtemEmbedded.TagProviders({
+            appCallbacks: {
+                onAdAvailable : self.onAdAvailable,
+                onAllAdUnavailable : self.onAllAdUnavailable,
+                onComplete : self.onComplete
+            }
+        });
+        
+        tagProviders.execute();
 
-    playtemEmbedded.Core.globals.debug = self.settings.debug;
+        new playtemEmbedded.CloseImgWatcher();
+        playtemEmbedded.Core.globals.windowBlocker = new playtemEmbedded.WindowBlocker();
+        playtemEmbedded.Core.globals.debug = playtemEmbedded.AppSettings.debug;
+    },
+
+    onAdAvailable : function() {
+        window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
+        playtemEmbedded.Core.globals.windowBlocker.setBlocker();
+    },
+
+    onAllAdUnavailable : function() {
+        window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
+    },
+
+    onComplete : function() {
+        if(playtemEmbedded.AppSettings.hasReward == true) {
+            var rewarder = new playtemEmbedded.Reward({
+                apiKey: playtemEmbedded.AppSettings.apiKey
+            });
+
+            rewarder.execute($.noop);
+        }
+
+        // wait for the reward to appear on the window
+        window.setTimeout(playtemEmbedded.Core.globals.windowBlocker.clearBlocker, 1000);
+    }    
+};
+
+playtemEmbedded.AppOutstream = function(options) {
+    
+    if (!options) throw "options must be defined";
+    if (typeof options.apiKey != "string") throw "apiKey must be a valid string";
+    if (!options.providers || typeof options.providers != "object" || options.providers.length == 0) throw "providers must be a not empty array";
+    if (typeof options.hasReward != "boolean") throw "hasReward must be a valid boolean";
+
+    playtemEmbedded.AppSettings = $.extend(playtemEmbedded.AppSettings, options);
+};
+
+playtemEmbedded.AppOutstream.prototype = {
+    
+    execute : function() {
+        var self = this;
+
+        var tagProviders = new playtemEmbedded.TagProviders({
+            appCallbacks: {
+                onAdAvailable : self.onAdAvailable,
+                onAllAdUnavailable : self.onAllAdUnavailable,
+                onComplete : self.onComplete
+            }
+        });
+        
+        tagProviders.execute();
+
+        new playtemEmbedded.CloseImgWatcher();
+        playtemEmbedded.Core.globals.debug = playtemEmbedded.AppSettings.debug;
+    },
+
+    onAdAvailable : function() {
+        var self = this;
+        window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
+
+        if(playtemEmbedded.AppSettings.hasReward == true) {
+            var rewarder = new playtemEmbedded.Reward({ apiKey: playtemEmbedded.AppSettings.apiKey });
+            rewarder.execute($.noop);
+        }
+    },
+
+    onAllAdUnavailable : function() {
+        window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdUnavailable, "*");
+    },
+
+    onComplete : function() {
+        window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.defaultEnd, "*");
+    }    
 };
 
 playtemEmbedded.AppSettings = {
@@ -186,17 +287,10 @@ playtemEmbedded.Core.Identifiers = {
 
 playtemEmbedded.TagProviders = function (options) {
     var defaults = {
-        providers : [],
-        apiKey: undefined,
-        gameType: undefined,
-        hasReward: false,
-        debug: false,
-        blockWindow: false
+        appCallbacks: {}
     };
 
     this.settings = {};
-
-    this.windowBlocker = new playtemEmbedded.WindowBlocker();
     
     this.defaults = $.extend(defaults, options);
     this.settings = $.extend(this.settings, defaults);
@@ -205,37 +299,15 @@ playtemEmbedded.TagProviders = function (options) {
 playtemEmbedded.TagProviders.prototype.execute = function () {
     var self = this;
 
-    var placementProfile = null;
-
-    switch(self.settings.placementType) {
-        case playtemEmbedded.AppSettings.placementTypes.rewarded:
-            placementProfile = self.getPlacementRewardedBehavior();
-            break;
-
-        case playtemEmbedded.AppSettings.placementTypes.outstream:
-            placementProfile = self.getPlacementOutstreamBehavior();
-            break;
-
-        default:
-            throw new Error("placementType must be one of these values: " + Object.values(playtemEmbedded.AppSettings.placementTypes).join());
-    }
-
-    self.fetchAdvert(placementProfile);
+    self.fetchAdvert(self.settings.appCallbacks);
 };
 
 playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile) {
     var self = this;
     var index = 0;
 
-    var isArray = function(target) {
-        return Object.prototype.toString.call(target) == "[object Array]";
-    };
-
     var executeProvider = function (AdvertProvider) {
         var provider = new AdvertProvider({
-            debug: self.settings.debug,
-            apiKey: self.settings.apiKey,
-
             onAdAvailable: placementProfile.onAdAvailable,
             onAdComplete: placementProfile.onComplete,
             onError: placementProfile.onComplete,
@@ -245,42 +317,20 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile)
         provider.execute();
     };
 
-    // var onError = function(errorType) {
-    //     switch(errorType) {
-    //         case "timeout":
-    //             placementProfile.onComplete();
-    //             break;
-    //         case "videoError":
-    //             placementProfile.onComplete();
-    //             break;
-    //         case "internalError":
-    //             moveNext();
-    //             break;                
-    //         default:
-    //             placementProfile.onComplete();
-    //     }
-    // };
-
     var moveNext = function () {
         index++;
         run();
     };
 
     var run = function () {
-        if (index >= self.settings.providers.length) {
+        if (index >= playtemEmbedded.AppSettings.providers.length) {
             placementProfile.onAllAdUnavailable();
             return;
         }
 
-        var currentProviderReference = self.settings.providers[index];
+        var currentProviderReference = playtemEmbedded.AppSettings.providers[index];
         executeProvider(currentProviderReference);
     };
-
-    if(!isArray(self.settings.providers || self.settings.providers.length == 0)) {
-        playtemEmbedded.Core.log("TagProviders.fetchAdvert", "self.settings.providers is empty or not an array");
-        placementProfile.onAllAdUnavailable();
-        return;
-    }
 
     run();
 };
@@ -292,8 +342,8 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
         onAdAvailable : function() {
             window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
 
-            if(self.settings.hasReward == true) {
-                var rewarder = new playtemEmbedded.Reward({ apiKey: self.settings.apiKey });
+            if(playtemEmbedded.AppSettings.hasReward == true) {
+                var rewarder = new playtemEmbedded.Reward({ apiKey: playtemEmbedded.AppSettings.apiKey });
                 rewarder.execute($.noop);
             }
         },
@@ -322,9 +372,9 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
         },
 
         onComplete : function() {
-            if(self.settings.hasReward == true) {
+            if(playtemEmbedded.AppSettings.hasReward == true) {
                 var rewarder = new playtemEmbedded.Reward({
-                    apiKey: self.settings.apiKey
+                    apiKey: playtemEmbedded.AppSettings.apiKey
                 });
 
                 rewarder.execute($.noop);
@@ -338,13 +388,9 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
 
 playtemEmbedded.Affiz = function(options) {
     var defaults = {
-        debug : false,
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
-        onAdComplete: $.noop,
-        onTimeout: $.noop
+        onAdComplete: $.noop
     };
 
     this.settings = {
@@ -375,7 +421,7 @@ playtemEmbedded.Affiz.prototype.onAdAvailable = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdAvailable",
         onAlways: self.settings.onAdAvailable
     });
@@ -387,7 +433,7 @@ playtemEmbedded.Affiz.prototype.onAdComplete = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdComplete",
         onAlways: self.settings.onAdComplete
     });
@@ -399,7 +445,7 @@ playtemEmbedded.Affiz.prototype.onAdUnavailable = function() {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdUnavailable",
         onAlways: self.settings.onAdUnavailable
     });
@@ -416,7 +462,7 @@ playtemEmbedded.Affiz.prototype.onClose = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdClosed",
         onAlways: requestCloseWindow
     });
@@ -430,7 +476,7 @@ playtemEmbedded.Affiz.prototype.onError = function(errorType) {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: errorType,
         onAlways: self.settings.onError
     });
@@ -459,7 +505,7 @@ playtemEmbedded.Affiz.prototype.execute = function() {
     window.avAsyncInit = function() {
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
+            apiKey:  playtemEmbedded.AppSettings.apiKey,
             eventType: "requestSuccess",
             onAlways: initAffiz
         });
@@ -518,7 +564,7 @@ playtemEmbedded.Affiz.prototype.init = function() {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "request",
         onDone: injectScript,
         onFail: self.settings.onAdUnavailable
@@ -527,9 +573,6 @@ playtemEmbedded.Affiz.prototype.init = function() {
 
 playtemEmbedded.RevContent = function(options) {
     var defaults = {
-        debug : false,
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop
@@ -554,7 +597,7 @@ playtemEmbedded.RevContent.prototype.onAdAvailable = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdAvailable",
         onAlways: self.settings.onAdAvailable
     });
@@ -571,7 +614,7 @@ playtemEmbedded.RevContent.prototype.onAdUnavailable = function() {
     else {
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
+            apiKey:  playtemEmbedded.AppSettings.apiKey,
             eventType: "onAdUnavailable",
             onAlways: self.settings.onAdUnavailable
         });
@@ -586,7 +629,7 @@ playtemEmbedded.RevContent.prototype.onError = function(errorType) {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: errorType,
         onAlways: self.settings.onError
     });
@@ -610,7 +653,7 @@ playtemEmbedded.RevContent.prototype.execute = function() {
 
             playtemEmbedded.Core.track({
                 providerName: self.settings.providerName,
-                apiKey:  self.settings.apiKey,
+                apiKey:  playtemEmbedded.AppSettings.apiKey,
                 eventType: "requestSuccess",
                 onAlways: startWatch
             });
@@ -619,7 +662,7 @@ playtemEmbedded.RevContent.prototype.execute = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "request",
         onAlways: initialize
     });
@@ -730,12 +773,12 @@ playtemEmbedded.RevContent.prototype.watchAdCreation = function(callback) {
 
 playtemEmbedded.SmartadInternal = function(options) {
     var defaults = {
-        apiKey: undefined,
         providerName: undefined,
         formatId : undefined,
 
         onAdAvailable: $.noop,
-        onAdUnavailable: $.noop
+        onAdUnavailable: $.noop,
+        onError: $.noop
     };
 
     this.settings = {
@@ -769,7 +812,7 @@ playtemEmbedded.SmartadInternal.prototype.onAdAvailable = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdAvailable",
         onAlways: self.settings.onAdAvailable
     });    
@@ -781,7 +824,7 @@ playtemEmbedded.SmartadInternal.prototype.onAdUnavailable = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdUnavailable",
         onAlways: self.settings.onAdUnavailable
     });
@@ -795,7 +838,7 @@ playtemEmbedded.SmartadInternal.prototype.onError = function(errorType) {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: errorType,
         onAlways: self.settings.onError
     });
@@ -840,7 +883,7 @@ playtemEmbedded.SmartadInternal.prototype.execute = function(callback) {
 
             playtemEmbedded.Core.track({
                 providerName: self.settings.providerName,
-                apiKey:  self.settings.apiKey,
+                apiKey:  playtemEmbedded.AppSettings.apiKey,
                 eventType: "requestSuccess",
                 onAlways: execute
             });
@@ -849,7 +892,7 @@ playtemEmbedded.SmartadInternal.prototype.execute = function(callback) {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "request",
         onAlways: initialize
     });
@@ -892,8 +935,6 @@ playtemEmbedded.SmartadInternal.prototype.render = function() {
 
 playtemEmbedded.SmartadMixedContent = function(options) {
     var defaults = {
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onError: $.noop
@@ -913,7 +954,6 @@ playtemEmbedded.SmartadMixedContent.prototype.execute = function() {
     var self = this;
 
     self.smartadInternal = new playtemEmbedded.SmartadInternal({
-        apiKey: self.settings.apiKey,
         formatId: self.settings.formatId,
         providerName: "SmartadMixedContent",
 
@@ -927,9 +967,7 @@ playtemEmbedded.SmartadMixedContent.prototype.execute = function() {
 
 playtemEmbedded.SpotxInternal = function(options) {
     var defaults = {
-        debug: false,
         siteId: undefined,
-        apiKey: undefined,
         providerName: undefined,
 
         onAdAvailable: $.noop,
@@ -989,7 +1027,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdAvailable",
         onAlways: self.settings.onAdAvailable
     });
@@ -1000,7 +1038,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdComplete = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdComplete",
         onAlways: self.settings.onAdComplete
     });
@@ -1016,7 +1054,7 @@ playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
     else {
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
+            apiKey:  playtemEmbedded.AppSettings.apiKey,
             eventType: "onAdUnavailable",
             onAlways: self.settings.onAdUnavailable
         });
@@ -1028,7 +1066,7 @@ playtemEmbedded.SpotxInternal.prototype.onError = function(errorType) {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: errorType,
         onAlways: self.settings.onError
     });
@@ -1059,7 +1097,7 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
 
             playtemEmbedded.Core.track({
                 providerName: self.settings.providerName,
-                apiKey:  self.settings.apiKey,
+                apiKey:  playtemEmbedded.AppSettings.apiKey,
                 eventType: "requestSuccess",
                 onAlways: startWatch
             });
@@ -1068,7 +1106,7 @@ playtemEmbedded.SpotxInternal.prototype.execute = function(callback) {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "request",
         onAlways: initialize
     });
@@ -1156,9 +1194,6 @@ playtemEmbedded.SpotxInstream = function(options) {
     this.siteId = "147520";
 
     var defaults = {
-        debug: false,
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
@@ -1175,9 +1210,7 @@ playtemEmbedded.SpotxInstream.prototype.execute = function() {
     var self = this;
 
     self.spotxInternal = new playtemEmbedded.SpotxInternal({
-        debug: self.settings.debug,
         siteId: self.siteId,
-        apiKey: self.settings.apiKey,
         providerName: "SpotxInstream",
 
         onAdAvailable: self.settings.onAdAvailable,
@@ -1194,7 +1227,6 @@ playtemEmbedded.SpotxOutstream = function(options) {
 
     var defaults = {
         debug: false,
-        apiKey: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -1212,9 +1244,7 @@ playtemEmbedded.SpotxOutstream.prototype.execute = function() {
     var self = this;
 
     self.spotxInternal = new playtemEmbedded.SpotxInternal({
-        debug: self.settings.debug,
         siteId: self.siteId,
-        apiKey: self.settings.apiKey,
         providerName: "SpotxOutstream",
 
         onAdAvailable: self.settings.onAdAvailable,
@@ -1228,9 +1258,7 @@ playtemEmbedded.SpotxOutstream.prototype.execute = function() {
 
 playtemEmbedded.PlaytemVastPlayer = function(options) {
     var defaults = {
-        debug: false,
         vastTag: undefined,
-        apiKey: undefined,
         providerName: undefined,
 
         onAdAvailable: $.noop,
@@ -1316,7 +1344,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdAvailable",
         onAlways: self.settings.onAdAvailable
     });
@@ -1330,7 +1358,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdComplete = function() {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdComplete",
         onAlways: self.settings.onAdComplete
     });
@@ -1343,7 +1371,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdUnavailable = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdUnavailable",
         onAlways: self.settings.onAdUnavailable
     });
@@ -1358,7 +1386,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onError = function(errorType) {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: errorType,
         onAlways: self.settings.onError
     });
@@ -1415,7 +1443,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
 
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
+            apiKey:  playtemEmbedded.AppSettings.apiKey,
             eventType: "requestSuccess",
             onAlways: runPlayer
         });
@@ -1450,7 +1478,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.init = function(callback) {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "request",
         onAlways: injectScript
     });
@@ -1458,9 +1486,6 @@ playtemEmbedded.PlaytemVastPlayer.prototype.init = function(callback) {
 
 playtemEmbedded.PlaytemVastInstream = function(options) {
     var defaults = {
-        debug: false,
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
@@ -1489,9 +1514,7 @@ playtemEmbedded.PlaytemVastInstream.prototype.execute = function() {
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
-        debug: self.settings.debug,
         vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
         providerName: "PlaytemVastInstream",
 
         onAdAvailable: self.settings.onAdAvailable,
@@ -1505,9 +1528,6 @@ playtemEmbedded.PlaytemVastInstream.prototype.execute = function() {
 
 playtemEmbedded.PlaytemVastOutstream = function(options) {
     var defaults = {
-        debug: false,
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
@@ -1536,9 +1556,7 @@ playtemEmbedded.PlaytemVastOutstream.prototype.execute = function() {
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
-        debug: self.settings.debug,
         vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
         providerName: "PlaytemVastOutstream",
 
         onAdAvailable: self.settings.onAdAvailable,
@@ -1658,7 +1676,7 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
     $.ajax({
         url: self.settings.scriptUrl,
         data: {
-            apiKey : self.settings.apiKey,
+            apiKey : playtemEmbedded.AppSettings.apiKey,
             userId : self.userId,
             timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
         },
@@ -1684,7 +1702,7 @@ playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) 
         $("#js-rewardOfferingMessage").css("visibility", "hidden");
     };
 
-    if(!self.settings.apiKey) {
+    if(!playtemEmbedded.AppSettings.apiKey) {
         initCallback("window.apiKey undefined", null);
         return;
     }

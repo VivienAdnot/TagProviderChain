@@ -1,40 +1,17 @@
-playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile) {
+playtemEmbedded.TagProviders.prototype.fetchAdvert = function () {
     var self = this;
     var index = 0;
 
-    var isArray = function(target) {
-        return Object.prototype.toString.call(target) == "[object Array]";
-    };
-
     var executeProvider = function (AdvertProvider) {
         var provider = new AdvertProvider({
-            debug: self.settings.debug,
-            apiKey: self.settings.apiKey,
-
-            onAdAvailable: placementProfile.onAdAvailable,
-            onAdComplete: placementProfile.onComplete,
-            onError: placementProfile.onComplete,
+            onAdAvailable: self.settings.appCallbacks.onAdAvailable,
+            onAdComplete: self.settings.appCallbacks.onComplete,
+            onError: self.settings.appCallbacks.onComplete,
             onAdUnavailable: moveNext
         });
 
         provider.execute();
     };
-
-    // var onError = function(errorType) {
-    //     switch(errorType) {
-    //         case "timeout":
-    //             placementProfile.onComplete();
-    //             break;
-    //         case "videoError":
-    //             placementProfile.onComplete();
-    //             break;
-    //         case "internalError":
-    //             moveNext();
-    //             break;                
-    //         default:
-    //             placementProfile.onComplete();
-    //     }
-    // };
 
     var moveNext = function () {
         index++;
@@ -42,20 +19,14 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile)
     };
 
     var run = function () {
-        if (index >= self.settings.providers.length) {
-            placementProfile.onAllAdUnavailable();
+        if (index >= playtemEmbedded.AppSettings.providers.length) {
+            self.settings.appCallbacks.onAllAdUnavailable();
             return;
         }
 
-        var currentProviderReference = self.settings.providers[index];
+        var currentProviderReference = playtemEmbedded.AppSettings.providers[index];
         executeProvider(currentProviderReference);
     };
-
-    if(!isArray(self.settings.providers || self.settings.providers.length == 0)) {
-        playtemEmbedded.Core.log("TagProviders.fetchAdvert", "self.settings.providers is empty or not an array");
-        placementProfile.onAllAdUnavailable();
-        return;
-    }
 
     run();
 };

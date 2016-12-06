@@ -6,7 +6,7 @@ playtemEmbedded.Affiz.prototype.onError = function(errorType) {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: errorType,
         onAlways: self.settings.onError
     });

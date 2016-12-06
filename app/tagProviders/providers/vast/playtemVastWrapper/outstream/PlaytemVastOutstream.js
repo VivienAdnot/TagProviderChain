@@ -1,8 +1,5 @@
 playtemEmbedded.PlaytemVastOutstream = function(options) {
     var defaults = {
-        debug: false,
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
@@ -31,9 +28,7 @@ playtemEmbedded.PlaytemVastOutstream.prototype.execute = function() {
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
-        debug: self.settings.debug,
         vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
         providerName: "PlaytemVastOutstream",
 
         onAdAvailable: self.settings.onAdAvailable,

@@ -16,7 +16,7 @@ playtemEmbedded.RevContent.prototype.execute = function() {
 
             playtemEmbedded.Core.track({
                 providerName: self.settings.providerName,
-                apiKey:  self.settings.apiKey,
+                apiKey:  playtemEmbedded.AppSettings.apiKey,
                 eventType: "requestSuccess",
                 onAlways: startWatch
             });
@@ -25,7 +25,7 @@ playtemEmbedded.RevContent.prototype.execute = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "request",
         onAlways: initialize
     });

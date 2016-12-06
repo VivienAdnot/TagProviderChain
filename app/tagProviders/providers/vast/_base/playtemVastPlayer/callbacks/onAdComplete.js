@@ -6,7 +6,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdComplete = function() {
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdComplete",
         onAlways: self.settings.onAdComplete
     });

@@ -4,7 +4,7 @@ playtemEmbedded.SmartadInternal.prototype.onAdUnavailable = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdUnavailable",
         onAlways: self.settings.onAdUnavailable
     });
