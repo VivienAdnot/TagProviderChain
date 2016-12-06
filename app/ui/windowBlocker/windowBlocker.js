@@ -1,25 +1,11 @@
-playtemEmbedded.WindowBlocker = function(options) {
-    var defaults = {
-
-    };
-
-    this.settings = {
-        $blockableElement : $(".js-closeAd"),
-        fadeInDuration: 500
-    };
-    
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);    
-};
+playtemEmbedded.WindowBlocker = function() {};
 
 playtemEmbedded.WindowBlocker.prototype = {
     setBlocker : function() {
-        var self = this;
-        self.settings.$blockableElement.hide();
+        playtemEmbedded.AppSettings.$closeImgElement.hide();
     },
 
     clearBlocker: function() {
-        var self = this;
-        self.settings.$blockableElement.fadeIn(self.settings.fadeInDuration);
+        playtemEmbedded.AppSettings.$closeImgElement.fadeIn(500);
     }
 };
