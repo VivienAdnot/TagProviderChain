@@ -43,7 +43,8 @@ playtemEmbedded.AppSettings = {
     placementTypes: {
         outstream: "outstream",
         rewarded: "rewarded"
-    }
+    },
+    vastProviderNames : ["Actiplay", "SmartadVastRewarded", "CitroenOutstream", "CitroenInstream"]
 };
 
 playtemEmbedded.Core = {};
@@ -1419,7 +1420,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.settings = {
         playerId: 'radiantVideoPlayer',
-        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.8.3/js/rmp.min.js',
+        scriptUrl: '//cdn.radiantmediatechs.com/rmp/v3/latest/js/rmp.min.js',
 
         $targetContainerElement: $('.ad'),
     };
@@ -1461,13 +1462,16 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.adFound = false;
 
+    this.videoPlayer = null;
+    this.videoPlayerElement = null;
+
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    // this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
-    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["poc.playtem.com"];
+    var hostName = document.location.hostname || "static.playtem.com";
+    this.radiantMediaPlayerSettings.licenseKey = licenseKeys[hostName];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;
@@ -1478,13 +1482,11 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
     this.playerPosition.height = this.settings.playerPosition.height + "px";
 };
 
-playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
+playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function(providerName) {
     var self = this;
 
-    self.adFound = true;
-
     playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
+        providerName: providerName,
         apiKey:  self.settings.apiKey,
         eventType: "onAdAvailable",
         onDone: self.settings.onAdAvailable,
@@ -1540,6 +1542,47 @@ playtemEmbedded.PlaytemVastPlayer.prototype.clean = function() {
 playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
     var self = this;
 
+    var extractProviderName = function(adWrapperAdSystems) {
+        var providerName = null;
+
+        try {
+            providerName = adWrapperAdSystems.pop();
+            var isProviderNameAllowed = (playtemEmbedded.AppSettings.vastProviderNames.indexOf(providerName) != -1);
+
+            if(!isProviderNameAllowed) {
+                throw "providerName unknown: " + providerName.toString();
+            }
+        } catch(e) {
+            playtemEmbedded.Core.log("PlaytemVastPlayer", "adWrapperAdSystems exception" + e);
+            providerName = null;
+        }
+
+        return providerName;
+    };
+
+    var runPlayer = function() {
+        self.videoPlayerElement.addEventListener('adstarted', function() {
+            self.adFound = true;
+            
+            var providerName = extractProviderName(self.videoPlayer.getAdWrapperAdSystems());
+            (providerName) ? self.onAdAvailable(providerName) : self.onError();
+        });
+
+        self.videoPlayerElement.addEventListener('aderror', function() {
+            (self.adFound == true) ? self.onError() : self.onAdUnavailable();
+        });
+
+        self.videoPlayerElement.addEventListener('adcomplete', function() {
+            self.onAdComplete();
+        });
+
+        self.videoPlayerElement.addEventListener('adskipped', function() {
+            self.onAdComplete();
+        });
+        
+        self.videoPlayer.init(self.radiantMediaPlayerSettings);
+    };
+
     self.init(function(error) {
         if(error) {
             self.settings.onAdUnavailable();
@@ -1551,41 +1594,20 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             return;
         }
         
-        var videoPlayer = new RadiantMP(self.settings.playerId);
-        var videoPlayerElement = document.getElementById(self.settings.playerId);
+        self.videoPlayer = new RadiantMP(self.settings.playerId);
+        self.videoPlayerElement = document.getElementById(self.settings.playerId);
         
-        if(!videoPlayer || typeof videoPlayer.init !== "function") {
+        if(!self.videoPlayer || typeof self.videoPlayer.init !== "function" || typeof self.videoPlayer.getAdWrapperAdSystems !== "function") {
+            playtemEmbedded.Core.log("PlaytemVastPlayer", "api method unavailable");
             self.settings.onAdUnavailable();
             return;
         }
-
-        var runPlayer = function() {
-            videoPlayerElement.addEventListener('adstarted', function() {
-                self.onAdAvailable();
-            });
-
-            videoPlayerElement.addEventListener('aderror', function() {
-                console.log(videoPlayer.getAdErrorCode());
-                (self.adFound == true) ? self.onError() : self.onAdUnavailable();
-            });
-
-            videoPlayerElement.addEventListener('adcomplete', function() {
-                self.onAdComplete();
-            });
-
-            videoPlayerElement.addEventListener('adskipped', function() {
-                self.onAdComplete();
-            });
-            
-            videoPlayer.init(self.radiantMediaPlayerSettings);
-        };
 
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
             apiKey:  self.settings.apiKey,
             eventType: "requestSuccess",
-            onDone: runPlayer,
-            onFail: self.settings.onAdUnavailable
+            onAlways: runPlayer
         });
     });
 };
@@ -1701,6 +1723,53 @@ playtemEmbedded.PlaytemVastOutstream.prototype.execute = function() {
         vastTag: buildTag(),
         apiKey: self.settings.apiKey,
         providerName: "PlaytemVastOutstream",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onAdComplete: self.settings.onAdComplete,
+        onAdError: self.settings.onAdError
+    });
+
+    self.vastPlayer.execute();
+};
+
+playtemEmbedded.PlaytemVastTest = function(options) {
+    var defaults = {
+        debug: false,
+        apiKey: undefined,
+
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onAdComplete: $.noop,
+        onAdError: $.noop
+    };
+
+    this.settings = {
+
+    };
+
+    this.vastPlayer = undefined;
+
+    this.defaults = $.extend(defaults, options);
+    this.settings = $.extend(this.settings, defaults);
+
+    if(this.settings.debug === true) {
+        // nothing to do
+    }
+};
+
+playtemEmbedded.PlaytemVastTest.prototype.execute = function() {
+    var self = this;
+
+    var buildTag = function() {
+        return "//static.playtem.com/tag/tagProviders/vast/test/head.xml?" + playtemEmbedded.Core.Date.getCurrentTimestamp();
+    };
+
+    self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
+        debug: self.settings.debug,
+        vastTag: buildTag(),
+        apiKey: self.settings.apiKey,
+        providerName: "Test",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,

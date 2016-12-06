@@ -3,7 +3,7 @@ var instreamTest = [playtemEmbedded.AffizTest];
 var providers = {};
 
 providers.test = {
-    "XXXX-xxxxx": [playtemEmbedded.Affiz]
+    "XXXX-xxxxx": [playtemEmbedded.PlaytemVastTest]
 };
 
 //===========================
