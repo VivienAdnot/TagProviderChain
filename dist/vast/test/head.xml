@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
 	<Ad id="Testerhead">
 		<Wrapper>
-			<AdSystem>head</AdSystem>
+			<AdSystem>Actiplay</AdSystem>
 			<VASTAdTagURI>
 				<![CDATA[https://static.playtem.com/tag/tagProviders/vast/test/child1.xml]]>
 			</VASTAdTagURI>

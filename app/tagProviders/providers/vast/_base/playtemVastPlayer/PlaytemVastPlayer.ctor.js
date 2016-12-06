@@ -61,6 +61,9 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.adFound = false;
 
+    this.videoPlayer = null;
+    this.videoPlayerElement = null;
+
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="

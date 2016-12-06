@@ -1,10 +1,8 @@
-playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
+playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function(providerName) {
     var self = this;
 
-    self.adFound = true;
-
     playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
+        providerName: providerName,
         apiKey:  self.settings.apiKey,
         eventType: "onAdAvailable",
         onDone: self.settings.onAdAvailable,
