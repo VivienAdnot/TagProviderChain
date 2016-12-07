@@ -40,7 +40,7 @@
     <script type="text/javascript" src="../_source/playtemEmbeddedApp.js?1"></script>
     <script type="text/javascript" src="js/applicationProviders.js?1"></script>
 
-    <script type="text/javascript">
+    <!--<script type="text/javascript">
         var playtemApp = new playtemEmbedded.App({
             hasReward: true,
             providers: providers["rewarded"]["TSTr5-8a76"],
@@ -49,6 +49,16 @@
             gameType: "desktop",
             debug: false,
             placementType: "rewarded"
+        });
+
+        playtemApp.execute();
+    </script>-->
+
+    <script type="text/javascript">
+        var playtemApp = new playtemEmbedded.AppInstream({
+            hasReward: true,
+            providers: providers["rewarded"]["TSTr5-8a76"],
+            apiKey: "TSTr5-8a76",
         });
 
         playtemApp.execute();

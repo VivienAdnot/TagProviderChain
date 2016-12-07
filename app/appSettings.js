@@ -11,7 +11,7 @@ playtemEmbedded.AppSettings = {
     },
     providerErrorTypes: {
         internal: "internalError",
-        timeout: "timeout",
+        timeout: "Timeout", // do not change the case !
         inVideo: "onAdError"
     },
     $closeImgElement: $(".js-closeAd")

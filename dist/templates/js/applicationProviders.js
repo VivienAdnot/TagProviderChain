@@ -3,7 +3,7 @@ var instreamTest = [playtemEmbedded.RevContent];
 var providers = {};
 
 providers.test = {
-    "XXXX-xxxxx": [playtemEmbedded.Affiz]
+    "XXXX-xxxxx": [playtemEmbedded.SmartadMixedContent, playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SpotxOutstream]
 };
 
 //===========================
@@ -13,6 +13,8 @@ providers.test = {
 var allProvidersInstream = [playtemEmbedded.PlaytemVastInstream, playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream];
 var iscoolsInstream = [playtemEmbedded.PlaytemVastInstream, playtemEmbedded.SpotxInstream];
 
+
+
 providers.rewarded = {
     //===== prod =====
 
@@ -20,7 +22,7 @@ providers.rewarded = {
     "4a2b-8438v": allProvidersInstream,
 
     //urbanRivals
-    "494f-8f1bv": allProvidersInstream,        
+    "494f-8f1bv": allProvidersInstream,
 
     //belote
     "4da9-acb2b": iscoolsInstream,
