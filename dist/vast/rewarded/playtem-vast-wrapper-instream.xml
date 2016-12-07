@@ -23,15 +23,4 @@
             </Extensions>
         </Wrapper>
     </Ad>
-    <Ad id="Citroen">
-        <Wrapper>
-            <AdSystem>CitroenInstream</AdSystem>
-            <VASTAdTagURI>
-                <![CDATA[https://vid.springserve.com/vast/44114?w=500&h=300&url=&cb=1234]]>
-            </VASTAdTagURI>
-            <Extensions>
-                <Extension type="waterfall" fallback_index="2" />
-            </Extensions>
-        </Wrapper>
-    </Ad>
 </VAST>

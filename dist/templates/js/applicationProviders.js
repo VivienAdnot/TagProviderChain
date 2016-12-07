@@ -32,6 +32,7 @@ providers.rewarded = {
 
     //jotu
     "4c3f-be78j": allProvidersInstream,
+    "TSTf-be78j": instreamTest,
 
     //ladyPopular
     "r47c7-9c9b": allProvidersInstream,
