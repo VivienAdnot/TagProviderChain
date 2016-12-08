@@ -20,7 +20,7 @@ providers.rewarded = {
     "4a2b-8438v": allProvidersInstream,
 
     //urbanRivals
-    "494f-8f1bv": allProvidersInstream,        
+    "494f-8f1bv": allProvidersInstream,
 
     //belote
     "4da9-acb2b": iscoolsInstream,
@@ -40,7 +40,11 @@ providers.rewarded = {
 
     //mediastay rewarded
     "r4b75-8a76": allProvidersInstream,
-    "TSTr5-8a76": instreamTest
+    "TSTr5-8a76": instreamTest,
+
+    //Bingo-Video rewarded
+    "r45da-bc19": allProvidersInstream,
+    "TSTra-bc19": instreamTest
 };
 
 //===========================
