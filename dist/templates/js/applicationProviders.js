@@ -51,13 +51,10 @@ providers.rewarded = {
 // OUTSTREAM
 //===========================
 
-var allProvidersOutstream = [playtemEmbedded.SmartadMixedContent, playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SpotxOutstream];
+var allProvidersOutstream = [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream];
 
 providers.outstream = {
     //===== prod =====
-
-    //jotu
-    "1c27-4684v": allProvidersOutstream,
 
     //mediastay
     "e048-4cdev": allProvidersOutstream,
@@ -67,9 +64,6 @@ providers.outstream = {
 
     //Voyage to Fantasy
     "9a56-4422f": allProvidersOutstream,
-
-    //Equideow
-    "ff3d-4b8cf": allProvidersOutstream,
     
     //Prizee
     "Fj68VbKzEe": allProvidersOutstream,
@@ -95,5 +89,11 @@ providers.outstream = {
     // ==== providers exceptions =====
 
     //ludokado
-    "9a19-43fav": [playtemEmbedded.SmartadMixedContent]
+    "9a19-43fav": [playtemEmbedded.SmartadMixedContent],
+
+    //jotu
+    "1c27-4684v": [playtemEmbedded.SmartadMixedContent, playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SpotxOutstream],
+
+    //Equideow
+    "ff3d-4b8cf": [playtemEmbedded.SmartadMixedContent, playtemEmbedded.PlaytemVastOutstream, playtemEmbedded.SpotxOutstream],    
 };
