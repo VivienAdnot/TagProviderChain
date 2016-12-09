@@ -246,13 +246,20 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
         //reward img uri
         $("#rewardImageUri").attr("src", rewardImageUri);
         $("#rewardImageUri").css("visibility", "visible");
+        
         //reward img name
         $("#rewardName").text(rewardName);
         $("#rewardName").css("visibility", "visible");
+
         //our partner
-        $(".ad__reward__offerMessage__brandName").text("Our partner");
+        var partnerText = $(".ad__reward__offerMessage__brandName").text();
+        partnerText = (partnerText != "") ? partnerText : "Our partner";
+        $(".ad__reward__offerMessage__brandName").text(partnerText);
+        
         //offers you
-        $("#js-rewardOfferingMessage").text("offers you");
+        var offerText = $("#js-rewardOfferingMessage").text();
+        offerText = (offerText != "") ? offerText : "offers you";
+        $("#js-rewardOfferingMessage").text(offerText);
     };
 
     var parseResponse = function(data) {
