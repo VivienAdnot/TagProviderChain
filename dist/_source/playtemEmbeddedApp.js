@@ -1354,6 +1354,10 @@ playtemEmbedded.SpotxInstream = function(options) {
         onError: $.noop
     };
 
+    this.settings = {
+
+    };
+
     this.spotxInternal = null;
 
     $.extend(defaults, options);
@@ -1390,6 +1394,10 @@ playtemEmbedded.SpotxOutstream = function(options) {
         onAdComplete: $.noop,
         onError: $.noop
     };
+
+    this.settings = {
+
+    };    
 
     this.spotxInternal = null;
 
