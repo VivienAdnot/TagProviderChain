@@ -8,7 +8,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop,
+        onError: $.noop,
 
         playerPosition: {
             top: 179,
@@ -19,7 +19,7 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.settings = {
         playerId: 'radiantVideoPlayer',
-        scriptUrl: '//cdn.radiantmediatechs.com/rmp/3.8.3/js/rmp.min.js',
+        scriptUrl: '//cdn.radiantmediatechs.com/rmp/v3/latest/js/rmp.min.js',
 
         $targetContainerElement: $('.ad'),
     };
@@ -56,17 +56,21 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
         hideCentralPlayButton: false
     };
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 
     this.adFound = false;
+
+    this.videoPlayer = null;
+    this.videoPlayerElement = null;
 
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
+    var hostName = document.location.hostname || "static.playtem.com";
+    this.radiantMediaPlayerSettings.licenseKey = licenseKeys[hostName];
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;

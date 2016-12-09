@@ -1,27 +1,38 @@
-playtemEmbedded.Core.track = function(providerName, apiKey, eventType, callback) {
-    if(!callback || typeof callback != "function") {
-        callback = $.noop;
+playtemEmbedded.Core.track = function(options) {
+    var defaults = {
+        providerName: undefined,
+        apiKey: undefined,
+        eventType: undefined,
+        onDone: $.noop,
+        onFail: $.noop,
+        onAlways: $.noop
+    };
+
+    var settings = $.extend({}, defaults, options);
+
+    if(!settings.providerName || !settings.apiKey || !settings.eventType) {
+        playtemEmbedded.Core("playtemEmbedded", "playtemEmbedded.Core.track missing option");
+        settings.onFail();
+        settings.onAlways();
+        return;
     }
 
-    var timestamp = playtemEmbedded.Core.Date.getCurrentTimestamp();
-    var url = "//api.playtem.com/tracker.gif?a=" + eventType + "&c=&p=" + providerName + "&k=" + apiKey + "&t=" + timestamp;
+    var trackerUriBase = (playtemEmbedded.Core.globals.debug === true) ? "//poc.playtem.com/tracker.gif" : "//api.playtem.com/tracker.gif";
+
+    var url = trackerUriBase + "?a=" + settings.eventType
+        + "&c=&p=" + settings.providerName
+        + "&k=" + settings.apiKey
+        + "&t=" + playtemEmbedded.Core.Date.getCurrentTimestamp();
 
     $.get(url)
-        .fail(function(jqxhr) {
-            var message = "pixel tracking fail.";
-            var thisArgs = arguments;
-
-            for(var key in thisArgs) {
-                if(!thisArgs.hasOwnProperty(key)) {
-                    continue;
-                }
-
-                message += " " + thisArgs[key].toString();
-            }
-
-            playtemEmbedded.Core.log("playtemEmbedded", message);
+        .done(function() {
+            settings.onDone();
+        })
+        .fail(function() {
+            playtemEmbedded.Core.log("playtemEmbedded", "pixel tracking fail.");
+            settings.onFail();
         })
         .always(function() {
-            callback();
+            settings.onAlways();
         });
 };

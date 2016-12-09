@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>IsCool outstream</title>
+
+    <link rel="stylesheet" href="css/iscool/style.css"/>
+</head>
+<body>
+    <div class="ad">
+        <!-- title-->
+        <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">Congratulations</h1>
+        <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/IsCool/750x550/cross-close.png"/>
+
+        <!-- discover Message block-->
+        <div class="ad__discoverMessageBlock u-verticalAlignText">
+            <div class="ad__discoverMessageWrapper">
+                <span class="ad__discoverMessage__brandName"></span>
+                <span id="js-discoverMessage"></span>
+            </div>
+        </div>
+    </div>
+
+    <img src="//api.playtem.com/tracker.gif?a=IframeCreated&c=&p=TagProvider&k=12df-48691&t=" width="0" height="0" style="position:absolute; visibility:hidden;"/>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src="../_source/playtemEmbeddedApp.js?1"></script>
+    <script type="text/javascript" src="js/applicationProviders.js?1"></script>
+
+    <script type="text/javascript">
+        var playtemApp = new playtemEmbedded.App({
+            hasReward: false,
+            providers: providers["outstream"]["12df-48691"],
+            apiKey: "12df-48691",
+            outputLanguage : "en-US",
+            gameType: "desktop",
+            debug: false,
+            placementType: "outstream"
+        });
+
+        playtemApp.execute();
+    </script>
+</body>
+</html>

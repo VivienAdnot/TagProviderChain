@@ -1,9 +1,11 @@
-playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function() {
+playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function(providerName) {
     var self = this;
 
-    self.adFound = true;
-
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdAvailable", function() {
-        self.settings.onAdAvailable();
+    playtemEmbedded.Core.track({
+        providerName: providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "onAdAvailable",
+        onDone: self.settings.onAdAvailable,
+        onFail: self.settings.onError
     });
 };

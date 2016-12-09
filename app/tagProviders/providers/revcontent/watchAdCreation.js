@@ -21,5 +21,5 @@ playtemEmbedded.RevContent.prototype.watchAdCreation = function(callback) {
         window.clearInterval(poll);
 
         callback(false);
-    }, 30000);
+    }, self.settings.httpRequestTimeout);
 };

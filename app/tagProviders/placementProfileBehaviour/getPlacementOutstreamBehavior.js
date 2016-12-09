@@ -1,16 +1,18 @@
 playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function () {
-    var self = this;
+    var self = this;   
 
     return {
         onAdAvailable : function() {
             window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
 
             if(self.settings.hasReward == true) {
-                var rewarder = new playtemEmbedded.Reward({
+                var rewardManager = new playtemEmbedded.Reward({
                     apiKey: self.settings.apiKey
                 });
 
-                rewarder.execute(function(error, success) {
+                rewardManager.clear();
+
+                rewardManager.execute(function(error, success) {
                     // nothing to do
                 });
             }
@@ -22,7 +24,7 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
 
         onAdComplete : $.noop,
 
-        onAdError: function() {
+        onError: function() {
             //request close window
             window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
         }

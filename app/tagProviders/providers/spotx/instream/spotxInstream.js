@@ -1,8 +1,5 @@
 playtemEmbedded.SpotxInstream = function(options) {
-    var siteIdTest = "85394";
-    var siteIdProductionInstream = "147520";
-
-    this.siteId = (options.debug === true) ? siteIdTest : siteIdProductionInstream;
+    this.siteId = "147520";
 
     var defaults = {
         debug: false,
@@ -11,13 +8,15 @@ playtemEmbedded.SpotxInstream = function(options) {
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop
+        onError: $.noop
     };
+
+    this.settings = {};
 
     this.spotxInternal = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
 };
 
 playtemEmbedded.SpotxInstream.prototype.execute = function() {
@@ -32,7 +31,7 @@ playtemEmbedded.SpotxInstream.prototype.execute = function() {
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError
+        onError: self.settings.onError
     });
 
     self.spotxInternal.execute();

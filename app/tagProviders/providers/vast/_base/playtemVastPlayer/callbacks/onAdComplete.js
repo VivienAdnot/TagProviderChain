@@ -3,7 +3,11 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdComplete = function() {
 
     self.clean();
     
-    playtemEmbedded.Core.track(self.settings.providerName, self.settings.apiKey, "onAdComplete", function() {
-        self.settings.onAdComplete();
+    playtemEmbedded.Core.track({
+        providerName: self.settings.providerName,
+        apiKey:  self.settings.apiKey,
+        eventType: "onAdComplete",
+        onDone: self.settings.onAdComplete,
+        onFail: self.settings.onError
     });
 };

@@ -1,0 +1,56 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Prizee outstream</title>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="css/prizee/style.css"/>
+</head>
+<body>
+    <div class="ad">
+        <!-- title-->
+        <h1 id="js-headerTitle" class="ad__header__title u-verticalAlignText">Congratulations</h1>
+        <img class="js-closeAd ad__imgClose" src="//static.playtem.com/templates/Prizee/750x550/cross-close.png"/>
+
+        <!-- reward block-->
+        <div class="ad__reward__offerMessageBlock">
+            <div class="ad__reward__offerMessage u-verticalAlignText">
+                <div>
+                    <span class="ad__reward__offerMessage__brandName"></span>
+                    <span id="js-rewardOfferingMessage"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ad__rewardImageBlock">
+            <img id="rewardImageUri" class="ad__reward__image" src="img/pixel.png" alt="" />
+            <div class="ad__reward__itemTitleBlock">
+                <div class="ad__reward__itemTitle u-verticalAlignText">
+                    <span id="rewardName"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <img src="//api.playtem.com/tracker.gif?a=IframeCreated&c=&p=TagProvider&k=Fj68VbKzEe&t=" width="0" height="0" style="position:absolute; visibility:hidden;"/>
+
+    <script type="text/javascript" src="../_source/playtemEmbeddedApp.js?16"></script>
+    <script type="text/javascript" src="js/applicationProviders.js?17"></script>
+
+    <script type="text/javascript">
+        var playtemApp = new playtemEmbedded.App({
+            hasReward: true,
+            providers: providers["outstream"]["Fj68VbKzEe"],
+            apiKey: "Fj68VbKzEe",
+            outputLanguage : "en-US",
+            gameType: "desktop",
+            debug: false,
+            placementType: "outstream"
+        });
+
+        playtemApp.execute();
+    </script>
+</body>
+</html>
