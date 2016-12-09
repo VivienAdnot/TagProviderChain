@@ -1,17 +1,17 @@
 playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function () {
     var self = this;
 
+    var rewardManager = new playtemEmbedded.Reward({
+        apiKey: self.settings.apiKey
+    });
+
     var adCompleteOrError = function() {
         var always = function() {
             self.windowBlocker.clearBlocker();
         };
 
         if(self.settings.hasReward == true) {
-            var rewarder = new playtemEmbedded.Reward({
-                apiKey: self.settings.apiKey
-            });
-
-            rewarder.execute(function(error, success) {
+            rewardManager.execute(function(error, success) {
                 always();
             });
         } else {
@@ -21,8 +21,9 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
 
     return {
         onAdAvailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
             self.windowBlocker.setBlocker();
+            rewardManager.clear();
+            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
         },
 
         onAllAdUnavailable : function() {

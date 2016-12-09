@@ -1,6 +1,4 @@
-playtemEmbedded.Reward.prototype.clear = function(executeCallback, initCallback) {
-    var self = this;
-
+playtemEmbedded.Reward.prototype.clear = function() {
     var hideElements = function() {
         //reward img uri
         $("#rewardImageUri").css("visibility", "hidden");
@@ -11,15 +9,5 @@ playtemEmbedded.Reward.prototype.clear = function(executeCallback, initCallback)
         $("#js-rewardOfferingMessage").css("visibility", "hidden");
     };
 
-    if(!self.settings.apiKey) {
-        initCallback("window.apiKey undefined", null);
-        return;
-    }
-
-    self.executeCallback = executeCallback;
-
-    //hideElements();
-    playtemEmbedded.Core.globals.playtemRewardContext = self;
-
-    initCallback(null, "success");
+    hideElements();
 };

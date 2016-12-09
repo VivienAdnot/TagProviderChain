@@ -14,11 +14,13 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
         var partnerText = $(".ad__reward__offerMessage__brandName").text();
         partnerText = (partnerText != "") ? partnerText : "Our partner";
         $(".ad__reward__offerMessage__brandName").text(partnerText);
+        $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
         
         //offers you
         var offerText = $("#js-rewardOfferingMessage").text();
         offerText = (offerText != "") ? offerText : "offers you";
         $("#js-rewardOfferingMessage").text(offerText);
+        $("#js-rewardOfferingMessage").css("visibility", "visible");
     };
 
     var parseResponse = function(data) {
