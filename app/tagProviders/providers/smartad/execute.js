@@ -1,15 +1,36 @@
-playtemEmbedded.RevContent.prototype.execute = function() {
+playtemEmbedded.SmartadInternal.prototype.execute = function(callback) {
     var self = this;
 
-    var startWatch = function() {
-        self.watchAdCreation(function(adStartedStatus) {
-            (adStartedStatus) ? self.onAdAvailable() : self.onAdUnavailable();
+    var onLoadHandler = function(result) {
+        (result && result.hasAd === true) ? self.onAdAvailable() : self.onAdUnavailable();
+    };
+
+    var execute = function() {
+        sas.setup({
+            domain: self.settings.domain,
+            async: true,
+            renderMode: 0
         });
+
+        sas.call("onecall",
+            {
+                siteId: self.settings.siteId,
+                pageName: self.settings.pageName,
+                formatId: self.settings.formatId
+            },
+            {
+                onLoad: function(result) {
+                    onLoadHandler(result);
+                }
+            }
+        );
+
+        self.render();
     };
 
     var initialize = function() {
-        self.init(function(status) {
-            if(status === false) {
+        self.init(function(error) {
+            if(error) {
                 self.onAdUnavailable();
                 return;
             }
@@ -18,7 +39,7 @@ playtemEmbedded.RevContent.prototype.execute = function() {
                 providerName: self.settings.providerName,
                 apiKey:  playtemEmbedded.AppSettings.apiKey,
                 eventType: "requestSuccess",
-                onAlways: startWatch
+                onAlways: execute
             });
         });
     };

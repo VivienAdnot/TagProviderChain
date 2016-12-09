@@ -1,11 +1,11 @@
 playtemEmbedded.SmartadInternal = function(options) {
     var defaults = {
-        apiKey: undefined,
         providerName: undefined,
         formatId : undefined,
 
         onAdAvailable: $.noop,
-        onAdUnavailable: $.noop
+        onAdUnavailable: $.noop,
+        onError: $.noop
     };
 
     this.settings = {
@@ -29,4 +29,6 @@ playtemEmbedded.SmartadInternal = function(options) {
 
     $.extend(defaults, options);
     $.extend(this.settings, defaults);       
+
+    this.timeoutTimer = null;
 };

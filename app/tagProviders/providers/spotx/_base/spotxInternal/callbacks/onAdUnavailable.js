@@ -8,10 +8,9 @@ playtemEmbedded.SpotxInternal.prototype.onAdUnavailable = function() {
     else {
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
+            apiKey:  playtemEmbedded.AppSettings.apiKey,
             eventType: "onAdUnavailable",
-            onDone: self.settings.onAdUnavailable,
-            onFail: self.settings.onError
+            onAlways: self.settings.onAdUnavailable
         });
     }
 };

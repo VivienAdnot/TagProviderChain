@@ -3,7 +3,6 @@ playtemEmbedded.SpotxOutstream = function(options) {
 
     var defaults = {
         debug: false,
-        apiKey: undefined,
 
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
@@ -23,9 +22,7 @@ playtemEmbedded.SpotxOutstream.prototype.execute = function() {
     var self = this;
 
     self.spotxInternal = new playtemEmbedded.SpotxInternal({
-        debug: self.settings.debug,
         siteId: self.siteId,
-        apiKey: self.settings.apiKey,
         providerName: "SpotxOutstream",
 
         onAdAvailable: self.settings.onAdAvailable,

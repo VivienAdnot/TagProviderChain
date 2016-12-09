@@ -9,16 +9,13 @@ playtemEmbedded.SpotxInternal.prototype.watchVideoPlayerCreation = function(call
 
         if(isVideoPlayerDefined && isVideoPlayerVisible) {
             window.clearTimeout(self.timeouts.videoAvailability.instance);
-
             window.clearInterval(self.poll);
-
             callback(true);
         }
     }, 250);
 
     self.timeouts.videoAvailability.instance = window.setTimeout(function () {
         window.clearInterval(self.poll);
-
         callback(false);
     }, self.timeouts.videoAvailability.duration);
 };

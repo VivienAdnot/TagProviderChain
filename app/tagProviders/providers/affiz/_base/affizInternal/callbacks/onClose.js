@@ -1,16 +1,16 @@
 playtemEmbedded.AffizInternal.prototype.onClose = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
 
-    var closeWindow = function() {
-        window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
+    var requestCloseWindow = function() {
+        playtemEmbedded.AppSettings.$closeImgElement.click();
     };
+
+    window.clearTimeout(self.timeoutTimer);
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdClosed",
-        onDone: closeWindow,
-        onFail: self.settings.onError,
-        onAlways: $.noop
+        onAlways: requestCloseWindow
     });
 };

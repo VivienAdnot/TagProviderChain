@@ -26,4 +26,5 @@ playtemEmbedded.AffizInternal = function(options) {
 
     $.extend(defaults, options);
     $.extend(this.settings, defaults);
+    this.timeoutTimer = null;
 };

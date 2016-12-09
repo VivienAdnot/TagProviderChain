@@ -8,19 +8,18 @@ playtemEmbedded.PlaytemVastPlayer.prototype.init = function(callback) {
         $("#" + self.settings.playerId).css(self.playerPosition);
     };
 
-    createTarget();
-
     var injectScript = function() {
         playtemEmbedded.Core.injectScript(self.settings.scriptUrl, function(error, data) {
             callback(error);
         });
     };
 
+    createTarget();
+
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "request",
-        onDone: injectScript,
-        onFail: self.settings.onAdUnavailable
+        onAlways: injectScript
     });
 };

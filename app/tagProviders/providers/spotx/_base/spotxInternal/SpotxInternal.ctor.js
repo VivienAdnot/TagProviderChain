@@ -1,8 +1,6 @@
 playtemEmbedded.SpotxInternal = function(options) {
     var defaults = {
-        debug: false,
         siteId: undefined,
-        apiKey: undefined,
         providerName: undefined,
 
         onAdAvailable: $.noop,
@@ -44,7 +42,7 @@ playtemEmbedded.SpotxInternal = function(options) {
     this.timeouts = {
         videoAvailability : {
             instance: null,
-            duration: 10000
+            duration: playtemEmbedded.AppSettings.providerTimeout
         }
     };
 

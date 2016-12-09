@@ -1,17 +1,17 @@
 playtemEmbedded.RevContent.prototype.onAdUnavailable = function() {
     var self = this;
+    window.clearTimeout(self.timeoutTimer);
 
     if(self.adFound === true) {
-        self.onAdError();
+        self.onError();
     }
     
     else {
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
+            apiKey:  playtemEmbedded.AppSettings.apiKey,
             eventType: "onAdUnavailable",
-            onDone: self.settings.onAdUnavailable,
-            onFail: self.settings.onError
+            onAlways: self.settings.onAdUnavailable
         });
     }
 };

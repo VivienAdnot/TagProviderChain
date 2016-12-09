@@ -1,8 +1,8 @@
 playtemEmbedded.AffizInternal.prototype.execute = function() {
     var self = this;
 
-    window.avAsyncInit = function() {
-        var initAffiz = function() {
+    var initAffiz = function() {
+        try {
             AFFIZVIDEO.init({
                 site_id: self.settings.siteId,
                 clientid: self.settings.clientid,
@@ -13,16 +13,27 @@ playtemEmbedded.AffizInternal.prototype.execute = function() {
                 complete_callback: self.onAdComplete,
                 close_callback: self.onClose
             });
+        } catch(e) {
+            self.onError(playtemEmbedded.AppSettings.providerErrorTypes.internal);
         }
+    };
 
+    window.avAsyncInit = function() {
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
-            apiKey:  self.settings.apiKey,
+            apiKey:  playtemEmbedded.AppSettings.apiKey,
             eventType: "requestSuccess",
-            onDone: initAffiz,
-            onFail: self.settings.onAdUnavailable
+            onAlways: initAffiz
         });
     };
 
     self.init();
+
+    self.timeoutTimer = window.setTimeout(function () {
+        self.onAdAvailable = $.noop;
+        self.onAdUnavailable = $.noop;
+        self.onAdComplete = $.noop;
+
+        self.onError(playtemEmbedded.AppSettings.providerErrorTypes.timeout);
+    }, playtemEmbedded.AppSettings.providerTimeout);
 };

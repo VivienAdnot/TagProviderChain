@@ -1,12 +1,9 @@
 playtemEmbedded.PlaytemVastInstream = function(options) {
     var defaults = {
-        debug: false,
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop,
-        onAdError: $.noop
+        onError: $.noop
     };
 
     this.settings = {
@@ -31,15 +28,13 @@ playtemEmbedded.PlaytemVastInstream.prototype.execute = function() {
     };
 
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
-        debug: self.settings.debug,
         vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
         providerName: "PlaytemVastInstream",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
         onAdComplete: self.settings.onAdComplete,
-        onAdError: self.settings.onAdError
+        onError: self.settings.onError
     });
 
     self.vastPlayer.execute();

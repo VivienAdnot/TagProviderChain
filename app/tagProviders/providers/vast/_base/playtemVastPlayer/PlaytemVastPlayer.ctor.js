@@ -1,8 +1,6 @@
 playtemEmbedded.PlaytemVastPlayer = function(options) {
     var defaults = {
-        debug: false,
         vastTag: undefined,
-        apiKey: undefined,
         providerName: undefined,
 
         onAdAvailable: $.noop,
@@ -63,6 +61,8 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.videoPlayer = null;
     this.videoPlayerElement = null;
+
+    this.timeoutTimer = null;
 
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',

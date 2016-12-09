@@ -1,8 +1,5 @@
 playtemEmbedded.RevContent = function(options) {
     var defaults = {
-        debug : false,
-        apiKey: undefined,
-
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop
@@ -17,4 +14,6 @@ playtemEmbedded.RevContent = function(options) {
 
     $.extend(defaults, options);
     $.extend(this.settings, defaults);
+
+    this.timeoutTimer = null;
 };

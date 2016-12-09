@@ -1,9 +1,8 @@
-playtemEmbedded.PlaytemVastPlayer.prototype.onError = function(errorType) {
+playtemEmbedded.Affiz.prototype.onError = function(errorType) {
     var self = this;
     errorType = errorType || playtemEmbedded.AppSettings.providerErrorTypes.internal;
 
     window.clearTimeout(self.timeoutTimer);
-    self.clean();
     
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,

@@ -5,9 +5,8 @@ playtemEmbedded.SpotxInternal.prototype.onAdAvailable = function() {
 
     playtemEmbedded.Core.track({
         providerName: self.settings.providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdAvailable",
-        onDone: self.settings.onAdAvailable,
-        onFail: self.settings.onError
+        onAlways: self.settings.onAdAvailable
     });
 };
