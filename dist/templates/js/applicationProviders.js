@@ -1,4 +1,4 @@
-var instreamTest = [playtemEmbedded.AffizTest];
+var instreamTest = [playtemEmbedded.SpotxTest];
 
 var providers = {};
 
