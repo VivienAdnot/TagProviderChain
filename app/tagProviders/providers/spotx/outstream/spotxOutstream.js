@@ -11,9 +11,7 @@ playtemEmbedded.SpotxOutstream = function(options) {
         onError: $.noop
     };
 
-    this.settings = {
-
-    };    
+    this.settings = {};    
 
     this.spotxInternal = null;
 

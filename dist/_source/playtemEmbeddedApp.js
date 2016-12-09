@@ -220,6 +220,20 @@ playtemEmbedded.Reward = function(options) {
     $.extend(this.settings, defaults);       
 };
 
+playtemEmbedded.Reward.prototype.clear = function() {
+    var hideElements = function() {
+        //reward img uri
+        $("#rewardImageUri").css("visibility", "hidden");
+        //reward img name
+        $("#rewardName").css("visibility", "hidden");
+
+        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
+        $("#js-rewardOfferingMessage").css("visibility", "hidden");
+    };
+
+    hideElements();
+};
+
 playtemEmbedded.Reward.prototype.execute = function(callback) {
     var self = this;
 
@@ -246,13 +260,22 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
         //reward img uri
         $("#rewardImageUri").attr("src", rewardImageUri);
         $("#rewardImageUri").css("visibility", "visible");
+        
         //reward img name
         $("#rewardName").text(rewardName);
         $("#rewardName").css("visibility", "visible");
+
         //our partner
-        $(".ad__reward__offerMessage__brandName").text("Our partner");
+        var partnerText = $(".ad__reward__offerMessage__brandName").text();
+        partnerText = (partnerText != "") ? partnerText : "Our partner";
+        $(".ad__reward__offerMessage__brandName").text(partnerText);
+        $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
+        
         //offers you
-        $("#js-rewardOfferingMessage").text("offers you");
+        var offerText = $("#js-rewardOfferingMessage").text();
+        offerText = (offerText != "") ? offerText : "offers you";
+        $("#js-rewardOfferingMessage").text(offerText);
+        $("#js-rewardOfferingMessage").css("visibility", "visible");
     };
 
     var parseResponse = function(data) {
@@ -306,16 +329,6 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
 
 playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) {
     var self = this;
-
-    var hideElements = function() {
-        //reward img uri
-        $("#rewardImageUri").css("visibility", "hidden");
-        //reward img name
-        $("#rewardName").css("visibility", "hidden");
-
-        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
-        $("#js-rewardOfferingMessage").css("visibility", "hidden");
-    };
 
     if(!self.settings.apiKey) {
         initCallback("window.apiKey undefined", null);
@@ -432,18 +445,20 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function (placementProfile)
 };
 
 playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function () {
-    var self = this;
+    var self = this;   
 
     return {
         onAdAvailable : function() {
             window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
 
             if(self.settings.hasReward == true) {
-                var rewarder = new playtemEmbedded.Reward({
+                var rewardManager = new playtemEmbedded.Reward({
                     apiKey: self.settings.apiKey
                 });
 
-                rewarder.execute(function(error, success) {
+                rewardManager.clear();
+
+                rewardManager.execute(function(error, success) {
                     // nothing to do
                 });
             }
@@ -465,17 +480,17 @@ playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function 
 playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function () {
     var self = this;
 
+    var rewardManager = new playtemEmbedded.Reward({
+        apiKey: self.settings.apiKey
+    });
+
     var adCompleteOrError = function() {
         var always = function() {
             self.windowBlocker.clearBlocker();
         };
 
         if(self.settings.hasReward == true) {
-            var rewarder = new playtemEmbedded.Reward({
-                apiKey: self.settings.apiKey
-            });
-
-            rewarder.execute(function(error, success) {
+            rewardManager.execute(function(error, success) {
                 always();
             });
         } else {
@@ -485,8 +500,9 @@ playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function (
 
     return {
         onAdAvailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
             self.windowBlocker.setBlocker();
+            rewardManager.clear();
+            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
         },
 
         onAllAdUnavailable : function() {
@@ -1338,9 +1354,7 @@ playtemEmbedded.SpotxInstream = function(options) {
         onError: $.noop
     };
 
-    this.settings = {
-
-    };    
+    this.settings = {};
 
     this.spotxInternal = null;
 
@@ -1379,9 +1393,7 @@ playtemEmbedded.SpotxOutstream = function(options) {
         onError: $.noop
     };
 
-    this.settings = {
-
-    };    
+    this.settings = {};    
 
     this.spotxInternal = null;
 
@@ -1420,9 +1432,7 @@ playtemEmbedded.SpotxTest = function(options) {
         onError: $.noop
     };
 
-    this.settings = {
-
-    };    
+    this.settings = {};    
 
     this.spotxInternal = null;
 
