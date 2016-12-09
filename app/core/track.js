@@ -11,7 +11,7 @@ playtemEmbedded.Core.track = function(options) {
     var settings = $.extend({}, defaults, options);
 
     if(!settings.providerName || !settings.apiKey || !settings.eventType) {
-        playtemEmbedded.Core("playtemEmbedded", "playtemEmbedded.Core.track missing option");
+        playtemEmbedded.Core.log("playtemEmbedded", "playtemEmbedded.Core.track missing option");
         settings.onFail();
         settings.onAlways();
         return;

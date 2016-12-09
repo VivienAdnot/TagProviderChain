@@ -1,4 +1,4 @@
-playtemEmbedded.AffizInternal.prototype.init = function() {
+playtemEmbedded.Affiz.prototype.init = function() {
     var self = this;
 
     playtemEmbedded.Core.globals.affizContext = self;

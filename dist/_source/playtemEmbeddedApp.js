@@ -1,21 +1,25 @@
 var playtemEmbedded = {};
 
 playtemEmbedded.AppInstream = function(options) {
-    
     if (!options) throw "options must be defined";
     if (typeof options.apiKey != "string") throw "apiKey must be a valid string";
-    if (!options.providers || typeof options.providers != "object" || options.providers.length == 0) throw "providers must be a not empty array";
     if (typeof options.hasReward != "boolean") throw "hasReward must be a valid boolean";
 
+    options.providers = options.providers || providers["rewarded"][options.apiKey];
+
     playtemEmbedded.AppSettings = $.extend(playtemEmbedded.AppSettings, options);
+
+    if(playtemEmbedded.AppSettings.hasReward === true) {
+        playtemEmbedded.Core.globals.rewardManager = new playtemEmbedded.Reward({
+            apiKey: playtemEmbedded.AppSettings.apiKey
+        });
+
+        playtemEmbedded.Core.globals.rewardManager.clear();
+    }
 };
 
 playtemEmbedded.AppInstream.prototype = {
     
-<<<<<<< HEAD
-    $.extend(defaults, options);
-    $.extend(this.settings, defaults);
-=======
     execute : function() {
         var self = this;
 
@@ -44,28 +48,33 @@ playtemEmbedded.AppInstream.prototype = {
     },
 
     onComplete : function() {
-        if(playtemEmbedded.AppSettings.hasReward == true) {
-            var rewarder = new playtemEmbedded.Reward({
-                apiKey: playtemEmbedded.AppSettings.apiKey
-            });
+        var self = this;
 
-            rewarder.execute($.noop);
+        if(playtemEmbedded.AppSettings.hasReward == true) {
+            playtemEmbedded.Core.globals.rewardManager.execute($.noop);
         }
 
         // wait for the reward to appear on the window
         window.setTimeout(playtemEmbedded.Core.globals.windowBlocker.clearBlocker, 1000);
     }    
->>>>>>> 2apps
 };
 
 playtemEmbedded.AppOutstream = function(options) {
-    
     if (!options) throw "options must be defined";
     if (typeof options.apiKey != "string") throw "apiKey must be a valid string";
-    if (!options.providers || typeof options.providers != "object" || options.providers.length == 0) throw "providers must be a not empty array";
     if (typeof options.hasReward != "boolean") throw "hasReward must be a valid boolean";
 
+    options.providers = options.providers || providers["outstream"][options.apiKey];
+
     playtemEmbedded.AppSettings = $.extend(playtemEmbedded.AppSettings, options);
+
+    if(playtemEmbedded.AppSettings.hasReward === true) {
+        playtemEmbedded.Core.globals.rewardManager = new playtemEmbedded.Reward({
+            apiKey: playtemEmbedded.AppSettings.apiKey
+        });
+
+        playtemEmbedded.Core.globals.rewardManager.clear();
+    }    
 };
 
 playtemEmbedded.AppOutstream.prototype = {
@@ -92,8 +101,7 @@ playtemEmbedded.AppOutstream.prototype = {
         window.parent.postMessage(playtemEmbedded.AppSettings.IframeManagerEvents.onAdAvailable, "*");
 
         if(playtemEmbedded.AppSettings.hasReward == true) {
-            var rewarder = new playtemEmbedded.Reward({ apiKey: playtemEmbedded.AppSettings.apiKey });
-            rewarder.execute($.noop);
+            playtemEmbedded.Core.globals.rewardManager.execute($.noop);
         }
     },
 
@@ -111,9 +119,6 @@ playtemEmbedded.AppSettings = {
         outstream: "outstream",
         rewarded: "rewarded"
     },
-<<<<<<< HEAD
-    vastProviderNames : ["Actiplay", "SmartadVastRewarded", "CitroenOutstream", "CitroenInstream"]
-=======
     providerTimeout: 10000,
     IframeManagerEvents: {
         onAdAvailable: "playtem:tagApp:adAvailable",
@@ -122,11 +127,11 @@ playtemEmbedded.AppSettings = {
     },
     providerErrorTypes: {
         internal: "internalError",
-        timeout: "timeout",
+        timeout: "Timeout", // do not change the case !
         inVideo: "onAdError"
     },
-    $closeImgElement: $(".js-closeAd")
->>>>>>> 2apps
+    $closeImgElement: $(".js-closeAd"),
+    vastProviderNames : ["Actiplay", "SmartadVastRewarded", "CitroenOutstream", "CitroenInstream"]    
 };
 
 playtemEmbedded.Core = {};
@@ -165,50 +170,6 @@ playtemEmbedded.Core.log = function (tag, message) {
     jQuery.post(url, { message: formattedMessage });
 };
 
-playtemEmbedded.Core.Operations = {
-    onceProxy: function (fn, errorCallback) {
-        var returnValue, called, callbackCalled = false;
-        errorCallback = errorCallback || function() {};
-
-        return function () {
-            if (!called) {
-                called = true;
-                returnValue = fn.apply(this, arguments);
-            } else {
-                if(!callbackCalled) {
-                    callbackCalled = true;
-                    errorCallback();
-                }
-            }
-            return returnValue;
-        };
-    }
-};
-
-playtemEmbedded.Core.PostMessage = function() {
-    this.listenerPool = {};
-};
-
-playtemEmbedded.Core.PostMessage.prototype.listen = function(eventHandler) {
-    var self = this;
-
-    window.addEventListener("message", responseHandler, false);
-    var poolLength = self.listenerPool.push(responseHandler);
-    var listenerId = poolLength - 1;
-    return listenerId;
-};
-
-playtemEmbedded.Core.PostMessage.prototype.send = function(message) {
-    window.parent.postMessage(message, "*");
-};
-
-playtemEmbedded.Core.PostMessage.prototype.destroyListener = function(listenerId) {
-    var self = this;
-
-    var handler = self.listenerPool.splice(listenerId);
-    window.removeEventListener("message", handler, false);
-};
-
 playtemEmbedded.Core.track = function(options) {
     var defaults = {
         providerName: undefined,
@@ -222,7 +183,7 @@ playtemEmbedded.Core.track = function(options) {
     var settings = $.extend({}, defaults, options);
 
     if(!settings.providerName || !settings.apiKey || !settings.eventType) {
-        playtemEmbedded.Core("playtemEmbedded", "playtemEmbedded.Core.track missing option");
+        playtemEmbedded.Core.log("playtemEmbedded", "playtemEmbedded.Core.track missing option");
         settings.onFail();
         settings.onAlways();
         return;
@@ -248,206 +209,6 @@ playtemEmbedded.Core.track = function(options) {
         });
 };
 
-playtemEmbedded.Core.Identifiers = {
-    newGUID : function() {
-        var S4 = function() {
-            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-        };
-        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-    }
-};
-
-<<<<<<< HEAD
-playtemEmbedded.CrossManager = function(options) {
-    var defaults = {
-
-    };
-
-    this.settings = {
-        $element : $(".js-closeAd"),
-        sendEvents: {
-            messageCloseWindow : "closeAdWindow"
-        }
-    };
-    
-    $.extend(defaults, options);
-    $.extend(this.settings, defaults);    
-};
-
-playtemEmbedded.CrossManager.prototype = {
-    watchClose : function() {
-        var self = this;
-
-        self.settings.$element.click(function () {
-            window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
-        });
-    }
-};
-
-playtemEmbedded.Reward = function(options) {
-    var defaults = {
-        apiKey: undefined
-    };
-
-    this.settings = {
-        scriptUrl: "//api.playtem.com/advertising/services.reward/",
-        sendEvents: {
-            userId: "playtem:tagApp:userId",
-        }
-    };
-
-    this.userId = null;
-    this.executeCallback = null;
-
-    $.extend(defaults, options);
-    $.extend(this.settings, defaults);       
-};
-
-playtemEmbedded.Reward.prototype.clear = function() {
-    var hideElements = function() {
-        //reward img uri
-        $("#rewardImageUri").css("visibility", "hidden");
-        //reward img name
-        $("#rewardName").css("visibility", "hidden");
-
-        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
-        $("#js-rewardOfferingMessage").css("visibility", "hidden");
-    };
-
-    hideElements();
-};
-
-playtemEmbedded.Reward.prototype.execute = function(callback) {
-    var self = this;
-
-    self.init(callback, function(error, data) {
-        if(error != null) {
-            return;
-        }
-
-        // listen
-        window.addEventListener("message", self.userIdMessageHandler, false);
-
-        // send
-        window.parent.postMessage(self.settings.sendEvents.userId, "*");
-
-        // we don't set up a timeout because this module is not critical for the app if it fails.
-        // create a default reward in the html template in case of error
-    });
-};
-
-playtemEmbedded.Reward.prototype.getReward = function(callback) {
-    var self = this;
-
-    var onParseSuccess = function(rewardName, rewardImageUri) {
-        //reward img uri
-        $("#rewardImageUri").attr("src", rewardImageUri);
-        $("#rewardImageUri").css("visibility", "visible");
-        
-        //reward img name
-        $("#rewardName").text(rewardName);
-        $("#rewardName").css("visibility", "visible");
-
-        //our partner
-        var partnerText = $(".ad__reward__offerMessage__brandName").text();
-        partnerText = (partnerText != "") ? partnerText : "Our partner";
-        $(".ad__reward__offerMessage__brandName").text(partnerText);
-        $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
-        
-        //offers you
-        var offerText = $("#js-rewardOfferingMessage").text();
-        offerText = (offerText != "") ? offerText : "offers you";
-        $("#js-rewardOfferingMessage").text(offerText);
-        $("#js-rewardOfferingMessage").css("visibility", "visible");
-    };
-
-    var parseResponse = function(data) {
-        try {
-            if(data.StatusCode !== 0) {
-                throw "no gift available: " + data.StatusCode + ", " + data.StatusMessage;
-            }
-
-            var response = data.Response;
-
-            var rewardImageUri = response.Image;
-            if(!rewardImageUri) {
-                throw "no reward image";
-            }
-
-            var defaultLanguage = response.Name.Default;
-            if(!defaultLanguage) {
-                throw "no default Language";
-            }
-
-            var rewardName = response.Name[defaultLanguage];
-            if(!rewardName) {
-                throw "no reward Name";
-            }
-
-            onParseSuccess(rewardName, rewardImageUri);
-
-            callback(null, "success");
-        } catch(e) {
-            var errorMessage = "reward parse response error: " + e;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
-            callback(errorMessage, null);
-        }
-    };
-
-    $.ajax({
-        url: self.settings.scriptUrl,
-        data: {
-            apiKey : self.settings.apiKey,
-            userId : self.userId,
-            timestamp : playtemEmbedded.Core.Date.getUnixCurrentTimestampSeconds()
-        },
-        success: parseResponse,
-        error: function(jqXHR, textStatus, errorThrown) {
-            var errorMessage = "reward ajax error: " + errorThrown;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
-            callback(errorMessage, null);
-        }
-    });
-};
-
-playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) {
-    var self = this;
-
-    if(!self.settings.apiKey) {
-        initCallback("window.apiKey undefined", null);
-        return;
-    }
-
-    self.executeCallback = executeCallback;
-
-    //hideElements();
-    playtemEmbedded.Core.globals.playtemRewardContext = self;
-
-    initCallback(null, "success");
-};
-
-playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
-    var self = playtemEmbedded.Core.globals.playtemRewardContext;
-    var playtemIdentifier = "playtem:js:";
-
-    try {
-        var userIdMessage = postMessage.data;
-
-        if(userIdMessage.indexOf(playtemIdentifier) == 0) {
-            self.userId = userIdMessage.substring(playtemIdentifier.length);
-            self.getReward(self.executeCallback);
-
-            window.removeEventListener("message", self.userIdMessageHandler, false);
-        }
-    }
-    
-    catch(e) {
-        return;
-    }
-};
-
-=======
->>>>>>> 2apps
 playtemEmbedded.TagProviders = function (options) {
     var defaults = {
         appCallbacks: {}
@@ -498,120 +259,34 @@ playtemEmbedded.TagProviders.prototype.fetchAdvert = function () {
     run();
 };
 
-<<<<<<< HEAD
-playtemEmbedded.TagProviders.prototype.getPlacementOutstreamBehavior = function () {
-    var self = this;   
-
-    return {
-        onAdAvailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
-
-            if(self.settings.hasReward == true) {
-                var rewardManager = new playtemEmbedded.Reward({
-                    apiKey: self.settings.apiKey
-                });
-
-                rewardManager.clear();
-
-                rewardManager.execute(function(error, success) {
-                    // nothing to do
-                });
-            }
-        },
-
-        onAllAdUnavailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
-        },
-
-        onAdComplete : $.noop,
-
-        onError: function() {
-            //request close window
-            window.parent.postMessage(self.settings.sendEvents.messageCloseWindow, "*");
-        }
-    };
-};
-
-playtemEmbedded.TagProviders.prototype.getPlacementRewardedBehavior = function () {
-    var self = this;
-
-    var rewardManager = new playtemEmbedded.Reward({
-        apiKey: self.settings.apiKey
-    });
-
-    var adCompleteOrError = function() {
-        var always = function() {
-            self.windowBlocker.clearBlocker();
-        };
-
-        if(self.settings.hasReward == true) {
-            rewardManager.execute(function(error, success) {
-                always();
-            });
-        } else {
-            always();
-        }
-    };
-
-    return {
-        onAdAvailable : function() {
-            self.windowBlocker.setBlocker();
-            rewardManager.clear();
-            window.parent.postMessage(self.settings.sendEvents.onAdAvailable, "*");
-        },
-
-        onAllAdUnavailable : function() {
-            window.parent.postMessage(self.settings.sendEvents.onAdUnavailable, "*");
-        },
-
-        onAdComplete : adCompleteOrError,
-
-        onError: adCompleteOrError
-    };
-};
-
-playtemEmbedded.AffizInternal = function(options) {
-    var defaults = {
-        debug: false,
-        siteId: undefined,
-        apiKey: undefined,
-        providerName: undefined,
-
-=======
 playtemEmbedded.Affiz = function(options) {
     var defaults = {
->>>>>>> 2apps
+        debug: false,
+        apiKey: undefined,
+
         onAdAvailable: $.noop,
         onAdUnavailable: $.noop,
         onAdComplete: $.noop
     };
 
     this.settings = {
+        providerName: "affiz",
+        siteId: "315f315f32333439_8d31ea22dd",
         scriptUrl: '//cpm1.affiz.net/tracking/ads_video.php',
         clientId: "12345", // TBD
         $targetContainerElement: $('.ad'),
-        modal: true,
-        sendEvents: {
-            messageCloseWindow : "closeAdWindow"
-        }
+        modal: true
     };
 
     playtemEmbedded.Core.globals.affizContext = undefined;
 
-    this.windowBlocker = new playtemEmbedded.WindowBlocker();
-
-<<<<<<< HEAD
     $.extend(defaults, options);
     $.extend(this.settings, defaults);
-=======
-    this.timeoutTimer = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
->>>>>>> 2apps
+    this.timeoutTimer = null;
 };
 
-playtemEmbedded.AffizInternal.prototype.onAdAvailable = function() {
+playtemEmbedded.Affiz.prototype.onAdAvailable = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
     window.clearTimeout(self.timeoutTimer);
 
@@ -623,7 +298,7 @@ playtemEmbedded.AffizInternal.prototype.onAdAvailable = function() {
     });
 };
 
-playtemEmbedded.AffizInternal.prototype.onAdComplete = function() {
+playtemEmbedded.Affiz.prototype.onAdComplete = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
     window.clearTimeout(self.timeoutTimer);
 
@@ -635,7 +310,7 @@ playtemEmbedded.AffizInternal.prototype.onAdComplete = function() {
     });
 };
 
-playtemEmbedded.AffizInternal.prototype.onAdUnavailable = function() {
+playtemEmbedded.Affiz.prototype.onAdUnavailable = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
     window.clearTimeout(self.timeoutTimer);
     
@@ -647,7 +322,7 @@ playtemEmbedded.AffizInternal.prototype.onAdUnavailable = function() {
     });
 };
 
-playtemEmbedded.AffizInternal.prototype.onClose = function() {
+playtemEmbedded.Affiz.prototype.onClose = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
 
     var requestCloseWindow = function() {
@@ -678,7 +353,7 @@ playtemEmbedded.Affiz.prototype.onError = function(errorType) {
     });
 };
 
-playtemEmbedded.AffizInternal.prototype.execute = function() {
+playtemEmbedded.Affiz.prototype.execute = function() {
     var self = this;
 
     var initAffiz = function() {
@@ -718,7 +393,7 @@ playtemEmbedded.AffizInternal.prototype.execute = function() {
     }, playtemEmbedded.AppSettings.providerTimeout);
 };
 
-playtemEmbedded.AffizInternal.prototype.init = function() {
+playtemEmbedded.Affiz.prototype.init = function() {
     var self = this;
 
     playtemEmbedded.Core.globals.affizContext = self;
@@ -767,62 +442,6 @@ playtemEmbedded.AffizInternal.prototype.init = function() {
     });
 };
 
-playtemEmbedded.Affiz = function(options) {
-    var defaults = {
-        debug : false,
-        apiKey: undefined,
-
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onAdComplete: $.noop
-    };
-
-    this.settings = {
-        providerName: 'affiz',
-        siteId : '315f315f32333439_8d31ea22dd'
-    };
-
-    this.affizInternal = null;
-
-    $.extend(defaults, options);
-    $.extend(this.settings, defaults);
-};
-
-playtemEmbedded.Affiz.prototype.execute = function() {
-    var self = this;
-
-    self.affizInternal = new playtemEmbedded.AffizInternal(self.settings);
-    self.affizInternal.execute();
-};
-
-playtemEmbedded.AffizTest = function(options) {
-    var defaults = {
-        debug : false,
-        apiKey: undefined,
-
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onAdComplete: $.noop
-    };
-
-    this.settings = {
-        providerName: 'Test',
-        siteId : '315f315f32333530_68dafd7974'
-    };
-
-    this.affizInternal = null;
-
-    $.extend(defaults, options);
-    $.extend(this.settings, defaults);
-};
-
-playtemEmbedded.AffizTest.prototype.execute = function() {
-    var self = this;
-
-    self.affizInternal = new playtemEmbedded.AffizInternal(self.settings);
-    self.affizInternal.execute();
-};
-
 playtemEmbedded.RevContent = function(options) {
     var defaults = {
         onAdAvailable: $.noop,
@@ -837,15 +456,10 @@ playtemEmbedded.RevContent = function(options) {
         httpRequestTimeout: 3000
     };
 
-<<<<<<< HEAD
     $.extend(defaults, options);
     $.extend(this.settings, defaults);
-=======
-    this.timeoutTimer = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);
->>>>>>> 2apps
+    this.timeoutTimer = null;
 };
 
 playtemEmbedded.RevContent.prototype.onAdAvailable = function() {
@@ -1057,15 +671,42 @@ playtemEmbedded.SmartadInternal = function(options) {
         }
     };
 
-<<<<<<< HEAD
     $.extend(defaults, options);
     $.extend(this.settings, defaults);       
-=======
-    this.timeoutTimer = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
->>>>>>> 2apps
+    this.timeoutTimer = null;
+};
+
+playtemEmbedded.SmartadMixedContent = function(options) {
+    var defaults = {
+        onAdAvailable: $.noop,
+        onAdUnavailable: $.noop,
+        onError: $.noop
+    };
+
+    this.settings = {
+        formatId : 42149
+    };
+
+    this.smartadInternal = null;
+
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);
+};
+
+playtemEmbedded.SmartadMixedContent.prototype.execute = function() {
+    var self = this;
+
+    self.smartadInternal = new playtemEmbedded.SmartadInternal({
+        formatId: self.settings.formatId,
+        providerName: "SmartadMixedContent",
+
+        onAdAvailable: self.settings.onAdAvailable,
+        onAdUnavailable: self.settings.onAdUnavailable,
+        onError: self.settings.onError
+    });
+
+    self.smartadInternal.execute();
 };
 
 playtemEmbedded.SmartadInternal.prototype.onAdAvailable = function() {
@@ -1194,38 +835,6 @@ playtemEmbedded.SmartadInternal.prototype.render = function() {
     sas.render(self.settings.formatId);
 };
 
-
-playtemEmbedded.SmartadMixedContent = function(options) {
-    var defaults = {
-        onAdAvailable: $.noop,
-        onAdUnavailable: $.noop,
-        onError: $.noop
-    };
-
-    this.settings = {
-        formatId : 42149
-    };
-
-    this.smartadInternal = null;
-
-    $.extend(defaults, options);
-    $.extend(this.settings, defaults);
-};
-
-playtemEmbedded.SmartadMixedContent.prototype.execute = function() {
-    var self = this;
-
-    self.smartadInternal = new playtemEmbedded.SmartadInternal({
-        formatId: self.settings.formatId,
-        providerName: "SmartadMixedContent",
-
-        onAdAvailable: self.settings.onAdAvailable,
-        onAdUnavailable: self.settings.onAdUnavailable,
-        onError: self.settings.onError
-    });
-
-    self.smartadInternal.execute();
-};
 
 playtemEmbedded.SpotxInternal = function(options) {
     var defaults = {
@@ -1622,25 +1231,18 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
     this.adFound = false;
 
-<<<<<<< HEAD
     this.videoPlayer = null;
     this.videoPlayerElement = null;
-=======
+
     this.timeoutTimer = null;
->>>>>>> 2apps
 
     var licenseKeys = {
         "static.playtem.com": 'Kl8lMDc9N3N5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg==',
         "poc.playtem.com": "Kl8lZ2V5MmdjPTY3dmkyeWVpP3JvbTVkYXNpczMwZGIwQSVfKg=="
     };
 
-<<<<<<< HEAD
     var hostName = document.location.hostname || "static.playtem.com";
     this.radiantMediaPlayerSettings.licenseKey = licenseKeys[hostName];
-=======
-    //this.radiantMediaPlayerSettings.licenseKey = licenseKeys["static.playtem.com"];
-    this.radiantMediaPlayerSettings.licenseKey = licenseKeys["poc.playtem.com"];
->>>>>>> 2apps
     
     this.radiantMediaPlayerSettings.adTagUrl = this.settings.vastTag;
     this.radiantMediaPlayerSettings.width = this.settings.playerPosition.width;
@@ -1653,19 +1255,11 @@ playtemEmbedded.PlaytemVastPlayer = function(options) {
 
 playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function(providerName) {
     var self = this;
+    window.clearTimeout(self.timeoutTimer);
 
-<<<<<<< HEAD
     playtemEmbedded.Core.track({
         providerName: providerName,
         apiKey:  self.settings.apiKey,
-=======
-    window.clearTimeout(self.timeoutTimer);
-    self.adFound = true;
-
-    playtemEmbedded.Core.track({
-        providerName: self.settings.providerName,
-        apiKey:  playtemEmbedded.AppSettings.apiKey,
->>>>>>> 2apps
         eventType: "onAdAvailable",
         onAlways: self.settings.onAdAvailable
     });
@@ -1783,30 +1377,6 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
             return;
         }
 
-<<<<<<< HEAD
-=======
-        var runPlayer = function() {
-            videoPlayerElement.addEventListener('adstarted', function() {
-                self.onAdAvailable();
-            });
-
-            videoPlayerElement.addEventListener('aderror', function() {
-                console.log(videoPlayer.getAdErrorCode());
-                (self.adFound == true) ? self.onError(playtemEmbedded.AppSettings.providerErrorTypes.invideo) : self.onAdUnavailable();
-            });
-
-            videoPlayerElement.addEventListener('adcomplete', function() {
-                self.onAdComplete();
-            });
-
-            videoPlayerElement.addEventListener('adskipped', function() {
-                self.onAdComplete();
-            });
-            
-            videoPlayer.init(self.radiantMediaPlayerSettings);
-        };
-
->>>>>>> 2apps
         playtemEmbedded.Core.track({
             providerName: self.settings.providerName,
             apiKey:  playtemEmbedded.AppSettings.apiKey,
@@ -1934,7 +1504,6 @@ playtemEmbedded.PlaytemVastOutstream.prototype.execute = function() {
     self.vastPlayer.execute();
 };
 
-<<<<<<< HEAD
 playtemEmbedded.PlaytemVastTest = function(options) {
     var defaults = {
         debug: false,
@@ -1982,9 +1551,6 @@ playtemEmbedded.PlaytemVastTest.prototype.execute = function() {
     self.vastPlayer.execute();
 };
 
-playtemEmbedded.WindowBlocker = function(options) {
-    var defaults = {
-=======
 playtemEmbedded.CloseImgWatcher = function() {
     var self = this;
 
@@ -2002,7 +1568,6 @@ playtemEmbedded.CloseImgWatcher = function() {
 
     this.watchClick();
 };
->>>>>>> 2apps
 
 playtemEmbedded.Reward = function(options) {
     var defaults = {
@@ -2015,17 +1580,26 @@ playtemEmbedded.Reward = function(options) {
             userId: "playtem:tagApp:userId",
         }
     };
-<<<<<<< HEAD
-    
-    $.extend(defaults, options);
-    $.extend(this.settings, defaults);    
-=======
 
     this.userId = null;
     this.executeCallback = null;
 
-    this.defaults = $.extend(defaults, options);
-    this.settings = $.extend(this.settings, defaults);       
+    $.extend(defaults, options);
+    $.extend(this.settings, defaults);       
+};
+
+playtemEmbedded.Reward.prototype.clear = function() {
+    var hideElements = function() {
+        //reward img uri
+        $("#rewardImageUri").css("visibility", "hidden");
+        //reward img name
+        $("#rewardName").css("visibility", "hidden");
+
+        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
+        $("#js-rewardOfferingMessage").css("visibility", "hidden");
+    };
+
+    hideElements();
 };
 
 playtemEmbedded.Reward.prototype.execute = function(callback) {
@@ -2054,13 +1628,22 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
         //reward img uri
         $("#rewardImageUri").attr("src", rewardImageUri);
         $("#rewardImageUri").css("visibility", "visible");
+        
         //reward img name
         $("#rewardName").text(rewardName);
         $("#rewardName").css("visibility", "visible");
+
         //our partner
-        $(".ad__reward__offerMessage__brandName").text("Our partner");
+        var partnerText = $(".ad__reward__offerMessage__brandName").text();
+        partnerText = (partnerText != "") ? partnerText : "Our partner";
+        $(".ad__reward__offerMessage__brandName").text(partnerText);
+        $(".ad__reward__offerMessage__brandName").css("visibility", "visible");
+        
         //offers you
-        $("#js-rewardOfferingMessage").text("offers you");
+        var offerText = $("#js-rewardOfferingMessage").text();
+        offerText = (offerText != "") ? offerText : "offers you";
+        $("#js-rewardOfferingMessage").text(offerText);
+        $("#js-rewardOfferingMessage").css("visibility", "visible");
     };
 
     var parseResponse = function(data) {
@@ -2115,17 +1698,7 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
 playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) {
     var self = this;
 
-    var hideElements = function() {
-        //reward img uri
-        $("#rewardImageUri").css("visibility", "hidden");
-        //reward img name
-        $("#rewardName").css("visibility", "hidden");
-
-        $(".ad__reward__offerMessage__brandName").css("visibility", "hidden");
-        $("#js-rewardOfferingMessage").css("visibility", "hidden");
-    };
-
-    if(!playtemEmbedded.AppSettings.apiKey) {
+    if(!self.settings.apiKey) {
         initCallback("window.apiKey undefined", null);
         return;
     }
@@ -2156,7 +1729,6 @@ playtemEmbedded.Reward.prototype.userIdMessageHandler = function(postMessage) {
     catch(e) {
         return;
     }
->>>>>>> 2apps
 };
 
 playtemEmbedded.WindowBlocker = function() {};

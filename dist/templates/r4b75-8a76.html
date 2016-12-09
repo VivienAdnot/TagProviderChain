@@ -17,8 +17,8 @@
         <div class="ad__reward__offerMessageBlock">
             <div class="ad__reward__offerMessage u-verticalAlignText">
                 <div>
-                    <span class="ad__reward__offerMessage__brandName"></span>
-                    <span id="js-rewardOfferingMessage"></span>
+                    <span class="ad__reward__offerMessage__brandName">Notre partenaire</span>
+                    <span id="js-rewardOfferingMessage">vous offre</span>
                 </div>
             </div>
         </div>
@@ -41,14 +41,9 @@
     <script type="text/javascript" src="js/applicationProviders.js?1"></script>
 
     <script type="text/javascript">
-        var playtemApp = new playtemEmbedded.App({
+        var playtemApp = new playtemEmbedded.AppInstream({
             hasReward: true,
-            providers: providers["rewarded"]["r4b75-8a76"],
-            apiKey: "r4b75-8a76",
-            outputLanguage : "en-US",
-            gameType: "desktop",
-            debug: false,
-            placementType: "rewarded"
+            apiKey: "r4b75-8a76"
         });
 
         playtemApp.execute();

@@ -1,4 +1,4 @@
-playtemEmbedded.AffizInternal.prototype.onClose = function() {
+playtemEmbedded.Affiz.prototype.onClose = function() {
     var self = playtemEmbedded.Core.globals.affizContext;
 
     var requestCloseWindow = function() {
