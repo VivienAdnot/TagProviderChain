@@ -1,0 +1,17 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "files.exclude": {
+        /* Defaults */
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        /* Project excludes */
+        "node_modules/**/*": true,
+        "dist/_source/**/*": true,
+        "dist/templates/css/**/*": true,
+        "dist/templates/img/**/*": true,
+        "dist/templates/**/*.html": true
+    }
+}
