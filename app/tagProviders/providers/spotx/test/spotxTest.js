@@ -1,5 +1,5 @@
-playtemEmbedded.SpotxOutstream = function(options) {
-    this.siteId = "146222";
+playtemEmbedded.SpotxTest = function(options) {
+    this.siteId = "85394";
 
     var defaults = {
         debug: false,
@@ -21,14 +21,14 @@ playtemEmbedded.SpotxOutstream = function(options) {
     $.extend(this.settings, defaults);
 };
 
-playtemEmbedded.SpotxOutstream.prototype.execute = function() {
+playtemEmbedded.SpotxTest.prototype.execute = function() {
     var self = this;
 
     self.spotxInternal = new playtemEmbedded.SpotxInternal({
         debug: self.settings.debug,
         siteId: self.siteId,
         apiKey: self.settings.apiKey,
-        providerName: "SpotxOutstream",
+        providerName: "Test",
 
         onAdAvailable: self.settings.onAdAvailable,
         onAdUnavailable: self.settings.onAdUnavailable,
