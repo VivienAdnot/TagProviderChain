@@ -7,20 +7,6 @@
 			<VASTAdTagURI>
 				<![CDATA[https://static.playtem.com/tag/tagProviders/vast/test/child1.xml]]>
 			</VASTAdTagURI>
-			<Error>
-				<![CDATA[https://poc.playtem.com/tracker.gif?a=onAdUnavailable&c=&p=Test&k=]]>
-			</Error>
-			<Creatives>
-				<Creative id="3" sequence="1">
-					<Linear>
-						<TrackingEvents>
-							<Tracking event="start">
-								<![CDATA[https://poc.playtem.com/tracker.gif?a=onAdAvailable&c=&p=Test&k=]]>
-							</Tracking>
-						</TrackingEvents>
-					</Linear>
-				</Creative>
-			</Creatives>
 			<Extensions>
 				<Extension type="waterfall" fallback_index="0" />
 			</Extensions>

@@ -33,7 +33,7 @@ playtemEmbedded.PlaytemVastTest.prototype.execute = function() {
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
         debug: self.settings.debug,
         vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
+        apiKey: playtemEmbedded.AppSettings.apiKey,
         providerName: "Test",
 
         onAdAvailable: self.settings.onAdAvailable,

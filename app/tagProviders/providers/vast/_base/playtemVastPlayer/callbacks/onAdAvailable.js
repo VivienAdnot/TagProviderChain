@@ -4,7 +4,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function(providerNam
 
     playtemEmbedded.Core.track({
         providerName: providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdAvailable",
         onAlways: self.settings.onAdAvailable
     });

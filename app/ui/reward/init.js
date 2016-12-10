@@ -1,7 +1,7 @@
 playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) {
     var self = this;
 
-    if(!self.settings.apiKey) {
+    if(!playtemEmbedded.AppSettings.apiKey) {
         initCallback("window.apiKey undefined", null);
         return;
     }

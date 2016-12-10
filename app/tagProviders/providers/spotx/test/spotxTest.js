@@ -25,7 +25,7 @@ playtemEmbedded.SpotxTest.prototype.execute = function() {
     self.spotxInternal = new playtemEmbedded.SpotxInternal({
         debug: self.settings.debug,
         siteId: self.siteId,
-        apiKey: self.settings.apiKey,
+        apiKey: playtemEmbedded.AppSettings.apiKey,
         providerName: "Test",
 
         onAdAvailable: self.settings.onAdAvailable,

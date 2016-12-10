@@ -1158,7 +1158,7 @@ playtemEmbedded.SpotxTest.prototype.execute = function() {
     self.spotxInternal = new playtemEmbedded.SpotxInternal({
         debug: self.settings.debug,
         siteId: self.siteId,
-        apiKey: self.settings.apiKey,
+        apiKey: playtemEmbedded.AppSettings.apiKey,
         providerName: "Test",
 
         onAdAvailable: self.settings.onAdAvailable,
@@ -1259,7 +1259,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.onAdAvailable = function(providerNam
 
     playtemEmbedded.Core.track({
         providerName: providerName,
-        apiKey:  self.settings.apiKey,
+        apiKey:  playtemEmbedded.AppSettings.apiKey,
         eventType: "onAdAvailable",
         onAlways: self.settings.onAdAvailable
     });
@@ -1539,7 +1539,7 @@ playtemEmbedded.PlaytemVastTest.prototype.execute = function() {
     self.vastPlayer = new playtemEmbedded.PlaytemVastPlayer({
         debug: self.settings.debug,
         vastTag: buildTag(),
-        apiKey: self.settings.apiKey,
+        apiKey: playtemEmbedded.AppSettings.apiKey,
         providerName: "Test",
 
         onAdAvailable: self.settings.onAdAvailable,
@@ -1698,7 +1698,7 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
 playtemEmbedded.Reward.prototype.init = function(executeCallback, initCallback) {
     var self = this;
 
-    if(!self.settings.apiKey) {
+    if(!playtemEmbedded.AppSettings.apiKey) {
         initCallback("window.apiKey undefined", null);
         return;
     }
