@@ -10,10 +10,8 @@ providers.test = {
 // INSTREAM
 //===========================
 
-var allProvidersInstream = [playtemEmbedded.PlaytemVastInstream, playtemEmbedded.Affiz, playtemEmbedded.SpotxInstream];
-var iscoolsInstream = [playtemEmbedded.PlaytemVastInstream, playtemEmbedded.SpotxInstream];
-
-
+var allProvidersInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastInstream, playtemEmbedded.Affiz];
+var iscoolsInstream = [playtemEmbedded.SpotxInstream, playtemEmbedded.PlaytemVastInstream];
 
 providers.rewarded = {
     //===== prod =====
