@@ -12,7 +12,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
                 throw "providerName unknown: " + providerName.toString();
             }
         } catch(e) {
-            playtemEmbedded.Core.log("PlaytemVastPlayer", "adWrapperAdSystems exception" + e);
+            playtemEmbedded.Core.logError("PlaytemVastPlayer", "adWrapperAdSystems exception" + e);
             providerName = null;
         }
 
@@ -57,7 +57,7 @@ playtemEmbedded.PlaytemVastPlayer.prototype.execute = function() {
         self.videoPlayerElement = document.getElementById(self.settings.playerId);
         
         if(!self.videoPlayer || typeof self.videoPlayer.init !== "function" || typeof self.videoPlayer.getAdWrapperAdSystems !== "function") {
-            playtemEmbedded.Core.log("PlaytemVastPlayer", "api method unavailable");
+            playtemEmbedded.Core.logError("PlaytemVastPlayer", "api method unavailable");
             self.settings.onAdUnavailable();
             return;
         }

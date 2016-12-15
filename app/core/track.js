@@ -11,7 +11,7 @@ playtemEmbedded.Core.track = function(options) {
     var settings = $.extend({}, defaults, options);
 
     if(!settings.providerName || !settings.apiKey || !settings.eventType) {
-        playtemEmbedded.Core.log("playtemEmbedded", "playtemEmbedded.Core.track missing option");
+        playtemEmbedded.Core.logError("track", "playtemEmbedded.Core.track missing option");
         settings.onFail();
         settings.onAlways();
         return;
@@ -29,7 +29,7 @@ playtemEmbedded.Core.track = function(options) {
             settings.onDone();
         })
         .fail(function() {
-            playtemEmbedded.Core.log("playtemEmbedded", "pixel tracking fail.");
+            playtemEmbedded.Core.logInfo("track", "tracking failed.");
             settings.onFail();
         })
         .always(function() {

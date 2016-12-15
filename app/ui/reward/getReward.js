@@ -51,7 +51,7 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
             callback(null, "success");
         } catch(e) {
             var errorMessage = "reward parse response error: " + e;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
+            playtemEmbedded.Core.logError("reward parser", errorMessage);
             callback(errorMessage, null);
         }
     };
@@ -66,7 +66,7 @@ playtemEmbedded.Reward.prototype.getReward = function(callback) {
         success: parseResponse,
         error: function(jqXHR, textStatus, errorThrown) {
             var errorMessage = "reward ajax error: " + errorThrown;
-            playtemEmbedded.Core.log("playtemEmbedded", errorMessage);
+            playtemEmbedded.Core.logError("reward fetch", errorMessage);
             callback(errorMessage, null);
         }
     });

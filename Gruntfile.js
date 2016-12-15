@@ -7,6 +7,13 @@ module.exports = function(grunt) {
             },
             app: {
                 src: ['app/**/*.js'],
+                dest: 'dist/_source/playtemEmbeddedApp.dev.js'
+            }
+        },
+
+        uglify: {
+            build: {
+                src: 'dist/_source/playtemEmbeddedApp.dev.js',
                 dest: 'dist/_source/playtemEmbeddedApp.js'
             }
         },
@@ -24,8 +31,9 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-connect');
 
-    grunt.registerTask('build', ['concat:app']);
-    grunt.registerTask('serve', ['concat:app', 'connect:root']);
+    grunt.registerTask('build', ['concat:app', 'uglify']);
+    grunt.registerTask('serve', ['concat:app', 'uglify', 'connect:root']);
 };
