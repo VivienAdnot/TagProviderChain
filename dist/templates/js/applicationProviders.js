@@ -52,6 +52,7 @@ providers.rewarded = {
 //===========================
 
 var allProvidersOutstream = [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream];
+var outstreamTest = [playtemEmbedded.SpotxTest];
 
 providers.outstream = {
     //===== prod =====
@@ -85,6 +86,10 @@ providers.outstream = {
 
     //iscool
     "12df-48691": allProvidersOutstream,
+
+    //farm fever
+    "4089-b867v": allProvidersOutstream,
+    "TST9-b867v": outstreamTest,
 
     // ==== providers exceptions =====
 
