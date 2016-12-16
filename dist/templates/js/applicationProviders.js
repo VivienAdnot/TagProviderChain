@@ -30,6 +30,10 @@ providers.rewarded = {
 
     //===== ! prod =====
 
+    //farm fever
+    "4089-b867v": iscoolsInstream,
+    "TST9-b867v": instreamTest,    
+
     //jotu
     "4c3f-be78j": allProvidersInstream,
     "TSTf-be78j": instreamTest,
@@ -52,7 +56,6 @@ providers.rewarded = {
 //===========================
 
 var allProvidersOutstream = [playtemEmbedded.SmartadMixedContent, playtemEmbedded.SpotxOutstream];
-var outstreamTest = [playtemEmbedded.SpotxTest];
 
 providers.outstream = {
     //===== prod =====
@@ -86,10 +89,6 @@ providers.outstream = {
 
     //iscool
     "12df-48691": allProvidersOutstream,
-
-    //farm fever
-    "4089-b867v": allProvidersOutstream,
-    "TST9-b867v": outstreamTest,
 
     // ==== providers exceptions =====
 
