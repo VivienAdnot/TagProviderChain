@@ -13,7 +13,7 @@ playtemEmbedded.AppOutstream = function(options) {
         });
 
         playtemEmbedded.Core.globals.rewardManager.clear();
-    }    
+    }
 };
 
 playtemEmbedded.AppOutstream.prototype = {
