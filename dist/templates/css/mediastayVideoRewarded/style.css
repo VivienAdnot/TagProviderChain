@@ -90,9 +90,7 @@ button {
     width: 750px;
     height: 550px;
     position: relative;
-    /*background: url("//static.playtem.com/templates/Generic_with_reward_desktop/750x550/background.png") no-repeat top left;*/
-    /*background: url("//static.playtem.com/templates/Generic_without_reward_desktop/750x550/background-opaque.png") no-repeat top left;*/
-    background: url("//static.playtem.com/templates/Generic_without_reward_desktop/750x550/background.png") no-repeat top left;
+    background: url("//static.playtem.com/templates/Mediastay/750x550/background.png") no-repeat top left;
     border-top: 1px solid transparent;
 }
 .ad__header__title {
