@@ -11,7 +11,7 @@
         "node_modules/**/*": true,
         "dist/_source/**/*": true,
         "dist/templates/img/**/*": true,
-        "dist/templates/css/**/*": true
+        //"dist/templates/css/**/*": true
         //"dist/templates/**/*.html": true
     }
 }
